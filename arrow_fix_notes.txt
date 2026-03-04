@@ -1,0 +1,10 @@
+Issue: Arrows don't work properly in RTL layout.
+In RTL, scrollLeft is negative (or inverted). The scroll direction logic needs to account for RTL.
+- In RTL: scrollLeft starts at 0 (rightmost) and goes negative as you scroll left
+- The ">" arrow should scroll to show more items (scroll left in RTL = negative direction)
+- The "<" arrow should scroll back (scroll right in RTL = positive direction)
+
+Fix: Need to handle RTL scroll behavior properly.
+- In RTL, scrollBy({left: -350}) scrolls to show more content
+- In RTL, scrollBy({left: 350}) scrolls back
+- Also need to fix canScrollRight/canScrollLeft detection for RTL

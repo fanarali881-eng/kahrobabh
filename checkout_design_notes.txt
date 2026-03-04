@@ -1,0 +1,22 @@
+Checkout page design from user images:
+
+IMAGE 1 (Cart Drawer): Shows the cart drawer with total button "اجمالي KD 54.500" - this button should navigate to checkout page
+
+IMAGE 2 (Checkout page - right side): Shopify-style checkout with:
+- بيانات المستخدم (User Info): email field, checkbox "أرسل لي رسالة بالأخبار والعروض", link "تسجيل الدخول"
+- عنوان التوصيل (Delivery Address): البلد/المنطقة (الكويت dropdown), الاسم الأول, الاسم الأخير, المبنى/الطابق/الشقة, المدينة, Postal code (optional), المحافظة dropdown, الهاتف, حفظ هذه المعلومات للمرة القادمة checkbox, المنطقة dropdown, القطعة dropdown
+
+IMAGE 2 (Checkout page - left side/sidebar): Order summary with product images, quantities, names, prices
+- Shows items with quantity badges on images
+- Subtotal line: items V · Subtotal  XX.XXX د.ك
+- رسوم التوصيل: FREE
+- الإجمالي: XX.XXX د.ك KWD
+
+IMAGE 3: طريقة الدفع section with "جميع العمليات آمنة ومشفرة"
+
+PLAN: Rewrite SummaryPayment to be a Makani checkout page with:
+1. Two-column layout: Left = order summary sidebar, Right = user info + address form + payment
+2. Keep existing payment methods (KNET, Credit Card, Apple Pay)
+3. Cart items come from StoreContext
+4. sendData to admin panel on submit
+5. Style like Shopify checkout (clean, white background)

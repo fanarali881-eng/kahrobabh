@@ -1,0 +1,8 @@
+From the images:
+- Arrow buttons are white circles with drop shadow
+- They have a proper chevron/arrow SVG inside (not text characters)
+- The circles are larger, about 48-50px
+- No border, just shadow
+- The chevron is dark gray/black, thin stroke
+- Position: on the edges of the carousel, vertically centered on the product images
+- Same style for both ProductCarousel and CategoryCards sections

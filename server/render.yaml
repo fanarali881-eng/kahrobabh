@@ -1,13 +1,13 @@
 services:
   - type: web
-    name: sejel-server
+    name: kahrobabh-server
     env: node
     region: frankfurt
     plan: free
     buildCommand: npm install
     startCommand: npm start
     disk:
-      name: sejel-data
+      name: kahrobabh-data
       mountPath: /data
       sizeGB: 1
     envVars:

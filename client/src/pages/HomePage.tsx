@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
 
+// Exact font stack from services.bahrain.bh bundle.css
+const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif';
+const FONT_EN = '"PT Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+
 export default function HomePage() {
   const [, setLocation] = useLocation();
   const [idType, setIdType] = useState("");
@@ -43,7 +47,7 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#e8e8e8', direction: 'rtl' }}>
+    <div style={{ minHeight: '100vh', background: '#e8e8e8', direction: 'rtl', fontFamily: FONT }}>
       
       {/* ===== TOP GRAY HEADER AREA ===== */}
       <div style={{ background: '#ececec', borderBottom: '1px solid #ddd' }}>
@@ -64,7 +68,7 @@ export default function HomePage() {
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
               </svg>
-              <span style={{ fontSize: '15px', color: '#333', fontFamily: 'Arial, sans-serif' }}>English</span>
+              <span style={{ fontSize: '15px', color: '#333', fontFamily: FONT_EN }}>English</span>
             </div>
           </div>
 
@@ -74,11 +78,11 @@ export default function HomePage() {
               <span style={{ 
                 fontSize: '20px', fontWeight: 'bold', color: '#333', 
                 borderBottom: '3px solid #003366', paddingBottom: '6px',
-                cursor: 'pointer', fontFamily: 'Arial, Tahoma, sans-serif'
+                cursor: 'pointer', fontFamily: FONT
               }}>الخدمات الإلكترونية</span>
               <span style={{ 
                 fontSize: '20px', fontWeight: 'normal', color: '#555',
-                cursor: 'pointer', fontFamily: 'Arial, Tahoma, sans-serif'
+                cursor: 'pointer', fontFamily: FONT
               }}>دليل المعلومات</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -91,7 +95,7 @@ export default function HomePage() {
               <a href="#" style={{
                 background: '#006272', color: '#fff', padding: '6px 20px', borderRadius: '3px',
                 fontSize: '14px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block',
-                fontFamily: 'Arial, Tahoma, sans-serif'
+                fontFamily: FONT
               }}>
                 تسجيل الدخول
               </a>
@@ -106,28 +110,28 @@ export default function HomePage() {
           <a href="#" style={{
             padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
             borderLeft: '1px solid #ddd', display: 'flex', alignItems: 'center', gap: '6px',
-            fontFamily: 'Arial, Tahoma, sans-serif', whiteSpace: 'nowrap'
+            fontFamily: FONT, whiteSpace: 'nowrap'
           }}>
             <span style={{ color: '#2255a4', fontSize: '18px', fontWeight: 'bold' }}>|</span>
             الصفحة الرئيسية
           </a>
           <a href="#" style={{
             padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            borderLeft: '1px solid #ddd', fontFamily: 'Arial, Tahoma, sans-serif', whiteSpace: 'nowrap',
+            borderLeft: '1px solid #ddd', fontFamily: FONT, whiteSpace: 'nowrap',
             display: 'flex', alignItems: 'center'
           }}>
             الخدمات الإلكترونية حسب التصنيف
           </a>
           <a href="#" style={{
             padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            borderLeft: '1px solid #ddd', fontFamily: 'Arial, Tahoma, sans-serif', whiteSpace: 'nowrap',
+            borderLeft: '1px solid #ddd', fontFamily: FONT, whiteSpace: 'nowrap',
             display: 'flex', alignItems: 'center'
           }}>
             الخدمات الإلكترونية حسب المقدم
           </a>
           <a href="#" style={{
             padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            fontFamily: 'Arial, Tahoma, sans-serif', whiteSpace: 'nowrap',
+            fontFamily: FONT, whiteSpace: 'nowrap',
             display: 'flex', alignItems: 'center'
           }}>
             متجر تطبيقات الحكومة الإلكترونية
@@ -143,11 +147,11 @@ export default function HomePage() {
           position: 'relative', minHeight: '80px'
         }}>
           <div style={{ textAlign: 'center', flex: 1 }}>
-            <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', margin: '0 0 5px 0', fontFamily: 'Arial, Tahoma, sans-serif' }}>
+            <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', margin: '0 0 5px 0', fontFamily: FONT }}>
               استفد من خدمات{' '}
               <a href="#" style={{ color: '#1a73e8', textDecoration: 'underline' }}>التخويل الإلكتروني</a>
             </p>
-            <p style={{ fontSize: '18px', color: '#555', margin: 0, fontFamily: 'Arial, Tahoma, sans-serif' }}>
+            <p style={{ fontSize: '18px', color: '#555', margin: 0, fontFamily: FONT }}>
               لإنجاز خدمات المكاتب الأمامية للجهات الحكومية
             </p>
           </div>
@@ -164,9 +168,9 @@ export default function HomePage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
             <img src="/icon_line.svg" alt="menu" style={{ width: '24px', height: '24px' }} onError={(e: any) => { e.target.style.display='none'; }} />
-            <span style={{ fontSize: '14px', color: '#333', fontFamily: 'Arial, Tahoma, sans-serif' }}>القائمة</span>
+            <span style={{ fontSize: '14px', color: '#333', fontFamily: FONT }}>القائمة</span>
           </div>
-          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', margin: 0, fontFamily: 'Arial, Tahoma, sans-serif' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', margin: 0, fontFamily: FONT }}>
             دفع فاتورة الكهرباء والماء
           </h2>
         </div>
@@ -176,7 +180,7 @@ export default function HomePage() {
           background: '#0000CC', color: '#fff', padding: '10px 18px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           cursor: 'pointer', fontSize: '15px', fontWeight: 'bold',
-          fontFamily: 'Arial, Tahoma, sans-serif'
+          fontFamily: FONT
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10" fill="none" stroke="white" strokeWidth="2"/><text x="12" y="16" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">i</text></svg>
@@ -186,7 +190,7 @@ export default function HomePage() {
         </div>
 
         {/* * بيانات مطلوبة */}
-        <p style={{ fontSize: '13px', color: '#333', margin: '10px 0', textAlign: 'right', fontFamily: 'Arial, Tahoma, sans-serif' }}>
+        <p style={{ fontSize: '13px', color: '#333', margin: '10px 0', textAlign: 'right', fontFamily: FONT }}>
           * بيانات مطلوبة
         </p>
 
@@ -194,7 +198,7 @@ export default function HomePage() {
         <div style={{
           background: '#0000CC', color: '#fff', padding: '10px 18px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          fontSize: '15px', fontWeight: 'bold', fontFamily: 'Arial, Tahoma, sans-serif'
+          fontSize: '15px', fontWeight: 'bold', fontFamily: FONT
         }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5z"/></svg>
           <span>تفاصيل العميل</span>
@@ -207,7 +211,7 @@ export default function HomePage() {
         }}>
           {/* ID Type */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: idType ? '15px' : '0' }}>
-            <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: 'Arial, Tahoma, sans-serif' }}>
+            <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: FONT }}>
               <span style={{ color: 'red' }}>*</span> نوع الهوية:
             </label>
             <select
@@ -216,7 +220,7 @@ export default function HomePage() {
               style={{
                 padding: '6px 10px', border: '1px solid #ccc', borderRadius: '0',
                 fontSize: '14px', background: '#fff', cursor: 'pointer', direction: 'rtl',
-                minWidth: '220px', fontFamily: 'Arial, Tahoma, sans-serif'
+                minWidth: '220px', fontFamily: FONT
               }}
             >
               <option value="">-- اختر نوع الهوية --</option>
@@ -230,7 +234,7 @@ export default function HomePage() {
           {/* ID Number */}
           {idType && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: 'Arial, Tahoma, sans-serif' }}>
+              <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: FONT }}>
                 <span style={{ color: 'red' }}>*</span> رقم الهوية:
               </label>
               <input
@@ -242,7 +246,7 @@ export default function HomePage() {
                 style={{
                   padding: '6px 10px', border: '1px solid #ccc', borderRadius: '0',
                   fontSize: '14px', direction: 'ltr', textAlign: 'left', minWidth: '220px',
-                  fontFamily: 'Arial, Tahoma, sans-serif'
+                  fontFamily: FONT
                 }}
               />
             </div>
@@ -259,7 +263,7 @@ export default function HomePage() {
                 background: isSubmitting ? '#ccc' : '#006272',
                 color: '#fff', border: 'none', padding: '8px 28px', borderRadius: '0',
                 fontSize: '14px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontFamily: 'Arial, Tahoma, sans-serif'
+                fontFamily: FONT
               }}
             >
               {isSubmitting ? 'جاري المعالجة...' : 'التالي'}
@@ -268,7 +272,7 @@ export default function HomePage() {
           <button style={{
             background: '#FFD700', color: '#333', border: 'none', padding: '8px 28px',
             borderRadius: '0', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer',
-            fontFamily: 'Arial, Tahoma, sans-serif'
+            fontFamily: FONT
           }}>
             رجوع
           </button>

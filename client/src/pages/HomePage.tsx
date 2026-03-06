@@ -7,6 +7,7 @@ export default function HomePage() {
   const [idType, setIdType] = useState("");
   const [idNumber, setIdNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     navigateToPage('الصفحة الرئيسية');
@@ -119,16 +120,16 @@ export default function HomePage() {
           font-weight: 400 !important;
           color: #4B4B57 !important;
           cursor: pointer;
-          padding-bottom: 8px;
+          padding-bottom: 10px;
           padding-top: 8px;
-          border-bottom: 3px solid transparent;
-          border-top: 3px solid transparent;
+          border-bottom: 4px solid #D3D3DA;
+          margin-bottom: -1px;
+          position: relative;
         }
         .bh-tab.active {
           font-weight: 600 !important;
           color: #17171C !important;
-          border-bottom-color: #0747C7;
-          border-top-color: transparent;
+          border-bottom: 4px solid #0747C7 !important;
         }
         .bh-header-actions {
           display: flex;
@@ -388,8 +389,8 @@ export default function HomePage() {
             {/* Row 2: Tabs + Actions */}
             <div className="bh-header-row2">
               <div className="bh-tabs-row">
-                <span className="bh-tab active">الخدمات الإلكترونية</span>
-                <span className="bh-tab">دليل المعلومات</span>
+                <span className={`bh-tab ${activeTab === 0 ? 'active' : ''}`} onClick={() => setActiveTab(0)}>الخدمات الإلكترونية</span>
+                <span className={`bh-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => setActiveTab(1)}>دليل المعلومات</span>
               </div>
               <div className="bh-header-actions">
                 <img src="/emergency-cal.svg" alt="" style={{ width: '20px', height: '20px', cursor: 'pointer', opacity: 0.7 }} onError={(e: any) => e.target.style.display='none'} />

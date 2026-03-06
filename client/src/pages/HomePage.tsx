@@ -80,7 +80,7 @@ export default function HomePage() {
         
         /* Header area */
         .bh-header {
-          background: #F5F5F7;
+          background: #fff;
           border-bottom: 1px solid #EAEAEE;
         }
         .bh-header-row1 {
@@ -142,7 +142,7 @@ export default function HomePage() {
         
         /* Navigation bar */
         .bh-nav {
-          background: #fff;
+          background: #EAEAEE;
           border-bottom: 3px solid #0747C7;
         }
         .bh-nav-items {

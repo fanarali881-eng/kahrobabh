@@ -45,30 +45,37 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#e8e8e8', fontFamily: "Arial, Tahoma, sans-serif", direction: 'rtl' }}>
       
-      {/* ===== TOP HEADER BAR ===== */}
-      <div style={{ background: '#f5f5f5', borderBottom: '1px solid #ccc', padding: '8px 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          
-          {/* RIGHT: Logo + Main Nav Links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <img src="/bahrain-coat.jpg" alt="حكومة مملكة البحرين" style={{ height: '55px' }} />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <a href="#" style={{ fontSize: '22px', fontWeight: 'bold', color: '#006272', textDecoration: 'underline', fontFamily: 'Arial, Tahoma, sans-serif' }}>الخدمات الإلكترونية</a>
-              <span style={{ color: '#999', fontSize: '18px' }}>|</span>
-              <a href="#" style={{ fontSize: '22px', fontWeight: 'bold', color: '#333', textDecoration: 'none', fontFamily: 'Arial, Tahoma, sans-serif' }}>دليل المعلومات</a>
-            </div>
+      {/* ===== ROW 1: Logo + English ===== */}
+      <div style={{ background: '#f0f0f0', borderBottom: '1px solid #ddd', padding: '10px 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* RIGHT: Logo + حكومة مملكة البحرين */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/bahrain-coat.jpg" alt="حكومة مملكة البحرين" style={{ height: '60px' }} />
           </div>
+          {/* LEFT: English */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '18px', color: '#555' }}>🌐</span>
+            <span style={{ fontSize: '15px', color: '#333', fontFamily: 'Arial, sans-serif' }}>English</span>
+          </div>
+        </div>
+      </div>
 
-          {/* LEFT: Login + Weather + Language */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px', color: '#333', textDecoration: 'none' }}>
-              <span style={{ fontSize: '16px' }}>🌐</span> English
-            </a>
-            <span style={{ fontSize: '20px', color: '#666' }}>⛅</span>
-            <span style={{ fontSize: '20px', color: '#666' }}>📋</span>
+      {/* ===== ROW 2: الخدمات الإلكترونية | دليل المعلومات + تسجيل الدخول + weather ===== */}
+      <div style={{ background: '#f5f5f5', borderBottom: '1px solid #ccc', padding: '8px 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* RIGHT: الخدمات الإلكترونية | دليل المعلومات */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <a href="#" style={{ fontSize: '24px', fontWeight: 'bold', color: '#006272', textDecoration: 'underline', borderBottom: '3px solid #006272', paddingBottom: '2px', fontFamily: 'Arial, Tahoma, sans-serif' }}>الخدمات الإلكترونية</a>
+            <span style={{ color: '#aaa', fontSize: '22px', margin: '0 5px' }}>|</span>
+            <a href="#" style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', textDecoration: 'none', fontFamily: 'Arial, Tahoma, sans-serif' }}>دليل المعلومات</a>
+          </div>
+          {/* LEFT: تسجيل الدخول + weather icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '22px', color: '#777' }}>📋</span>
+            <span style={{ fontSize: '22px', color: '#777' }}>⛅</span>
             <a href="#" style={{
-              background: '#006272', color: '#fff', padding: '8px 20px', borderRadius: '3px',
-              fontSize: '14px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block'
+              background: '#006272', color: '#fff', padding: '8px 24px', borderRadius: '4px',
+              fontSize: '15px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block'
             }}>
               تسجيل الدخول
             </a>
@@ -76,23 +83,23 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ===== NAVIGATION BAR ===== */}
+      {/* ===== ROW 3: NAVIGATION BAR ===== */}
       <div style={{ background: '#fff', borderBottom: '3px solid #0055a5' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 15px', display: 'flex' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex' }}>
           {[
-            { label: 'الصفحة الرئيسية', active: true, icon: true },
-            { label: 'الخدمات الإلكترونية حسب التصنيف', active: false },
-            { label: 'الخدمات الإلكترونية حسب المقدم', active: false },
-            { label: 'متجر تطبيقات الحكومة الإلكترونية', active: false },
+            { label: 'الصفحة الرئيسية', icon: true },
+            { label: 'الخدمات الإلكترونية حسب التصنيف' },
+            { label: 'الخدمات الإلكترونية حسب المقدم' },
+            { label: 'متجر تطبيقات الحكومة الإلكترونية' },
           ].map((item, i) => (
             <a key={i} href="#" style={{
-              padding: '12px 20px', fontSize: '14px', color: '#333', textDecoration: 'none',
-              borderLeft: i < 3 ? '1px solid #eee' : 'none',
+              padding: '12px 25px', fontSize: '14px', color: '#333', textDecoration: 'none',
+              borderLeft: '1px solid #e0e0e0',
               display: 'flex', alignItems: 'center', gap: '6px',
               fontWeight: 400,
-              position: 'relative',
+              ...(i === 3 ? { borderLeft: 'none' } : {}),
             }}>
-              {item.icon && <span style={{ color: '#0055a5', fontSize: '16px', fontWeight: 'bold' }}>|</span>}
+              {item.icon && <span style={{ color: '#0055a5', fontSize: '20px', fontWeight: 'bold', lineHeight: 1 }}>|</span>}
               {item.label}
             </a>
           ))}

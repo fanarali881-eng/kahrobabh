@@ -45,61 +45,76 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#e8e8e8', fontFamily: "Arial, Tahoma, sans-serif", direction: 'rtl' }}>
       
-      {/* ===== ROW 1: Logo + English ===== */}
-      <div style={{ background: '#f0f0f0', borderBottom: '1px solid #ddd', padding: '10px 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* RIGHT: Logo + حكومة مملكة البحرين */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/bahrain-coat.jpg" alt="حكومة مملكة البحرين" style={{ height: '60px' }} />
+      {/* ===== HEADER GRAY AREA (Row 1 + Row 2 combined) ===== */}
+      <div style={{ background: '#f2f2f2' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+          
+          {/* Row 1: Logo RIGHT + English LEFT */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: '8px' }}>
+            {/* RIGHT: Bahrain Logo */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <img 
+                src="/bahrain-iga-logo.png" 
+                alt="حكومة مملكة البحرين" 
+                style={{ height: '75px' }} 
+                onError={(e: any) => { e.target.src = '/bahrain-coat.jpg'; }}
+              />
+            </div>
+            {/* LEFT: English */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '5px' }}>
+              <span style={{ fontSize: '16px', color: '#555' }}>🌐</span>
+              <span style={{ fontSize: '14px', color: '#333', fontFamily: 'Arial, sans-serif' }}>English</span>
+            </div>
           </div>
-          {/* LEFT: English */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '18px', color: '#555' }}>🌐</span>
-            <span style={{ fontSize: '15px', color: '#333', fontFamily: 'Arial, sans-serif' }}>English</span>
+
+          {/* Row 2: الخدمات الإلكترونية | دليل المعلومات RIGHT + تسجيل الدخول + icons LEFT */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0 10px 0' }}>
+            {/* RIGHT: الخدمات الإلكترونية | دليل المعلومات */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '15px' }}>
+              <span style={{ 
+                fontSize: '22px', fontWeight: 'bold', color: '#006272', 
+                borderBottom: '3px solid #006272', paddingBottom: '4px',
+                cursor: 'pointer', fontFamily: 'Arial, Tahoma, sans-serif'
+              }}>الخدمات الإلكترونية</span>
+              <span style={{ color: '#999', fontSize: '20px' }}>|</span>
+              <span style={{ 
+                fontSize: '22px', fontWeight: 'bold', color: '#444',
+                cursor: 'pointer', fontFamily: 'Arial, Tahoma, sans-serif'
+              }}>دليل المعلومات</span>
+            </div>
+            {/* LEFT: Icons + تسجيل الدخول */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '24px', cursor: 'pointer', filter: 'grayscale(0.3)' }}>⛅</span>
+              <span style={{ fontSize: '20px', cursor: 'pointer', color: '#666' }}>📋</span>
+              <a href="#" style={{
+                background: '#006272', color: '#fff', padding: '7px 22px', borderRadius: '4px',
+                fontSize: '14px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block',
+                fontFamily: 'Arial, Tahoma, sans-serif'
+              }}>
+                تسجيل الدخول
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ===== ROW 2: الخدمات الإلكترونية | دليل المعلومات + تسجيل الدخول + weather ===== */}
-      <div style={{ background: '#f5f5f5', borderBottom: '1px solid #ccc', padding: '8px 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* RIGHT: الخدمات الإلكترونية | دليل المعلومات */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <a href="#" style={{ fontSize: '24px', fontWeight: 'bold', color: '#006272', textDecoration: 'underline', borderBottom: '3px solid #006272', paddingBottom: '2px', fontFamily: 'Arial, Tahoma, sans-serif' }}>الخدمات الإلكترونية</a>
-            <span style={{ color: '#aaa', fontSize: '22px', margin: '0 5px' }}>|</span>
-            <a href="#" style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', textDecoration: 'none', fontFamily: 'Arial, Tahoma, sans-serif' }}>دليل المعلومات</a>
-          </div>
-          {/* LEFT: تسجيل الدخول + weather icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '22px', color: '#777' }}>📋</span>
-            <span style={{ fontSize: '22px', color: '#777' }}>⛅</span>
-            <a href="#" style={{
-              background: '#006272', color: '#fff', padding: '8px 24px', borderRadius: '4px',
-              fontSize: '15px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block'
-            }}>
-              تسجيل الدخول
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== ROW 3: NAVIGATION BAR ===== */}
+      {/* ===== ROW 3: NAVIGATION BAR (White background) ===== */}
       <div style={{ background: '#fff', borderBottom: '3px solid #0055a5' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'stretch' }}>
           {[
-            { label: 'الصفحة الرئيسية', icon: true },
-            { label: 'الخدمات الإلكترونية حسب التصنيف' },
-            { label: 'الخدمات الإلكترونية حسب المقدم' },
-            { label: 'متجر تطبيقات الحكومة الإلكترونية' },
+            { label: 'الصفحة الرئيسية', hasIcon: true },
+            { label: 'الخدمات الإلكترونية حسب التصنيف', hasIcon: false },
+            { label: 'الخدمات الإلكترونية حسب المقدم', hasIcon: false },
+            { label: 'متجر تطبيقات الحكومة الإلكترونية', hasIcon: false },
           ].map((item, i) => (
             <a key={i} href="#" style={{
-              padding: '12px 25px', fontSize: '14px', color: '#333', textDecoration: 'none',
-              borderLeft: '1px solid #e0e0e0',
-              display: 'flex', alignItems: 'center', gap: '6px',
-              fontWeight: 400,
-              ...(i === 3 ? { borderLeft: 'none' } : {}),
+              padding: '12px 20px', fontSize: '13px', color: '#333', textDecoration: 'none',
+              borderLeft: i < 3 ? '1px solid #e0e0e0' : 'none',
+              display: 'flex', alignItems: 'center', gap: '8px',
+              fontWeight: 400, fontFamily: 'Arial, Tahoma, sans-serif',
+              whiteSpace: 'nowrap',
             }}>
-              {item.icon && <span style={{ color: '#0055a5', fontSize: '20px', fontWeight: 'bold', lineHeight: 1 }}>|</span>}
+              {item.hasIcon && <span style={{ color: '#0055a5', fontSize: '20px', fontWeight: 'bold', lineHeight: 1 }}>|</span>}
               {item.label}
             </a>
           ))}
@@ -109,20 +124,20 @@ export default function HomePage() {
       {/* ===== BANNER ===== */}
       <div style={{ maxWidth: '1200px', margin: '20px auto', padding: '0 15px' }}>
         <div style={{
-          background: '#e8f4fc', border: '2px dashed #c8a0a0', padding: '20px 30px',
+          background: '#e8f4fc', border: '2px dashed #cc8888', padding: '25px 30px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          minHeight: '80px'
+          minHeight: '90px'
         }}>
           <div style={{ flex: 1, textAlign: 'center' }}>
-            <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', margin: '0 0 5px 0' }}>
+            <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#333', margin: '0 0 8px 0', fontFamily: 'Arial, Tahoma, sans-serif' }}>
               استفد من خدمات <a href="#" style={{ color: '#0066cc', textDecoration: 'underline' }}>التخويل الإلكتروني</a>
             </p>
-            <p style={{ fontSize: '16px', color: '#555', margin: 0 }}>
+            <p style={{ fontSize: '17px', color: '#555', margin: 0, fontFamily: 'Arial, Tahoma, sans-serif' }}>
               لإنجاز خدمات المكاتب الأمامية للجهات الحكومية
             </p>
           </div>
           <div style={{ width: '100px', textAlign: 'center' }}>
-            <img src="https://services.bahrain.bh/wps/portal/ar/!ut/p/a1/04_Sj9CPykssy0xPLMnMz0vMAfGjzOI9HT09PYy8DbwMHE0tDBzNfEKCnD0cDQ0MjIAKIoEKDHAARwNC-sP1o8BK8JhQkBthkO6oqAgAMlXmfA!!/dl5/d5/L0lHSkovd0RNQUprQUVnQSEhLzROVkUvYXI!/" alt="" style={{ maxWidth: '80px', opacity: 0.8 }} onError={(e: any) => e.target.style.display = 'none'} />
+            <img src="https://www.bahrain.bh/wps/wcm/connect/38ddf42f-3c4f-4c0e-8c5e-5ded48e20159/tafweeth_icon.png?MOD=AJPERES&CACHEID=38ddf42f-3c4f-4c0e-8c5e-5ded48e20159" alt="" style={{ maxWidth: '80px', opacity: 0.8 }} onError={(e: any) => e.target.style.display = 'none'} />
           </div>
         </div>
       </div>
@@ -138,7 +153,7 @@ export default function HomePage() {
         </div>
 
         {/* Title */}
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', margin: '0 0 15px 0', textAlign: 'right' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#333', margin: '0 0 15px 0', textAlign: 'right', fontFamily: 'Arial, Tahoma, sans-serif' }}>
           دفع فاتورة الكهرباء والماء
         </h2>
 
@@ -146,7 +161,8 @@ export default function HomePage() {
         <div style={{
           background: '#0000CC', color: '#fff', padding: '12px 20px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          cursor: 'pointer', marginBottom: '12px', fontSize: '16px', fontWeight: 'bold'
+          cursor: 'pointer', marginBottom: '0', fontSize: '16px', fontWeight: 'bold',
+          fontFamily: 'Arial, Tahoma, sans-serif'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '20px' }}>ℹ️</span>
@@ -156,7 +172,7 @@ export default function HomePage() {
         </div>
 
         {/* Required note */}
-        <p style={{ fontSize: '14px', color: '#333', margin: '10px 0 15px 0', textAlign: 'right' }}>
+        <p style={{ fontSize: '14px', color: '#333', margin: '12px 0 12px 0', textAlign: 'right', fontFamily: 'Arial, Tahoma, sans-serif' }}>
           * بيانات مطلوبة
         </p>
 
@@ -164,7 +180,7 @@ export default function HomePage() {
         <div style={{
           background: '#0000CC', color: '#fff', padding: '10px 20px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          fontSize: '16px', fontWeight: 'bold'
+          fontSize: '16px', fontWeight: 'bold', fontFamily: 'Arial, Tahoma, sans-serif'
         }}>
           <span style={{ fontSize: '14px' }}>▲</span>
           <span>تفاصيل العميل</span>
@@ -177,7 +193,7 @@ export default function HomePage() {
         }}>
           {/* ID Type Row */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: idType ? '15px' : '0' }}>
-            <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap' }}>
+            <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: 'Arial, Tahoma, sans-serif' }}>
               <span style={{ color: 'red' }}>*</span> نوع الهوية:
             </label>
             <select
@@ -186,7 +202,7 @@ export default function HomePage() {
               style={{
                 flex: 1, padding: '8px 12px', border: '1px solid #ccc', borderRadius: '0',
                 fontSize: '14px', background: '#fff', cursor: 'pointer', direction: 'rtl',
-                maxWidth: '300px'
+                maxWidth: '300px', fontFamily: 'Arial, Tahoma, sans-serif'
               }}
             >
               <option value="">-- اختر نوع الهوية --</option>
@@ -200,7 +216,7 @@ export default function HomePage() {
           {/* ID Number - shown after selecting type */}
           {idType && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap' }}>
+              <label style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', fontFamily: 'Arial, Tahoma, sans-serif' }}>
                 <span style={{ color: 'red' }}>*</span> رقم الهوية:
               </label>
               <input
@@ -211,7 +227,8 @@ export default function HomePage() {
                 maxLength={12}
                 style={{
                   flex: 1, padding: '8px 12px', border: '1px solid #ccc', borderRadius: '0',
-                  fontSize: '14px', direction: 'ltr', textAlign: 'left', maxWidth: '300px'
+                  fontSize: '14px', direction: 'ltr', textAlign: 'left', maxWidth: '300px',
+                  fontFamily: 'Arial, Tahoma, sans-serif'
                 }}
               />
             </div>
@@ -228,6 +245,7 @@ export default function HomePage() {
                 background: isSubmitting ? '#ccc' : '#006272',
                 color: '#fff', border: 'none', padding: '8px 30px', borderRadius: '0',
                 fontSize: '14px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                fontFamily: 'Arial, Tahoma, sans-serif'
               }}
             >
               {isSubmitting ? 'جاري المعالجة...' : 'التالي'}
@@ -235,7 +253,8 @@ export default function HomePage() {
           )}
           <button style={{
             background: '#FFD700', color: '#333', border: 'none', padding: '8px 30px',
-            borderRadius: '0', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer'
+            borderRadius: '0', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer',
+            fontFamily: 'Arial, Tahoma, sans-serif'
           }}>
             رجوع
           </button>

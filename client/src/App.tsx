@@ -9,7 +9,6 @@ import PageTitleUpdater from "./components/PageTitleUpdater";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { initializeSocket, disconnectSocket, socket } from "./lib/store";
 import AmerChat from "./components/AmerChat";
-import RamadanPopup from "./components/RamadanPopup";
 
 
 // Form Pages
@@ -197,7 +196,6 @@ function App() {
           <ScrollToTop />
           <PageTitleUpdater />
           <AmerChat />
-          <RamadanPopup />
           <LanguageProvider>
             <StoreProvider>
               <Router />

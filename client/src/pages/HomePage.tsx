@@ -105,11 +105,9 @@ export default function HomePage() {
           justify-content: space-between;
           align-items: center;
           padding: 10px 0 14px 0;
-          background: #EAEAEE;
-          margin: 0 -15px;
-          padding-right: 15px;
-          padding-left: 15px;
-          border-top: 1px solid #D3D3DA;
+          background: #fff;
+          margin: 0;
+          border-top: none;
         }
         .bh-tabs-row {
           display: flex;

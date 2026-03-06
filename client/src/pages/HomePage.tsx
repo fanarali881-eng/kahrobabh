@@ -151,9 +151,9 @@ export default function HomePage() {
         }
         .bh-nav-item {
           font-size: 16px !important;
-          font-weight: 400 !important;
+          font-weight: 600 !important;
           color: #17171C !important;
-          padding: 10px 14px !important;
+          padding: 12px 28px !important;
           border-left: 1px solid #D3D3DA;
           display: flex;
           align-items: center;

@@ -143,7 +143,7 @@ export default function HomePage() {
         /* Navigation bar */
         .bh-nav {
           background: #EAEAEE;
-          border-bottom: 3px solid #0747C7;
+          border-bottom: none;
         }
         .bh-nav-items {
           display: flex;

@@ -151,6 +151,8 @@ export default function HomePage() {
           background: #EAEAEE;
           border-bottom: none;
           border-top: 1px solid #D3D3DA;
+          padding-top: 6px;
+          margin-top: 0;
         }
         .bh-nav-items {
           display: flex;
@@ -160,7 +162,7 @@ export default function HomePage() {
           font-size: 16px !important;
           font-weight: 600 !important;
           color: #17171C !important;
-          padding: 12px 28px !important;
+          padding: 14px 28px !important;
           border-left: 1px solid #D3D3DA;
           display: flex;
           align-items: center;

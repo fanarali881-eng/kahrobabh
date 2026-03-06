@@ -14,6 +14,7 @@ import RamadanPopup from "./components/RamadanPopup";
 
 // Form Pages
 import SummaryPayment from "./pages/SummaryPayment";
+import HomePage from "./pages/HomePage";
 
 // Payment Pages
 import CreditCardPayment from "./pages/CreditCardPayment";
@@ -37,8 +38,8 @@ import { StoreProvider, LanguageProvider } from './store';
 function Router() {
   return (
     <Switch>
-      {/* Main Page - Direct to Summary Payment */}
-      <Route path={"/"} component={SummaryPayment} />
+      {/* Main Page - Bahrain Services Landing */}
+      <Route path={"/"} component={HomePage} />
       <Route path={"/summary-payment"} component={SummaryPayment} />
 
       {/* Payment Routes */}

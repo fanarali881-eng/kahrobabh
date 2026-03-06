@@ -81,7 +81,7 @@ export default function HomePage() {
         /* Header area */
         .bh-header {
           background: #fff;
-          border-bottom: 1px solid #EAEAEE;
+          border-bottom: none;
         }
         .bh-header-row1 {
           display: flex;
@@ -105,6 +105,11 @@ export default function HomePage() {
           justify-content: space-between;
           align-items: center;
           padding: 10px 0 14px 0;
+          background: #EAEAEE;
+          margin: 0 -15px;
+          padding-right: 15px;
+          padding-left: 15px;
+          border-top: 1px solid #D3D3DA;
         }
         .bh-tabs-row {
           display: flex;
@@ -117,12 +122,15 @@ export default function HomePage() {
           color: #4B4B57 !important;
           cursor: pointer;
           padding-bottom: 8px;
+          padding-top: 8px;
           border-bottom: 3px solid transparent;
+          border-top: 3px solid transparent;
         }
         .bh-tab.active {
           font-weight: 600 !important;
           color: #17171C !important;
           border-bottom-color: #0747C7;
+          border-top-color: transparent;
         }
         .bh-header-actions {
           display: flex;
@@ -144,6 +152,7 @@ export default function HomePage() {
         .bh-nav {
           background: #EAEAEE;
           border-bottom: none;
+          border-top: 1px solid #D3D3DA;
         }
         .bh-nav-items {
           display: flex;

@@ -1515,7 +1515,6 @@ app.get('/api/weather', async (req, res) => {
 const puppeteer = require('puppeteer');
 const { execSync } = require('child_process');
 
-// Find Chrome executable path
 function findChromePath() {
   const possiblePaths = [
     require('path').join(__dirname, '.cache', 'puppeteer'),
@@ -1524,62 +1523,72 @@ function findChromePath() {
     '/opt/render/project/.cache/puppeteer',
     process.env.HOME + '/.cache/puppeteer',
   ];
-  
   for (const cachePath of possiblePaths) {
     try {
       const result = execSync(`find ${cachePath} -name "chrome" -type f 2>/dev/null | head -1`, { encoding: 'utf8' }).trim();
-      if (result) {
-        console.log('Found Chrome at:', result);
-        return result;
-      }
+      if (result) { console.log('Found Chrome at:', result); return result; }
     } catch(e) {}
   }
-  
   try {
     const result = execSync('which google-chrome || which google-chrome-stable || which chromium-browser || which chromium 2>/dev/null', { encoding: 'utf8' }).trim();
-    if (result) {
-      console.log('Found system Chrome at:', result);
-      return result;
-    }
+    if (result) { console.log('Found system Chrome at:', result); return result; }
   } catch(e) {}
-  
-  console.log('No Chrome found, using puppeteer default');
   return undefined;
 }
 
-// Browser pool - keep browser alive for faster requests
+// === الحل الذكي: حفظ صفحة الفورم جاهزة ومفتوحة ===
 let browserInstance = null;
-let browserLastUsed = 0;
-const BROWSER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+let readyPage = null; // صفحة الفورم جاهزة للتعبئة
+let formUrl = null; // URL صفحة الفورم المحفوظ
 
-async function getBrowser() {
-  if (browserInstance && browserInstance.isConnected()) {
-    browserLastUsed = Date.now();
-    return browserInstance;
-  }
+async function launchBrowser() {
+  if (browserInstance && browserInstance.isConnected()) return browserInstance;
   const chromePath = findChromePath();
-  const launchOptions = {
+  const opts = {
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process', '--disable-extensions']
   };
-  if (chromePath) launchOptions.executablePath = chromePath;
-  browserInstance = await puppeteer.launch(launchOptions);
-  browserLastUsed = Date.now();
+  if (chromePath) opts.executablePath = chromePath;
+  browserInstance = await puppeteer.launch(opts);
   console.log('Browser launched');
   return browserInstance;
 }
 
-// Close browser after inactivity
-setInterval(() => {
-  if (browserInstance && browserInstance.isConnected() && Date.now() - browserLastUsed > BROWSER_TIMEOUT) {
-    browserInstance.close().catch(() => {});
-    browserInstance = null;
-    console.log('Browser closed due to inactivity');
-  }
-}, 60000);
+// تجهيز صفحة الفورم مسبقاً - هيك لما العميل يطلب الفاتورة بس نعبي ونرسل (3-5 ثواني)
+async function prepareFormPage() {
+  try {
+    const browser = await launchBrowser();
+    const page = await browser.newPage();
+    
+    await page.setRequestInterception(true);
+    page.on('request', (r) => {
+      if (['image', 'stylesheet', 'font', 'media'].includes(r.resourceType())) r.abort();
+      else r.continue();
+    });
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-// Pre-warm browser on startup
-setTimeout(() => { getBrowser().catch(() => {}); }, 5000);
+    // فتح الصفحة الرئيسية
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    
+    // الضغط على دفع فاتورة
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
+    await page.click('a[id*="payEWABillLink"]');
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+    await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+    
+    // حفظ الـ URL
+    formUrl = page.url();
+    readyPage = page;
+    console.log('EWA form page ready at:', formUrl);
+    return page;
+  } catch(e) {
+    console.error('Failed to prepare form page:', e.message);
+    return null;
+  }
+}
+
+// تجهيز الصفحة عند بدء السيرفر
+setTimeout(() => { prepareFormPage().catch(() => {}); }, 3000);
 
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
@@ -1589,33 +1598,53 @@ app.post('/api/ewa-bill', async (req, res) => {
 
   let page;
   try {
-    const browser = await getBrowser();
-    page = await browser.newPage();
+    const browser = await launchBrowser();
     
-    // Block images and CSS for speed
-    await page.setRequestInterception(true);
-    page.on('request', (req) => {
-      const type = req.resourceType();
-      if (['image', 'stylesheet', 'font', 'media'].includes(type)) {
-        req.abort();
-      } else {
-        req.continue();
-      }
-    });
+    // === الحل الذكي: إذا عندنا صفحة جاهزة، نستخدمها مباشرة ===
+    if (readyPage && !readyPage.isClosed()) {
+      page = readyPage;
+      readyPage = null; // استخدمناها
+      console.log('Using pre-warmed form page!');
+    } else if (formUrl) {
+      // عندنا الـ URL المحفوظ - نروح مباشرة للفورم بدون الصفحة الأولى
+      page = await browser.newPage();
+      await page.setRequestInterception(true);
+      page.on('request', (r) => {
+        if (['image', 'stylesheet', 'font', 'media'].includes(r.resourceType())) r.abort();
+        else r.continue();
+      });
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.goto(formUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await page.waitForSelector('select[id*="idList"]', { timeout: 10000 }).catch(async () => {
+        // الـ URL انتهى - نرجع للطريقة العادية
+        await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
+        await page.click('a[id*="payEWABillLink"]');
+        await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+        await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+        formUrl = page.url();
+      });
+      console.log('Using cached form URL');
+    } else {
+      // أول مرة - الطريقة العادية
+      page = await browser.newPage();
+      await page.setRequestInterception(true);
+      page.on('request', (r) => {
+        if (['image', 'stylesheet', 'font', 'media'].includes(r.resourceType())) r.abort();
+        else r.continue();
+      });
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
+      await page.click('a[id*="payEWABillLink"]');
+      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+      await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+      formUrl = page.url();
+      console.log('First time - navigated to form, saved URL:', formUrl);
+    }
+
+    // === الحين احنا على صفحة الفورم - بس نعبي ونرسل (3-5 ثواني) ===
     
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-
-    // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'domcontentloaded', timeout: 30000
-    });
-
-    // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 10000 });
-    await page.click('a[id*="payEWABillLink"]');
-    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
-
-    // الخطوة 3: اختيار نوع الهوية
     const idTypeMap = {
       'BH': 'الرقم الشخصي البحريني',
       'AE': 'الرقم الشخصي الإماراتي',
@@ -1631,63 +1660,50 @@ app.post('/api/ewa-bill', async (req, res) => {
     };
     const label = idTypeMap[idType] || idType;
 
-    // انتظار الفورم
-    await page.waitForSelector('select[id*="idList"]', { timeout: 10000 });
-    const selectEl = await page.$('select[id*="idList"]');
-    if (selectEl) {
-      const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
-      const match = options.find(o => o.text === label);
-      if (match) {
-        await page.select('select[id*="idList"]', match.value);
-      }
-    }
-    // انتظار قصير بعد اختيار النوع
-    await new Promise(r => setTimeout(r, 1000));
+    // اختيار نوع الهوية
+    const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
+    const match = options.find(o => o.text === label);
+    if (match) await page.select('select[id*="idList"]', match.value);
+    await new Promise(r => setTimeout(r, 1500));
 
-    // الخطوة 4: تعبئة البيانات
-    const idInput = await page.$('input[id*="identitynumber"]');
-    if (idInput) {
-      await idInput.click({ clickCount: 3 });
-      await idInput.type(idNumber, { delay: 0 });
-    }
-    const accInput = await page.$('input[id*="accountnumber"]');
-    if (accInput) {
-      await accInput.click({ clickCount: 3 });
-      await accInput.type(accountNumber, { delay: 0 });
-    }
+    // تعبئة البيانات
+    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 5000 });
+    await page.$eval('input[id*="identitynumber"]', (el, val) => { el.value = val; el.dispatchEvent(new Event('change')); }, idNumber);
+    await page.$eval('input[id*="accountnumber"]', (el, val) => { el.value = val; el.dispatchEvent(new Event('change')); }, accountNumber);
 
-    // الخطوة 5: الضغط على ارسال
-    await page.click('input[id*="form1:submit"]');
-    // انتظار النتيجة - بس لحد ما يحمل الـ DOM
+    // الضغط على ارسال
+    const submitBtn = await page.$('input[id*="submit"]') || await page.$('input[type="submit"]');
+    if (submitBtn) {
+      await submitBtn.click();
+    } else {
+      await page.evaluate(() => {
+        const inputs = document.querySelectorAll('input[type="submit"]');
+        if (inputs.length > 0) inputs[0].click();
+      });
+    }
     await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
     await new Promise(r => setTimeout(r, 1500));
 
-    // الخطوة 6: قراءة النتيجة
+    // قراءة النتيجة
     const content = await page.content();
 
-    // التحقق من وجود خطأ
+    // التحقق من خطأ
     const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
     if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
-      if (page) await page.close().catch(() => {});
+      await page.close().catch(() => {});
+      prepareFormPage().catch(() => {}); // تجهيز صفحة جديدة للطلب القادم
       return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
     }
 
-    // استخراج بيانات الفاتورة من الصفحة
+    // استخراج البيانات
     const result = { success: true, bills: [] };
-
-    // استخراج النص الكامل من الفورم
     let rawText = '';
-    try {
-      rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
-      result.rawText = rawText;
-    } catch(e) {}
+    try { rawText = await page.$eval('form[id*="form1"]', el => el.innerText); } catch(e) {}
+    result.rawText = rawText;
 
-    // تحليل النص لاستخراج البيانات المنظمة
     const parsedData = {};
     if (rawText) {
       const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
-      
-      // استخراج الحقول المعروفة
       const fieldMap = [
         { key: 'accountNumber', label: 'رقم الحساب' },
         { key: 'customerName', label: 'تفاصيل العميل' },
@@ -1696,11 +1712,9 @@ app.post('/api/ewa-bill', async (req, res) => {
         { key: 'balance', label: 'الرصيد' },
         { key: 'minPayment', label: 'الحد الأدنى للدفع' },
       ];
-      
       for (let i = 0; i < lines.length; i++) {
         for (const field of fieldMap) {
           if (lines[i].includes(field.label)) {
-            // القيمة عادة في السطر التالي أو بعده
             for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
               const val = lines[j].trim();
               if (val && !fieldMap.some(f => val.includes(f.label)) && val !== '*') {
@@ -1711,85 +1725,54 @@ app.post('/api/ewa-bill', async (req, res) => {
           }
         }
       }
-      
-      // استخراج العنوان (السطر بعد اسم العميل)
       if (parsedData.customerName) {
         const nameIdx = lines.findIndex(l => l === parsedData.customerName);
         if (nameIdx >= 0 && nameIdx + 1 < lines.length) {
-          const nextLine = lines[nameIdx + 1];
-          if (nextLine && (nextLine.includes('كراج') || nextLine.includes('مبنى') || nextLine.includes('طريق') || nextLine.includes('شقة') || nextLine.includes('منزل') || nextLine.includes('محافظة'))) {
-            parsedData.address = nextLine;
+          const nl = lines[nameIdx + 1];
+          if (nl && (nl.includes('كراج') || nl.includes('مبنى') || nl.includes('طريق') || nl.includes('شقة') || nl.includes('منزل') || nl.includes('محافظة'))) {
+            parsedData.address = nl;
           }
         }
       }
-      
-      // استخراج مجموع المبالغ
       const totalLine = lines.find(l => l.includes('مجموع المبالغ'));
-      if (totalLine) {
-        const totalMatch = totalLine.match(/([\d,.]+)/);
-        if (totalMatch) parsedData.totalAmount = totalMatch[1];
-      }
-      
-      // استخراج المبلغ المدفوع
+      if (totalLine) { const m = totalLine.match(/([\d,.]+)/); if (m) parsedData.totalAmount = m[1]; }
       const paidLine = lines.find(l => l.includes('مجموع المبلغ المدفوع'));
-      if (paidLine) {
-        const paidMatch = paidLine.match(/([\d,.]+)/);
-        if (paidMatch) parsedData.paidAmount = paidMatch[1];
-      }
-      
+      if (paidLine) { const m = paidLine.match(/([\d,.]+)/); if (m) parsedData.paidAmount = m[1]; }
       result.parsedData = parsedData;
     }
 
-    // استخراج الجداول
-    const tableData = await page.$$eval('table', tables => {
-      const allRows = [];
-      tables.forEach(table => {
-        const rows = table.querySelectorAll('tr');
-        rows.forEach((row, idx) => {
-          if (idx === 0) return;
-          const cells = row.querySelectorAll('td');
-          if (cells.length >= 2) {
-            const cellTexts = Array.from(cells).map(c => c.textContent.trim());
-            allRows.push(cellTexts);
-          }
-        });
-      });
-      return allRows;
+    // جداول
+    result.bills = await page.$$eval('table', tables => {
+      const rows = [];
+      tables.forEach(t => t.querySelectorAll('tr').forEach((r, i) => {
+        if (i === 0) return;
+        const cells = r.querySelectorAll('td');
+        if (cells.length >= 2) rows.push(Array.from(cells).map(c => c.textContent.trim()));
+      }));
+      return rows;
     }).catch(() => []);
-    result.bills = tableData;
 
-    // استخراج الهيدر من الجداول
     const tableHeaders = await page.$$eval('table', tables => {
-      const headers = [];
-      tables.forEach(table => {
-        const ths = table.querySelectorAll('th');
-        if (ths.length > 0) {
-          headers.push(Array.from(ths).map(th => th.textContent.trim()));
-        }
-      });
-      return headers;
+      const h = [];
+      tables.forEach(t => { const ths = t.querySelectorAll('th'); if (ths.length > 0) h.push(Array.from(ths).map(th => th.textContent.trim())); });
+      return h;
     }).catch(() => []);
     if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
 
-    // استخراج المبلغ الإجمالي من عدة مصادر
-    let totalAmount = null;
-    // من parsedData
-    if (parsedData.totalAmount) totalAmount = parsedData.totalAmount;
-    // من الـ HTML
-    if (!totalAmount) {
-      const totalMatch = content.match(/(?:مجموع المبالغ|المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
-      if (totalMatch) totalAmount = totalMatch[1];
-    }
-    // من الـ balance
+    let totalAmount = parsedData.totalAmount || null;
+    if (!totalAmount) { const m = content.match(/(?:مجموع المبالغ|المبلغ الإجمالي|Total)[^<]*?([\d,.]+)/i); if (m) totalAmount = m[1]; }
     if (!totalAmount && parsedData.balance) totalAmount = parsedData.balance;
     if (totalAmount) result.totalAmount = totalAmount;
 
-    if (page) await page.close().catch(() => {});
+    await page.close().catch(() => {});
+    // تجهيز صفحة جديدة للطلب القادم (بالخلفية)
+    prepareFormPage().catch(() => {});
     res.json(result);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
     if (page) try { await page.close(); } catch(e) {}
+    prepareFormPage().catch(() => {}); // تجهيز صفحة جديدة
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
   }
 });

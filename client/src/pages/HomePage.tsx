@@ -738,7 +738,7 @@ export default function HomePage() {
                     type="text"
                     value={idNumber}
                     onChange={e => setIdNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="أدخل رقم الهوية"
+                    placeholder=""
                     maxLength={12}
                   />
                 </div>
@@ -751,7 +751,7 @@ export default function HomePage() {
                     type="text"
                     value={accountNumber}
                     onChange={e => setAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="أدخل رقم الحساب"
+                    placeholder=""
                     maxLength={15}
                   />
                 </div>

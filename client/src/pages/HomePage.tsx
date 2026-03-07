@@ -380,11 +380,11 @@ export default function HomePage() {
                 />
               </div>
               <div className="bh-lang">
-                <svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="1.5">
+                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>English</span>
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
                   <circle cx="16" cy="16" r="14"/>
                   <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
                 </svg>
-                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif' }}>English</span>
               </div>
             </div>
 

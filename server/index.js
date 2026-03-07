@@ -1522,9 +1522,28 @@ app.post('/api/ewa-bill', async (req, res) => {
 
   let browser;
   try {
+    // Try to find chromium executable
+    const possiblePaths = [
+      '/opt/render/.cache/ms-playwright/chromium-*/chrome-linux/chrome',
+      '/opt/render/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell',
+    ];
+    const glob = require('path');
+    let execPath = undefined;
+    try {
+      const { execSync } = require('child_process');
+      const found = execSync('find /opt/render/.cache/ms-playwright -name "chrome" -o -name "chrome-headless-shell" 2>/dev/null || find ~/.cache/ms-playwright -name "chrome" -o -name "chrome-headless-shell" 2>/dev/null || echo ""', { encoding: 'utf8' }).trim();
+      if (found) {
+        const paths = found.split('\n').filter(p => p);
+        // Prefer full chrome over headless shell
+        execPath = paths.find(p => p.endsWith('/chrome') && !p.includes('headless')) || paths[0];
+        console.log('Found browser at:', execPath);
+      }
+    } catch(e) { console.log('Could not find browser path, using default'); }
+
     browser = await chromium.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+      executablePath: execPath || undefined,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
     });
     const context = await browser.newContext({
       userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

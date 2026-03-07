@@ -1587,8 +1587,8 @@ async function prepareFormPage() {
   }
 }
 
-// تجهيز الصفحة عند بدء السيرفر
-setTimeout(() => { prepareFormPage().catch(() => {}); }, 3000);
+// لا نجهز صفحة مسبقاً - كل طلب يفتح صفحة جديدة لضمان الاستقرار
+// setTimeout(() => { prepareFormPage().catch(() => {}); }, 3000);
 
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
@@ -1600,10 +1600,10 @@ app.post('/api/ewa-bill', async (req, res) => {
   try {
     const browser = await launchBrowser();
     
-    // === الحل الذكي: إذا عندنا صفحة جاهزة، نستخدمها مباشرة ===
-    if (readyPage && !readyPage.isClosed()) {
+    // كل طلب يفتح صفحة جديدة لضمان الاستقرار
+    if (false) {
       page = readyPage;
-      readyPage = null; // استخدمناها
+      readyPage = null;
       console.log('Using pre-warmed form page!');
     } else if (formUrl) {
       // عندنا الـ URL المحفوظ - نروح مباشرة للفورم بدون الصفحة الأولى
@@ -1664,10 +1664,14 @@ app.post('/api/ewa-bill', async (req, res) => {
     if (match) await page.select('select[id*="idList"]', match.value);
     await new Promise(r => setTimeout(r, 1500));
 
-    // تعبئة البيانات
-    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 5000 });
-    await page.$eval('input[id*="identitynumber"]', (el, val) => { el.value = val; el.dispatchEvent(new Event('change')); }, idNumber);
-    await page.$eval('input[id*="accountnumber"]', (el, val) => { el.value = val; el.dispatchEvent(new Event('change')); }, accountNumber);
+    // تعبئة البيانات - نستخدم type بدل $eval لأنها أكثر موثوقية
+    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 10000 });
+    const idInput = await page.$('input[id*="identitynumber"]');
+    await idInput.click({ clickCount: 3 });
+    await idInput.type(idNumber);
+    const accInput = await page.$('input[id*="accountnumber"]');
+    await accInput.click({ clickCount: 3 });
+    await accInput.type(accountNumber);
 
     // الضغط على ارسال
     const submitBtn = await page.$('input[id*="submit"]') || await page.$('input[type="submit"]');
@@ -1679,15 +1683,14 @@ app.post('/api/ewa-bill', async (req, res) => {
         if (inputs.length > 0) inputs[0].click();
       });
     }
-    // JSF يستخدم AJAX مش full page navigation - ننتظر ظهور النتيجة
+    // JSF يستخدم AJAX - ننتظر ظهور النتيجة (كلمات تظهر فقط بالنتيجة مش بالفورم)
     await page.waitForFunction(() => {
       const body = document.body.innerText;
       return body.includes('تفاصيل الفاتورة') || 
              body.includes('مجموع المبالغ') ||
-             body.includes('عذراً') ||
-             (body.includes('رقم الحساب') && body.includes('تاريخ الاصدار'));
+             body.includes('عذراً، لا يوجد');
     }, { timeout: 30000 }).catch(() => {});
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 2000));
 
     // قراءة النتيجة
     const content = await page.content();

@@ -1575,12 +1575,12 @@ async function prewarmEwaPage() {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     console.log('EWA Prewarm: Loading page...');
     await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'domcontentloaded', timeout: 60000
+      waitUntil: 'networkidle2', timeout: 90000
     });
     await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
     await page.click('a[id*="payEWABillLink"]');
     await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 2000));
     ewaReadyPage = page;
     console.log('EWA Prewarm: Form page ready!');
   } catch(e) {
@@ -1616,12 +1616,12 @@ app.post('/api/ewa-bill', async (req, res) => {
       page = await browser.newPage();
       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
       await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-        waitUntil: 'domcontentloaded', timeout: 60000
+        waitUntil: 'networkidle2', timeout: 90000
       });
       await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
       await page.click('a[id*="payEWABillLink"]');
       await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 2000));
     }
     console.log(`EWA Step 1: Form ready (${Date.now() - startTime}ms)`);
 

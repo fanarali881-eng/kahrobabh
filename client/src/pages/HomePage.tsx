@@ -708,7 +708,7 @@ export default function HomePage() {
         <div className="bh-footer-social">
           <div className="bh-container">
             <div className="bh-footer-social-inner">
-              <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '80px', objectFit: 'contain' }} />
+              <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '120px', objectFit: 'contain' }} />
               <div className="bh-footer-social-right">
                 <span className="bh-footer-social-label">تابعنا على</span>
                 <div className="bh-footer-social-icons">

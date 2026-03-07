@@ -225,11 +225,15 @@ export default function HomePage() {
         }
         .bh-menu-link {
           display: flex;
+          flex-direction: row-reverse;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
           font-size: 14px !important;
           color: #4B4B57 !important;
           cursor: pointer;
+          background: #E8E8EC;
+          padding: 8px 14px;
+          border-radius: 6px;
         }
         
         /* Blue bars */
@@ -585,7 +589,7 @@ export default function HomePage() {
           <div className="bh-content-header">
             <h2 className="bh-content-title">دفع فاتورة الكهرباء والماء</h2>
             <div className="bh-menu-link">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B4B57" strokeWidth="2" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4B4B57" strokeWidth="3" strokeLinecap="round">
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="18" x2="21" y2="18"/>

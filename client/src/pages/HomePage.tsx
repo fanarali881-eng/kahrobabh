@@ -362,8 +362,8 @@ export default function HomePage() {
           color: #17171C !important;
           margin-bottom: 16px !important;
           padding-bottom: 8px;
-          border-bottom: 2px solid #0747C7;
-          display: inline-block;
+          border-bottom: 2px solid #D3D3DA;
+          display: block;
         }
         .bh-footer-col ul {
           list-style: none !important;

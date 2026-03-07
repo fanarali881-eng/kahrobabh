@@ -139,14 +139,15 @@ export default function HomePage() {
           gap: 12px;
         }
         .bh-login-btn {
-          background: #078757 !important;
+          background: #045c7c !important;
           color: #fff !important;
-          padding: 7px 22px !important;
-          border-radius: 4px !important;
-          font-size: 14px !important;
-          font-weight: 500 !important;
+          padding: 12px 24px !important;
+          border-radius: 6px !important;
+          font-size: 15px !important;
+          font-weight: 600 !important;
           cursor: pointer;
           display: inline-block;
+          margin-top: -4px;
         }
         
         /* Navigation bar */

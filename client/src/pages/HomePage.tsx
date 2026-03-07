@@ -218,10 +218,10 @@ export default function HomePage() {
           margin-bottom: 12px;
         }
         .bh-content-title {
-          font-size: 1.5rem !important;
-          font-weight: 600 !important;
+          font-size: 1.15rem !important;
+          font-weight: 400 !important;
           color: #0747C7 !important;
-          line-height: 30px;
+          line-height: 26px;
         }
         .bh-menu-link {
           display: flex;

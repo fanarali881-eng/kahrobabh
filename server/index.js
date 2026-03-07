@@ -1568,15 +1568,21 @@ app.post('/api/ewa-bill', async (req, res) => {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
     // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
+    console.log('EWA Step 1: Opening page...');
     await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'networkidle2', timeout: 60000
+      waitUntil: 'networkidle2', timeout: 90000
     });
+    console.log('EWA Step 1: Page loaded');
 
     // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 10000 });
+    console.log('EWA Step 2: Looking for payEWABillLink...');
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
     await page.click('a[id*="payEWABillLink"]');
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+    console.log('EWA Step 2: Clicked payEWABillLink, waiting for form...');
+    // Wait for the form to appear instead of waitForNavigation
+    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
     await new Promise(r => setTimeout(r, 2000));
+    console.log('EWA Step 2: Form loaded');
 
     // الخطوة 3: اختيار نوع الهوية
     const idTypeMap = {
@@ -1595,33 +1601,52 @@ app.post('/api/ewa-bill', async (req, res) => {
     const label = idTypeMap[idType] || idType;
 
     // اختيار من القائمة المنسدلة بناءً على النص
+    console.log('EWA Step 3: Selecting ID type:', label);
     const selectEl = await page.$('select[id*="idList"]');
     if (selectEl) {
       const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
       const match = options.find(o => o.text === label);
       if (match) {
         await page.select('select[id*="idList"]', match.value);
+        console.log('EWA Step 3: Selected', match.value);
       }
     }
     await new Promise(r => setTimeout(r, 3000));
     await page.waitForNetworkIdle({ timeout: 15000 }).catch(() => {});
 
     // الخطوة 4: تعبئة البيانات
+    console.log('EWA Step 4: Filling form...');
+    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 10000 });
     const idInput = await page.$('input[id*="identitynumber"]');
     if (idInput) {
       await idInput.click({ clickCount: 3 });
       await idInput.type(idNumber);
+      console.log('EWA Step 4: Filled ID number');
     }
+    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 10000 });
     const accInput = await page.$('input[id*="accountnumber"]');
     if (accInput) {
       await accInput.click({ clickCount: 3 });
       await accInput.type(accountNumber);
+      console.log('EWA Step 4: Filled account number');
     }
 
     // الخطوة 5: الضغط على ارسال
+    console.log('EWA Step 5: Clicking submit...');
+    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 10000 });
     await page.click('input[id*="form1:submit"]');
-    await new Promise(r => setTimeout(r, 5000));
-    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
+    console.log('EWA Step 5: Submit clicked, waiting for result...');
+    // Wait for result page to appear
+    try {
+      await page.waitForFunction(() => {
+        const b = document.body.innerText;
+        return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
+      }, { timeout: 30000 });
+      console.log('EWA Step 5: Result page detected');
+    } catch(e) {
+      console.log('EWA Step 5: Timeout waiting for result, continuing...');
+    }
+    await new Promise(r => setTimeout(r, 2000));
 
     // الخطوة 6: قراءة النتيجة
     const content = await page.content();

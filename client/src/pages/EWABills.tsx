@@ -324,8 +324,54 @@ export default function EWABills() {
                 </div>
               )}
 
-              {/* Parsed Bill Details */}
-              {billData.parsedData && (
+              {/* All Bills - displayed stacked */}
+              {billData.parsedBills && billData.parsedBills.length > 0 ? (
+                billData.parsedBills.map((bill: any, idx: number) => (
+                  <div key={idx}>
+                    <div className="ewa-blue-bar">
+                      {billData.parsedBills.length > 1 ? `تفاصيل الفاتورة ${idx + 1}` : 'تفاصيل الفاتورة'}
+                    </div>
+                    <div className="ewa-info-card">
+                      {bill.accountNumber && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">رقم الحساب</span>
+                          <span className="ewa-info-value">{bill.accountNumber}</span>
+                        </div>
+                      )}
+                      {bill.customerName && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">تفاصيل العميل</span>
+                          <span className="ewa-info-value">{bill.customerName}</span>
+                        </div>
+                      )}
+                      {bill.address && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">العنوان</span>
+                          <span className="ewa-info-value">{bill.address}</span>
+                        </div>
+                      )}
+                      {bill.issueDate && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">تاريخ الاصدار</span>
+                          <span className="ewa-info-value">{bill.issueDate}</span>
+                        </div>
+                      )}
+                      {bill.billMonth && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">القائمة لشهر</span>
+                          <span className="ewa-info-value">{bill.billMonth}</span>
+                        </div>
+                      )}
+                      {bill.balance && (
+                        <div className="ewa-info-row">
+                          <span className="ewa-info-label">الرصيد (د.ب)</span>
+                          <span className="ewa-info-value">{bill.balance}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : billData.parsedData && (
                 <>
                   <div className="ewa-blue-bar">تفاصيل الفاتورة</div>
                   <div className="ewa-info-card">
@@ -365,20 +411,26 @@ export default function EWABills() {
                         <span className="ewa-info-value">{billData.parsedData.balance}</span>
                       </div>
                     )}
-                    {billData.parsedData.totalAmount && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">مجموع المبالغ (د.ب)</span>
-                        <span className="ewa-info-value" style={{ fontWeight: 700, color: '#003366' }}>{billData.parsedData.totalAmount}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.paidAmount && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">مجموع المبلغ المدفوع (د.ب)</span>
-                        <span className="ewa-info-value">{billData.parsedData.paidAmount}</span>
-                      </div>
-                    )}
                   </div>
                 </>
+              )}
+
+              {/* Total Summary */}
+              {billData.totalSummary && (
+                <div className="ewa-info-card" style={{ background: '#f0f4ff', borderColor: '#003366' }}>
+                  {billData.totalSummary.totalAmount && (
+                    <div className="ewa-info-row">
+                      <span className="ewa-info-label" style={{ color: '#003366', fontWeight: 600 }}>مجموع المبالغ (د.ب)</span>
+                      <span className="ewa-info-value" style={{ fontWeight: 700, color: '#003366' }}>{billData.totalSummary.totalAmount}</span>
+                    </div>
+                  )}
+                  {billData.totalSummary.paidAmount && (
+                    <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
+                      <span className="ewa-info-label" style={{ color: '#003366', fontWeight: 600 }}>مجموع المبلغ المدفوع (د.ب)</span>
+                      <span className="ewa-info-value" style={{ color: '#003366' }}>{billData.totalSummary.paidAmount}</span>
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Bills Table - if available */}

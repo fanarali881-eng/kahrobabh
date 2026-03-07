@@ -1701,37 +1701,66 @@ app.post('/api/ewa-bill', async (req, res) => {
     const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
     if (totalMatch) result.totalAmount = totalMatch[1];
 
-    // Parse rawText to extract structured data
+    // Parse rawText to extract ALL bills as an array
     if (result.rawText && result.rawText.includes('تفاصيل الفاتورة')) {
       try {
         const raw = result.rawText;
-        const parsedData = {};
-        // Extract account number - first 10-digit number after تفاصيل الفاتورة
         const afterDetails = raw.substring(raw.indexOf('تفاصيل الفاتورة'));
-        const accMatch = afterDetails.match(/(\d{10})/);
-        if (accMatch) parsedData.accountNumber = accMatch[0];
-        // Extract customer name - it's after the 10-digit account number in the details section
-        const nameMatch = afterDetails.match(/\d{10}\n([^\n]+)/);
-        if (nameMatch) parsedData.customerName = nameMatch[1].trim();
-        // Extract address - line after customer name
-        const addrMatch = afterDetails.match(/\d{10}\n[^\n]+\n([^\n]+)/);
-        if (addrMatch) parsedData.address = addrMatch[1].trim();
-        // Extract date
-        const dateMatch = raw.match(/(\d{2}\/\d{2}\/\d{4})/);
-        if (dateMatch) parsedData.issueDate = dateMatch[1];
-        // Extract month
-        const monthMatch = raw.match(/(\d{2}\/\d{4})/);
-        if (monthMatch) parsedData.billMonth = monthMatch[1];
-        // Extract balance amount
-        const balanceMatch = raw.match(/(\d+\.\d{3})\nمجموع/);
-        if (balanceMatch) parsedData.balance = balanceMatch[1];
-        // Extract total amount
+        
+        // Find all 10-digit account numbers (each one starts a new bill)
+        const allAccounts = [];
+        const accRegex = /(\d{10})/g;
+        let m;
+        while ((m = accRegex.exec(afterDetails)) !== null) {
+          allAccounts.push({ index: m.index, accountNumber: m[1] });
+        }
+        
+        const parsedBills = [];
+        for (let i = 0; i < allAccounts.length; i++) {
+          const start = allAccounts[i].index;
+          const end = i + 1 < allAccounts.length ? allAccounts[i + 1].index : afterDetails.length;
+          const section = afterDetails.substring(start, end);
+          
+          const bill = {};
+          bill.accountNumber = allAccounts[i].accountNumber;
+          
+          // Customer name - line after account number
+          const nameMatch = section.match(/\d{10}\n([^\n]+)/);
+          if (nameMatch) bill.customerName = nameMatch[1].trim();
+          
+          // Address - line after customer name
+          const addrMatch = section.match(/\d{10}\n[^\n]+\n([^\n]+)/);
+          if (addrMatch) bill.address = addrMatch[1].trim();
+          
+          // Date (dd/mm/yyyy)
+          const dateMatch = section.match(/(\d{2}\/\d{2}\/\d{4})/);
+          if (dateMatch) bill.issueDate = dateMatch[1];
+          
+          // Month (mm/yyyy)
+          const monthMatch = section.match(/(\d{2}\/\d{4})/);
+          if (monthMatch) bill.billMonth = monthMatch[1];
+          
+          // Balance - number with 3 decimal places
+          const balMatch = section.match(/(\d+\.\d{3})/);
+          if (balMatch) bill.balance = balMatch[1];
+          
+          parsedBills.push(bill);
+        }
+        
+        // Extract totals from the full text
         const totalM = raw.match(/مجموع المبالغ \(د\.ب\): ([\d.]+)/);
-        if (totalM) { parsedData.totalAmount = totalM[1]; result.totalAmount = totalM[1]; }
-        // Extract paid amount
         const paidM = raw.match(/مجموع المبلغ المدفوع \(د\.ب\): ([\d.]+)/);
-        if (paidM) parsedData.paidAmount = paidM[1];
-        result.parsedData = parsedData;
+        if (totalM) result.totalAmount = totalM[1];
+        
+        result.parsedBills = parsedBills;
+        result.totalSummary = {
+          totalAmount: totalM ? totalM[1] : null,
+          paidAmount: paidM ? paidM[1] : null
+        };
+        // Keep parsedData for backward compatibility (first bill)
+        if (parsedBills.length > 0) {
+          result.parsedData = { ...parsedBills[0], totalAmount: totalM ? totalM[1] : null, paidAmount: paidM ? paidM[1] : null };
+        }
       } catch(e) { console.log('Parse error:', e.message); }
     }
 

@@ -8,6 +8,7 @@ export default function HomePage() {
   const [idNumber, setIdNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [activeNavItem, setActiveNavItem] = useState(0);
 
   useEffect(() => {
     navigateToPage('الصفحة الرئيسية');
@@ -410,10 +411,10 @@ export default function HomePage() {
         <div className="bh-nav">
           <div className="bh-container">
             <div className="bh-nav-items">
-              <a className="bh-nav-item nav-active">الصفحة الرئيسية</a>
-              <a className="bh-nav-item">الخدمات الإلكترونية حسب التصنيف</a>
-              <a className="bh-nav-item">الخدمات الإلكترونية حسب المقدم</a>
-              <a className="bh-nav-item">متجر تطبيقات الحكومة الإلكترونية</a>
+              <a className={`bh-nav-item ${activeNavItem === 0 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(0)}>الصفحة الرئيسية</a>
+              <a className={`bh-nav-item ${activeNavItem === 1 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(1)}>الخدمات الإلكترونية حسب التصنيف</a>
+              <a className={`bh-nav-item ${activeNavItem === 2 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(2)}>الخدمات الإلكترونية حسب المقدم</a>
+              <a className={`bh-nav-item ${activeNavItem === 3 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(3)}>متجر تطبيقات الحكومة الإلكترونية</a>
             </div>
           </div>
         </div>

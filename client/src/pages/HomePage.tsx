@@ -442,7 +442,7 @@ export default function HomePage() {
         .bh-footer-contact-number {
           font-size: 24px !important;
           font-weight: 700 !important;
-          color: #A70717 !important;
+          color: #E31B23 !important;
           direction: ltr;
         }
         .bh-footer-contact-sub {

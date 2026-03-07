@@ -123,7 +123,7 @@ export default function HomePage() {
           gap: 24px;
         }
         .bh-tab {
-          font-size: 18px !important;
+          font-size: 22px !important;
           font-weight: 400 !important;
           color: #4B4B57 !important;
           cursor: pointer;

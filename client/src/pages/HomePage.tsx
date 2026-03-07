@@ -454,7 +454,7 @@ export default function HomePage() {
         }
 
         .bh-footer-bottom-links {
-          background: #F0F0F3;
+          background: #E2E2E7;
           padding: 16px 0;
           border-top: 1px solid #D3D3DA;
           text-align: center;

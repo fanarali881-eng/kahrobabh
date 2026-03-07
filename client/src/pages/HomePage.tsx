@@ -85,12 +85,16 @@ export default function HomePage() {
           background: #fff;
           border-bottom: none;
         }
+        .bh-header-divider {
+          border: none;
+          border-top: 2px solid #D3D3DA;
+          margin: 0;
+        }
         .bh-header-row1 {
           display: flex;
           justify-content: space-between;
           align-items: center;
           padding: 12px 0 12px 0;
-          border-bottom: 1px solid #D3D3DA;
         }
         .bh-logo img {
           height: 60px;
@@ -147,14 +151,14 @@ export default function HomePage() {
           font-weight: 600 !important;
           cursor: pointer;
           display: inline-block;
-          margin-top: -4px;
+          margin-top: -8px;
         }
         
         /* Navigation bar */
         .bh-nav {
           background: #EAEAEE;
           border-bottom: none;
-          border-top: 1px solid #D3D3DA;
+          border-top: 2px solid #D3D3DA;
           padding: 8px 0;
           margin-top: 0;
         }
@@ -383,6 +387,9 @@ export default function HomePage() {
               </div>
             </div>
 
+          </div>
+          <hr className="bh-header-divider" />
+          <div className="bh-container">
             {/* Row 2: Tabs + Actions */}
             <div className="bh-header-row2">
               <div className="bh-tabs-row">

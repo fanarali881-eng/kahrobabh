@@ -268,6 +268,7 @@ export default function HomePage() {
         .bh-form-row {
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 12px;
           margin-bottom: 15px;
         }

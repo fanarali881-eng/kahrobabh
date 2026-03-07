@@ -104,8 +104,8 @@ export default function HomePage() {
         .bh-header-row2 {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          padding: 10px 0 14px 0;
+          align-items: flex-end;
+          padding: 10px 0 0 0;
           background: #fff;
           margin: 0;
           border-top: none;
@@ -120,10 +120,10 @@ export default function HomePage() {
           font-weight: 400 !important;
           color: #4B4B57 !important;
           cursor: pointer;
-          padding-bottom: 10px;
+          padding-bottom: 12px;
           padding-top: 8px;
           border-bottom: 4px solid #D3D3DA;
-          margin-bottom: -1px;
+          margin-bottom: 0;
           position: relative;
         }
         .bh-tab.active {

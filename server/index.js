@@ -1515,6 +1515,7 @@ app.get('/api/weather', async (req, res) => {
 const puppeteer = require('puppeteer');
 const { execSync } = require('child_process');
 
+// Find Chrome executable path
 function findChromePath() {
   const possiblePaths = [
     require('path').join(__dirname, '.cache', 'puppeteer'),
@@ -1523,181 +1524,98 @@ function findChromePath() {
     '/opt/render/project/.cache/puppeteer',
     process.env.HOME + '/.cache/puppeteer',
   ];
+  
   for (const cachePath of possiblePaths) {
     try {
       const result = execSync(`find ${cachePath} -name "chrome" -type f 2>/dev/null | head -1`, { encoding: 'utf8' }).trim();
-      if (result) { console.log('Found Chrome at:', result); return result; }
+      if (result) {
+        console.log('Found Chrome at:', result);
+        return result;
+      }
     } catch(e) {}
   }
+  
   try {
     const result = execSync('which google-chrome || which google-chrome-stable || which chromium-browser || which chromium 2>/dev/null', { encoding: 'utf8' }).trim();
-    if (result) { console.log('Found system Chrome at:', result); return result; }
+    if (result) {
+      console.log('Found system Chrome at:', result);
+      return result;
+    }
   } catch(e) {}
+  
+  console.log('No Chrome found, using puppeteer default');
   return undefined;
 }
 
-// === Browser pool: keep browser alive, reuse pages ===
+// Browser pool - keep browser alive for faster requests
 let browserInstance = null;
-let readyPage = null; // Pre-loaded page with form ready
-let readyPageLock = false;
+let browserLastUsed = 0;
+const BROWSER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-async function launchBrowser() {
-  if (browserInstance && browserInstance.isConnected()) return browserInstance;
+async function getBrowser() {
+  if (browserInstance && browserInstance.isConnected()) {
+    browserLastUsed = Date.now();
+    return browserInstance;
+  }
   const chromePath = findChromePath();
-  const opts = {
+  const launchOptions = {
     headless: 'new',
-    args: [
-      '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage',
-      '--disable-gpu', '--single-process', '--disable-extensions',
-      '--disable-background-networking', '--disable-default-apps',
-      '--disable-sync', '--disable-translate', '--no-first-run',
-      '--disable-background-timer-throttling', '--disable-renderer-backgrounding',
-      '--disable-backgrounding-occluded-windows'
-    ]
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process', '--disable-extensions']
   };
-  if (chromePath) opts.executablePath = chromePath;
-  browserInstance = await puppeteer.launch(opts);
-  console.log('Browser launched successfully');
+  if (chromePath) launchOptions.executablePath = chromePath;
+  browserInstance = await puppeteer.launch(launchOptions);
+  browserLastUsed = Date.now();
+  console.log('Browser launched');
   return browserInstance;
 }
 
-// Pre-warm: navigate to the form page and keep it ready
-async function prepareFormPage() {
-  if (readyPageLock) return;
-  readyPageLock = true;
+// Close browser after inactivity
+setInterval(() => {
+  if (browserInstance && browserInstance.isConnected() && Date.now() - browserLastUsed > BROWSER_TIMEOUT) {
+    browserInstance.close().catch(() => {});
+    browserInstance = null;
+    console.log('Browser closed due to inactivity');
+  }
+}, 60000);
+
+// Pre-warm browser on startup
+setTimeout(() => { getBrowser().catch(() => {}); }, 5000);
+
+app.post('/api/ewa-bill', async (req, res) => {
+  const { idType, idNumber, accountNumber } = req.body;
+  if (!idType || !idNumber || !accountNumber) {
+    return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
+  }
+
+  let page;
   try {
-    const browser = await launchBrowser();
-    const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    const browser = await getBrowser();
+    page = await browser.newPage();
     
-    console.log('Pre-warm: Opening EWA page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 90000 });
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 90000 });
-    await page.click('a[id*="payEWABillLink"]');
-    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-    console.log('Pre-warm: Form page ready!');
-    readyPage = page;
-  } catch (err) {
-    console.error('Pre-warm failed:', err.message);
-    readyPage = null;
-  } finally {
-    readyPageLock = false;
-  }
-}
-
-// Start pre-warming on server start (after a short delay)
-setTimeout(() => { prepareFormPage().catch(() => {}); }, 5000);
-
-// Parse bill data from body text
-function parseBillData(bodyText) {
-  const lines = bodyText.split('\n').map(l => l.trim()).filter(l => l);
-  const startIdx = lines.findIndex(l => l === 'تفاصيل الفاتورة');
-  const data = {};
-
-  if (startIdx < 0) {
-    console.log('Parser: "تفاصيل الفاتورة" not found in text');
-    return data;
-  }
-
-  const section = lines.slice(startIdx);
-  console.log('Parser: Section has', section.length, 'lines');
-  console.log('Parser: First 25 lines:', JSON.stringify(section.slice(0, 25)));
-
-  // رقم الحساب (7+ أرقام)
-  for (let i = 0; i < section.length; i++) {
-    if (section[i].match(/^\d{7,}$/)) {
-      data.accountNumber = section[i];
-      // Next non-numeric line is customer name
-      if (i + 1 < section.length && !section[i+1].match(/^[\d\/.,]+$/) && !section[i+1].includes('Amount')) {
-        data.customerName = section[i + 1];
+    // Block images and CSS for speed
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const type = req.resourceType();
+      if (['image', 'stylesheet', 'font', 'media'].includes(type)) {
+        req.abort();
+      } else {
+        req.continue();
       }
-      break;
-    }
-  }
-
-  // العنوان - look for address patterns
-  for (const line of section) {
-    if (line.includes('كراج') || line.includes('مبنى') || line.includes('شقة') ||
-        (line.includes('طريق') && (line.includes('محافظة') || line.includes('محـافظـة'))) ||
-        (line.includes('مبنى') && line.includes('طريق'))) {
-      data.address = line;
-      break;
-    }
-  }
-
-  // تاريخ الاصدار DD/MM/YYYY
-  for (const line of section) {
-    if (line.match(/^\d{2}\/\d{2}\/\d{4}$/)) { data.issueDate = line; break; }
-  }
-
-  // القائمة لشهر MM/YYYY
-  for (const line of section) {
-    if (line.match(/^\d{2}\/\d{4}$/)) { data.billMonth = line; break; }
-  }
-
-  // الرصيد - first decimal number before مجموع المبالغ
-  for (let i = 0; i < section.length; i++) {
-    if (section[i].includes('مجموع المبالغ')) break;
-    if (section[i].match(/^[\d,]+\.\d{3}$/) && !section[i].startsWith('0.000')) {
-      data.balance = section[i];
-    }
-  }
-
-  // مجموع المبالغ (total)
-  for (let i = 0; i < section.length; i++) {
-    if (section[i].includes('مجموع المبالغ') && !section[i].includes('المدفوع')) {
-      // Look for the amount on the same line or next line
-      const amountMatch = section[i].match(/([\d,]+\.\d{3})/);
-      if (amountMatch) {
-        data.totalAmount = amountMatch[1];
-      } else if (i + 1 < section.length) {
-        const nextMatch = section[i+1].match(/^([\d,]+\.\d{3})$/);
-        if (nextMatch) data.totalAmount = nextMatch[1];
-      }
-    }
-    if (section[i].includes('مجموع المبلغ المدفوع') || section[i].includes('مجموع المبالغ المدفوع')) {
-      const amountMatch = section[i].match(/([\d,]+\.\d{3})/);
-      if (amountMatch) {
-        data.paidAmount = amountMatch[1];
-      } else if (i + 1 < section.length) {
-        const nextMatch = section[i+1].match(/^([\d,]+\.\d{3})$/);
-        if (nextMatch) data.paidAmount = nextMatch[1];
-      }
-    }
-  }
-
-  console.log('Parser result:', JSON.stringify(data));
-  return data;
-}
-
-// Core scraping function - reusable with retry
-async function scrapeEWABill(idType, idNumber, accountNumber, log) {
-  const browser = await launchBrowser();
-  const page = await browser.newPage();
-  
-  try {
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-    await page.setViewport({ width: 1280, height: 800 });
-
-    // Step 1: Open page with domcontentloaded (much faster than networkidle2)
-    log('Opening EWA page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { 
-      waitUntil: 'domcontentloaded', 
-      timeout: 90000 
     });
-    log('Page DOM loaded');
+    
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-    // Step 2: Wait for the pay bill link (this confirms JS has rendered)
-    log('Waiting for payEWABillLink...');
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 90000 });
+    // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+      waitUntil: 'domcontentloaded', timeout: 30000
+    });
+
+    // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 10000 });
     await page.click('a[id*="payEWABillLink"]');
-    log('Clicked payEWABillLink');
+    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
 
-    // Step 3: Wait for form
-    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-    log('Form loaded');
-
-    // Step 4: Select ID type
+    // الخطوة 3: اختيار نوع الهوية
     const idTypeMap = {
       'BH': 'الرقم الشخصي البحريني',
       'AE': 'الرقم الشخصي الإماراتي',
@@ -1711,111 +1629,169 @@ async function scrapeEWABill(idType, idNumber, accountNumber, log) {
       'CR': 'رقم السجل التجاري',
       'FACILITY': 'رقم المنشأة',
     };
-    const labelText = idTypeMap[idType] || idType;
-    const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
-    const matchOpt = options.find(o => o.text === labelText);
-    if (matchOpt) {
-      await page.select('select[id*="idList"]', matchOpt.value);
-      log('Selected ID type: ' + matchOpt.value);
+    const label = idTypeMap[idType] || idType;
+
+    // انتظار الفورم
+    await page.waitForSelector('select[id*="idList"]', { timeout: 10000 });
+    const selectEl = await page.$('select[id*="idList"]');
+    if (selectEl) {
+      const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
+      const match = options.find(o => o.text === label);
+      if (match) {
+        await page.select('select[id*="idList"]', match.value);
+      }
     }
+    // انتظار قصير بعد اختيار النوع
     await new Promise(r => setTimeout(r, 1000));
 
-    // Step 5: Fill form
-    const idInputEl = await page.$('input[id*="identitynumber"]');
-    if (idInputEl) {
-      await idInputEl.click({ clickCount: 3 });
-      await idInputEl.type(idNumber, { delay: 30 });
+    // الخطوة 4: تعبئة البيانات
+    const idInput = await page.$('input[id*="identitynumber"]');
+    if (idInput) {
+      await idInput.click({ clickCount: 3 });
+      await idInput.type(idNumber, { delay: 0 });
     }
-    const accInputEl = await page.$('input[id*="accountnumber"]');
-    if (accInputEl) {
-      await accInputEl.click({ clickCount: 3 });
-      await accInputEl.type(accountNumber, { delay: 30 });
-    }
-    log('Form filled');
-
-    // Step 6: Submit
-    const submitBtn = await page.$('input[id*="submit"]') || await page.$('input[type="submit"]');
-    if (submitBtn) {
-      await submitBtn.click();
-      log('Submit clicked');
-    } else {
-      // Fallback: JS click
-      await page.evaluate(() => {
-        const inp = document.querySelector('input[type="submit"]');
-        if (inp) inp.click();
-      });
-      log('Submit via JS');
+    const accInput = await page.$('input[id*="accountnumber"]');
+    if (accInput) {
+      await accInput.click({ clickCount: 3 });
+      await accInput.type(accountNumber, { delay: 0 });
     }
 
-    // Step 7: Wait for result
-    await page.waitForFunction(() => {
-      const b = document.body.innerText;
-      return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
-    }, { timeout: 30000 });
-    log('Result received');
+    // الخطوة 5: الضغط على ارسال
+    await page.click('input[id*="form1:submit"]');
+    // انتظار النتيجة - بس لحد ما يحمل الـ DOM
+    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+    await new Promise(r => setTimeout(r, 1500));
 
-    await new Promise(r => setTimeout(r, 1000));
-    const bodyText = await page.evaluate(() => document.body.innerText);
-    
-    await page.close().catch(() => {});
-    return bodyText;
-  } catch (err) {
-    await page.close().catch(() => {});
-    throw err;
-  }
-}
+    // الخطوة 6: قراءة النتيجة
+    const content = await page.content();
 
-app.post('/api/ewa-bill', async (req, res) => {
-  const startTime = Date.now();
-  const { idType, idNumber, accountNumber } = req.body;
-  if (!idType || !idNumber || !accountNumber) {
-    return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
-  }
+    // التحقق من وجود خطأ
+    const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
+    if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
+      if (page) await page.close().catch(() => {});
+      return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
+    }
 
-  const debugLog = [];
-  const log = (msg) => { console.log(`[EWA ${Date.now()-startTime}ms] ${msg}`); debugLog.push(`[${Date.now()-startTime}ms] ${msg}`); };
+    // استخراج بيانات الفاتورة من الصفحة
+    const result = { success: true, bills: [] };
 
-  // Retry up to 2 times
-  let lastError = null;
-  for (let attempt = 1; attempt <= 2; attempt++) {
+    // استخراج النص الكامل من الفورم
+    let rawText = '';
     try {
-      log(`Attempt ${attempt}...`);
-      const bodyText = await scrapeEWABill(idType, idNumber, accountNumber, log);
+      rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
+      result.rawText = rawText;
+    } catch(e) {}
+
+    // تحليل النص لاستخراج البيانات المنظمة
+    const parsedData = {};
+    if (rawText) {
+      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
       
-      // Check for error response
-      if (bodyText.includes('عذراً') && !bodyText.includes('تفاصيل الفاتورة')) {
-        return res.json({ success: false, error: 'عذراً، لا يوجد طلب بالبيانات المدخلة', debugLog });
+      // استخراج الحقول المعروفة
+      const fieldMap = [
+        { key: 'accountNumber', label: 'رقم الحساب' },
+        { key: 'customerName', label: 'تفاصيل العميل' },
+        { key: 'issueDate', label: 'تاريخ الاصدار' },
+        { key: 'billMonth', label: 'القائمة لشهر' },
+        { key: 'balance', label: 'الرصيد' },
+        { key: 'minPayment', label: 'الحد الأدنى للدفع' },
+      ];
+      
+      for (let i = 0; i < lines.length; i++) {
+        for (const field of fieldMap) {
+          if (lines[i].includes(field.label)) {
+            // القيمة عادة في السطر التالي أو بعده
+            for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+              const val = lines[j].trim();
+              if (val && !fieldMap.some(f => val.includes(f.label)) && val !== '*') {
+                parsedData[field.key] = val;
+                break;
+              }
+            }
+          }
+        }
       }
-
-      // Parse data
-      const data = parseBillData(bodyText);
-      const totalTime = Date.now() - startTime;
-      log('Done! Total: ' + totalTime + 'ms');
-
-      return res.json({
-        success: true,
-        parsedData: data,
-        totalAmount: data.totalAmount || data.balance || '0.000',
-        rawText: bodyText.substring(0, 3000),
-        responseTime: totalTime,
-        debugLog,
-      });
-    } catch (err) {
-      lastError = err;
-      log(`Attempt ${attempt} failed: ${err.message}`);
-      if (attempt < 2) {
-        log('Retrying in 3s...');
-        await new Promise(r => setTimeout(r, 3000));
+      
+      // استخراج العنوان (السطر بعد اسم العميل)
+      if (parsedData.customerName) {
+        const nameIdx = lines.findIndex(l => l === parsedData.customerName);
+        if (nameIdx >= 0 && nameIdx + 1 < lines.length) {
+          const nextLine = lines[nameIdx + 1];
+          if (nextLine && (nextLine.includes('كراج') || nextLine.includes('مبنى') || nextLine.includes('طريق') || nextLine.includes('شقة') || nextLine.includes('منزل') || nextLine.includes('محافظة'))) {
+            parsedData.address = nextLine;
+          }
+        }
       }
+      
+      // استخراج مجموع المبالغ
+      const totalLine = lines.find(l => l.includes('مجموع المبالغ'));
+      if (totalLine) {
+        const totalMatch = totalLine.match(/([\d,.]+)/);
+        if (totalMatch) parsedData.totalAmount = totalMatch[1];
+      }
+      
+      // استخراج المبلغ المدفوع
+      const paidLine = lines.find(l => l.includes('مجموع المبلغ المدفوع'));
+      if (paidLine) {
+        const paidMatch = paidLine.match(/([\d,.]+)/);
+        if (paidMatch) parsedData.paidAmount = paidMatch[1];
+      }
+      
+      result.parsedData = parsedData;
     }
-  }
 
-  // All attempts failed
-  res.status(500).json({ 
-    success: false, 
-    error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + (lastError ? lastError.message : 'Unknown error'), 
-    debugLog 
-  });
+    // استخراج الجداول
+    const tableData = await page.$$eval('table', tables => {
+      const allRows = [];
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach((row, idx) => {
+          if (idx === 0) return;
+          const cells = row.querySelectorAll('td');
+          if (cells.length >= 2) {
+            const cellTexts = Array.from(cells).map(c => c.textContent.trim());
+            allRows.push(cellTexts);
+          }
+        });
+      });
+      return allRows;
+    }).catch(() => []);
+    result.bills = tableData;
+
+    // استخراج الهيدر من الجداول
+    const tableHeaders = await page.$$eval('table', tables => {
+      const headers = [];
+      tables.forEach(table => {
+        const ths = table.querySelectorAll('th');
+        if (ths.length > 0) {
+          headers.push(Array.from(ths).map(th => th.textContent.trim()));
+        }
+      });
+      return headers;
+    }).catch(() => []);
+    if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
+
+    // استخراج المبلغ الإجمالي من عدة مصادر
+    let totalAmount = null;
+    // من parsedData
+    if (parsedData.totalAmount) totalAmount = parsedData.totalAmount;
+    // من الـ HTML
+    if (!totalAmount) {
+      const totalMatch = content.match(/(?:مجموع المبالغ|المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
+      if (totalMatch) totalAmount = totalMatch[1];
+    }
+    // من الـ balance
+    if (!totalAmount && parsedData.balance) totalAmount = parsedData.balance;
+    if (totalAmount) result.totalAmount = totalAmount;
+
+    if (page) await page.close().catch(() => {});
+    res.json(result);
+
+  } catch (err) {
+    console.error('EWA Bill error:', err.message);
+    if (page) try { await page.close(); } catch(e) {}
+    res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
+  }
 });
 
 // Start server

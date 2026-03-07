@@ -347,6 +347,7 @@ export default function HomePage() {
           background: #F0F0F3;
           padding: 40px 0 30px 0;
           border-top: 1px solid #B0B0BA;
+          margin-top: 40px;
         }
         .bh-footer-columns {
           display: flex;

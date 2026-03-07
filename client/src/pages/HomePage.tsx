@@ -12,6 +12,52 @@ export default function HomePage() {
   const [showFormFields, setShowFormFields] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [activeNavItem, setActiveNavItem] = useState(0);
+  const [showWeather, setShowWeather] = useState(false);
+  const [weatherData, setWeatherData] = useState<any>(null);
+
+  const fetchWeather = async () => {
+    try {
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=26.23&longitude=50.58&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset&timezone=Asia/Bahrain&forecast_days=4');
+      const data = await res.json();
+      setWeatherData(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getWeatherDesc = (code: number) => {
+    if (code <= 1) return 'صافي';
+    if (code <= 3) return 'غائم جزئياً';
+    if (code <= 48) return 'غائم';
+    if (code <= 67) return 'ممطر';
+    if (code <= 77) return 'ثلوج';
+    return 'عاصف';
+  };
+
+  const getWeatherEmoji = (code: number) => {
+    if (code <= 1) return '☀️';
+    if (code <= 3) return '⛅';
+    if (code <= 48) return '☁️';
+    if (code <= 67) return '🌧️';
+    return '⛈️';
+  };
+
+  const getArabicDay = (dateStr: string) => {
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const d = new Date(dateStr);
+    return days[d.getDay()];
+  };
+
+  const getArabicMonth = (dateStr: string) => {
+    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    const d = new Date(dateStr);
+    return months[d.getMonth()];
+  };
+
+  const formatTime = (iso: string) => {
+    const d = new Date(iso);
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  };
 
   useEffect(() => {
     navigateToPage('الصفحة الرئيسية');
@@ -394,6 +440,117 @@ export default function HomePage() {
           margin-bottom: 0;
         }
 
+        /* ===== WEATHER POPUP ===== */
+        .weather-popup {
+          position: absolute;
+          top: 50px;
+          left: 0;
+          width: 340px;
+          background: linear-gradient(180deg, #4a6d8c 0%, #6a8fa8 50%, #8ab0c8 100%);
+          border-radius: 10px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+          z-index: 10000;
+          color: #fff;
+          direction: rtl;
+          overflow: hidden;
+        }
+        .weather-popup-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 14px 18px 8px;
+        }
+        .weather-close {
+          font-size: 24px;
+          cursor: pointer;
+          color: #fff;
+          line-height: 1;
+        }
+        .weather-date {
+          font-size: 16px;
+          font-weight: 600;
+        }
+        .weather-popup-divider {
+          height: 1px;
+          background: rgba(255,255,255,0.3);
+          margin: 0 18px;
+        }
+        .weather-current {
+          text-align: center;
+          padding: 15px 18px 10px;
+        }
+        .weather-current-icon {
+          font-size: 48px;
+          margin-bottom: 4px;
+        }
+        .weather-current-desc {
+          font-size: 16px;
+          margin-bottom: 12px;
+        }
+        .weather-current-row {
+          display: flex;
+          justify-content: space-between;
+          text-align: center;
+        }
+        .weather-info-col {
+          flex: 1;
+          font-size: 12px;
+          line-height: 1.8;
+        }
+        .weather-val {
+          font-weight: 700;
+          font-size: 14px;
+        }
+        .weather-big-temp {
+          font-size: 32px;
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+        .weather-forecast {
+          display: flex;
+          gap: 8px;
+          padding: 12px 18px;
+          justify-content: center;
+        }
+        .weather-forecast-day {
+          flex: 1;
+          background: rgba(255,255,255,0.15);
+          border-radius: 8px;
+          padding: 10px 6px;
+          text-align: center;
+          font-size: 12px;
+          line-height: 1.6;
+        }
+        .weather-forecast-name {
+          font-weight: 600;
+          font-size: 13px;
+        }
+        .weather-forecast-daynum {
+          font-size: 18px;
+          font-weight: 700;
+        }
+        .weather-forecast-month {
+          font-size: 12px;
+        }
+        .weather-forecast-icon {
+          font-size: 28px;
+          margin: 4px 0;
+        }
+        .weather-forecast-temps {
+          font-weight: 600;
+          font-size: 13px;
+        }
+        .weather-link {
+          text-align: center;
+          padding: 10px 18px 14px;
+          font-size: 12px;
+          background: rgba(0,0,0,0.15);
+        }
+        .weather-link a {
+          color: #fff;
+          text-decoration: underline;
+        }
+
         /* ===== FOOTER ===== */
         .bh-footer-links {
           background: #F0F0F3;
@@ -603,10 +760,70 @@ export default function HomePage() {
                 <span className={`bh-tab ${activeTab === 0 ? 'active' : ''}`} onClick={() => setActiveTab(0)}>الخدمات الإلكترونية</span>
                 <span className={`bh-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => setActiveTab(1)}>دليل المعلومات</span>
               </div>
-              <div className="bh-header-actions">
+              <div className="bh-header-actions" style={{ position: 'relative' }}>
                 <img src="/accessibility-icon.svg" alt="إمكانية الوصول" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
-                <img src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} />
+                <img src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
                 <span className="bh-login-btn">تسجيل الدخول</span>
+
+                {showWeather && (
+                  <div className="weather-popup">
+                    <div className="weather-popup-header">
+                      <span className="weather-close" onClick={() => setShowWeather(false)}>&times;</span>
+                      <span className="weather-date">
+                        {(() => {
+                          const now = new Date();
+                          const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+                          const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+                          return `${days[now.getDay()]} ${String(now.getDate()).padStart(2,'0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="weather-popup-divider"></div>
+                    {weatherData ? (
+                      <>
+                        <div className="weather-current">
+                          <div className="weather-current-icon">{getWeatherEmoji(weatherData.current.weather_code)}</div>
+                          <div className="weather-current-desc">{getWeatherDesc(weatherData.current.weather_code)}</div>
+                          <div className="weather-current-row">
+                            <div className="weather-info-col">
+                              <div>العظمى</div>
+                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_max[0])}°</div>
+                              <div>غروب الشمس</div>
+                              <div className="weather-val">{formatTime(weatherData.daily.sunset[0])}</div>
+                            </div>
+                            <div className="weather-info-col weather-main-temp">
+                              <div className="weather-big-temp">{Math.round(weatherData.current.temperature_2m)} °C</div>
+                              <div>شروق الشمس</div>
+                              <div className="weather-val">{formatTime(weatherData.daily.sunrise[0])}</div>
+                            </div>
+                            <div className="weather-info-col">
+                              <div>الصغرى</div>
+                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_min[0])}°</div>
+                              <div>الرطوبة</div>
+                              <div className="weather-val">{weatherData.current.relative_humidity_2m} %</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="weather-forecast">
+                          {[1, 2, 3].map(i => (
+                            <div className="weather-forecast-day" key={i}>
+                              <div className="weather-forecast-name">{getArabicDay(weatherData.daily.time[i])}</div>
+                              <div className="weather-forecast-daynum">{new Date(weatherData.daily.time[i]).getDate().toString().padStart(2,'0')}</div>
+                              <div className="weather-forecast-month">{getArabicMonth(weatherData.daily.time[i])}</div>
+                              <div className="weather-forecast-icon">{getWeatherEmoji(weatherData.daily.weather_code[i])}</div>
+                              <div className="weather-forecast-temps">{Math.round(weatherData.daily.temperature_2m_min[i])}°-{Math.round(weatherData.daily.temperature_2m_max[i])}°</div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="weather-link">
+                          لمزيد من المعلومات : <a href="https://bahrainweather.gov.bh" target="_blank" rel="noopener noreferrer">bahrainweather.gov.bh</a> ↗
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '30px', color: '#fff' }}>جاري التحميل...</div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

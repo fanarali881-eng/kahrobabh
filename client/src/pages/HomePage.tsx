@@ -557,8 +557,24 @@ export default function HomePage() {
                 <span className={`bh-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => setActiveTab(1)}>دليل المعلومات</span>
               </div>
               <div className="bh-header-actions">
-                <img src="/emergency-cal.svg" alt="" style={{ width: '20px', height: '20px', cursor: 'pointer', opacity: 0.7 }} onError={(e: any) => e.target.style.display='none'} />
                 <span className="bh-login-btn">تسجيل الدخول</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {/* Weather icon */}
+                  <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', borderRadius: '4px' }}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6B6B76" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                      <circle cx="12" cy="12" r="4"/>
+                      <path d="M17 18a5 5 0 0 0-9.5-1.5A3.5 3.5 0 0 0 4 20h13a3 3 0 0 0 0-6z" fill="#D0D0D8" stroke="#6B6B76"/>
+                    </svg>
+                  </div>
+                  {/* Accessibility icon */}
+                  <div style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', borderRadius: '4px' }}>
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B6B76" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="4" r="2"/>
+                      <path d="M7 8h10M12 8v4M9 20l3-8 3 8M9 14h6"/>
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

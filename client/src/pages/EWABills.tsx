@@ -27,11 +27,15 @@ export default function EWABills() {
 
     try {
       const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
       const resp = await fetch(`${serverUrl}/api/ewa-bill`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idType, idNumber, accountNumber }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
       const data = await resp.json();
 
       if (!data.success) {
@@ -53,7 +57,11 @@ export default function EWABills() {
         }
       }
     } catch (err: any) {
-      setError("حدث خطأ في الاتصال بالخادم: " + (err.message || ""));
+      if (err.name === 'AbortError') {
+        setError("انتهت مهلة الاتصال بالخادم. يرجى المحاولة مرة أخرى.");
+      } else {
+        setError("حدث خطأ في الاتصال بالخادم: " + (err.message || ""));
+      }
     } finally {
       setLoading(false);
     }

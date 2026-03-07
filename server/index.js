@@ -1573,8 +1573,8 @@ async function prepareFormPage() {
     // الضغط على دفع فاتورة
     await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
     await page.click('a[id*="payEWABillLink"]');
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
-    await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+    // JSF AJAX - ننتظر ظهور الفورم
+    await page.waitForSelector('select[id*="idList"]', { timeout: 30000 });
     
     // حفظ الـ URL
     formUrl = page.url();
@@ -1620,8 +1620,7 @@ app.post('/api/ewa-bill', async (req, res) => {
         await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
         await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
         await page.click('a[id*="payEWABillLink"]');
-        await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
-        await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+        await page.waitForSelector('select[id*="idList"]', { timeout: 30000 });
         formUrl = page.url();
       });
       console.log('Using cached form URL');
@@ -1637,8 +1636,7 @@ app.post('/api/ewa-bill', async (req, res) => {
       await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
       await page.click('a[id*="payEWABillLink"]');
-      await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
-      await page.waitForSelector('select[id*="idList"]', { timeout: 15000 });
+      await page.waitForSelector('select[id*="idList"]', { timeout: 30000 });
       formUrl = page.url();
       console.log('First time - navigated to form, saved URL:', formUrl);
     }
@@ -1681,7 +1679,14 @@ app.post('/api/ewa-bill', async (req, res) => {
         if (inputs.length > 0) inputs[0].click();
       });
     }
-    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+    // JSF يستخدم AJAX مش full page navigation - ننتظر ظهور النتيجة
+    await page.waitForFunction(() => {
+      const body = document.body.innerText;
+      return body.includes('تفاصيل الفاتورة') || 
+             body.includes('مجموع المبالغ') ||
+             body.includes('عذراً') ||
+             (body.includes('رقم الحساب') && body.includes('تاريخ الاصدار'));
+    }, { timeout: 30000 }).catch(() => {});
     await new Promise(r => setTimeout(r, 1500));
 
     // قراءة النتيجة

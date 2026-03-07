@@ -59,7 +59,7 @@ export default function HomePage() {
         .bh-page {
           direction: rtl;
           min-height: 100vh;
-          background: #F5F5F7;
+          background: #FAFAFA;
           color: #17171C;
           font-size: 16px;
           font-weight: 400;

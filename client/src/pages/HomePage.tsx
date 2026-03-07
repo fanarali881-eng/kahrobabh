@@ -730,7 +730,7 @@ export default function HomePage() {
           <div className="bh-container">
             <div className="bh-footer-social-inner">
               <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '160px', objectFit: 'contain' }} />
-              <div className="bh-footer-social-right" style={{ flexDirection: 'row', alignItems: 'center', gap: '20px' }}>
+              <div className="bh-footer-social-right" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
                 <span className="bh-footer-contact-title">تابعونا</span>
                 <div className="bh-footer-social-icons">
                   <a title="LinkedIn">

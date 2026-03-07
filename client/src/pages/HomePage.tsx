@@ -88,7 +88,8 @@ export default function HomePage() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 0 0 0;
+          padding: 12px 0 12px 0;
+          border-bottom: 1px solid #D3D3DA;
         }
         .bh-logo img {
           height: 60px;

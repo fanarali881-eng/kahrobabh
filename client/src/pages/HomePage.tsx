@@ -384,7 +384,7 @@ export default function HomePage() {
         }
 
         .bh-footer-social {
-          background: #E2E2E7;
+          background: #F0F0F3;
           padding: 30px 0;
         }
         .bh-footer-social-inner {
@@ -474,7 +474,7 @@ export default function HomePage() {
         }
 
         .bh-footer-copyright {
-          background: #fff;
+          background: #E2E2E7;
           padding: 20px 0;
           text-align: center;
           border-top: 1px solid #D3D3DA;

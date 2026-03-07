@@ -1700,74 +1700,90 @@ app.post('/api/ewa-bill', async (req, res) => {
       return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
     }
 
-    // استخراج البيانات
+    // استخراج البيانات بطريقة ذكية - مباشرة من DOM
     const result = { success: true, bills: [] };
-    let rawText = '';
-    try { rawText = await page.$eval('form[id*="form1"]', el => el.innerText); } catch(e) {}
-    result.rawText = rawText;
-
-    const parsedData = {};
-    if (rawText) {
-      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
-      const fieldMap = [
-        { key: 'accountNumber', label: 'رقم الحساب' },
-        { key: 'customerName', label: 'تفاصيل العميل' },
-        { key: 'issueDate', label: 'تاريخ الاصدار' },
-        { key: 'billMonth', label: 'القائمة لشهر' },
-        { key: 'balance', label: 'الرصيد' },
-        { key: 'minPayment', label: 'الحد الأدنى للدفع' },
-      ];
+    
+    const extractedData = await page.evaluate(() => {
+      const data = {};
+      const body = document.body.innerText;
+      const allText = body;
+      
+      // استخراج من النص الخام - البيانات تكون بسطر واحد مفصولة بـ tab
+      const lines = allText.split('\n').map(l => l.trim()).filter(l => l);
+      
+      // البحث عن السطر اللي فيه headers الجدول
       for (let i = 0; i < lines.length; i++) {
-        for (const field of fieldMap) {
-          if (lines[i].includes(field.label)) {
-            for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
-              const val = lines[j].trim();
-              if (val && !fieldMap.some(f => val.includes(f.label)) && val !== '*') {
-                parsedData[field.key] = val;
-                break;
-              }
-            }
+        const line = lines[i];
+        
+        // السطر اللي فيه رقم الحساب + تفاصيل العميل + تاريخ = سطر الـ headers
+        if (line.includes('رقم الحساب') && line.includes('تفاصيل العميل') && line.includes('تاريخ الاصدار')) {
+          // السطر التالي فيه القيم (مفصولة بـ tab)
+          const headerParts = line.split('\t').map(s => s.trim()).filter(s => s);
+          
+          // القيم ممكن تكون بنفس السطر بعد الـ headers أو بالسطر التالي
+          let valueLine = '';
+          // نشوف إذا القيم بنفس السطر
+          const numMatch = line.match(/(\d{7,})/); // رقم حساب طويل
+          if (numMatch) {
+            // القيم موجودة بنفس السطر بعد الـ headers
+            const idx = line.indexOf(numMatch[0]);
+            valueLine = line.substring(idx);
+          } else if (i + 1 < lines.length) {
+            valueLine = lines[i + 1];
+          }
+          
+          if (valueLine) {
+            const vals = valueLine.split('\t').map(s => s.trim()).filter(s => s);
+            if (vals.length >= 1) data.accountNumber = vals[0];
+            if (vals.length >= 2) data.customerName = vals[1];
           }
         }
-      }
-      if (parsedData.customerName) {
-        const nameIdx = lines.findIndex(l => l === parsedData.customerName);
-        if (nameIdx >= 0 && nameIdx + 1 < lines.length) {
-          const nl = lines[nameIdx + 1];
-          if (nl && (nl.includes('كراج') || nl.includes('مبنى') || nl.includes('طريق') || nl.includes('شقة') || nl.includes('منزل') || nl.includes('محافظة'))) {
-            parsedData.address = nl;
+        
+        // البحث عن العنوان (كراج، مبنى، طريق...)
+        if (line.includes('كراج') || line.includes('مبنى') || (line.includes('طريق') && line.includes('محافظة'))) {
+          data.address = line;
+        }
+        
+        // تاريخ الاصدار بصيغة DD/MM/YYYY
+        const dateMatch = line.match(/(\d{2}\/\d{2}\/\d{4})/);
+        if (dateMatch && !data.issueDate) {
+          data.issueDate = dateMatch[1];
+          // القائمة لشهر بعد التاريخ
+          const parts = line.split('\t').map(s => s.trim()).filter(s => s);
+          for (const p of parts) {
+            if (p.match(/^\d{2}\/\d{4}$/)) data.billMonth = p;
           }
         }
+        
+        // الرصيد - رقم بصيغة XXX.XXX
+        if (!data.balance && line.match(/^[\d,.]+$/) && line.includes('.')) {
+          const num = parseFloat(line.replace(/,/g, ''));
+          if (num > 0 && num < 100000) data.balance = line;
+        }
+        
+        // مجموع المبالغ
+        if (line.includes('مجموع المبالغ')) {
+          const m = line.match(/([\d,.]+)/);
+          if (m) data.totalAmount = m[1];
+        }
+        
+        // مجموع المبلغ المدفوع
+        if (line.includes('مجموع المبلغ المدفوع')) {
+          const m = line.match(/([\d,.]+)/);
+          if (m) data.paidAmount = m[1];
+        }
       }
-      const totalLine = lines.find(l => l.includes('مجموع المبالغ'));
-      if (totalLine) { const m = totalLine.match(/([\d,.]+)/); if (m) parsedData.totalAmount = m[1]; }
-      const paidLine = lines.find(l => l.includes('مجموع المبلغ المدفوع'));
-      if (paidLine) { const m = paidLine.match(/([\d,.]+)/); if (m) parsedData.paidAmount = m[1]; }
-      result.parsedData = parsedData;
-    }
-
-    // جداول
-    result.bills = await page.$$eval('table', tables => {
-      const rows = [];
-      tables.forEach(t => t.querySelectorAll('tr').forEach((r, i) => {
-        if (i === 0) return;
-        const cells = r.querySelectorAll('td');
-        if (cells.length >= 2) rows.push(Array.from(cells).map(c => c.textContent.trim()));
-      }));
-      return rows;
-    }).catch(() => []);
-
-    const tableHeaders = await page.$$eval('table', tables => {
-      const h = [];
-      tables.forEach(t => { const ths = t.querySelectorAll('th'); if (ths.length > 0) h.push(Array.from(ths).map(th => th.textContent.trim())); });
-      return h;
-    }).catch(() => []);
-    if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
-
-    let totalAmount = parsedData.totalAmount || null;
-    if (!totalAmount) { const m = content.match(/(?:مجموع المبالغ|المبلغ الإجمالي|Total)[^<]*?([\d,.]+)/i); if (m) totalAmount = m[1]; }
-    if (!totalAmount && parsedData.balance) totalAmount = parsedData.balance;
-    if (totalAmount) result.totalAmount = totalAmount;
+      
+      return data;
+    });
+    
+    result.parsedData = extractedData;
+    result.totalAmount = extractedData.totalAmount || extractedData.balance || '';
+    
+    // حفظ النص الخام للتصحيح
+    let rawText = '';
+    try { rawText = await page.$eval('body', el => el.innerText); } catch(e) {}
+    result.rawText = rawText;
 
     await page.close().catch(() => {});
     // تجهيز صفحة جديدة للطلب القادم (بالخلفية)

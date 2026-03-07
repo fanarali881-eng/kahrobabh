@@ -459,10 +459,11 @@ export default function HomePage() {
           text-align: center;
         }
         .bh-footer-bottom-links a {
-          font-size: 13px !important;
-          color: #4B4B57 !important;
+          font-size: 16px !important;
+          color: #17171C !important;
           margin: 0 8px;
           cursor: pointer;
+          text-decoration: underline !important;
         }
         .bh-footer-bottom-links a:hover {
           color: #0747C7 !important;

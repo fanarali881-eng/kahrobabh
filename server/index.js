@@ -1642,17 +1642,42 @@ app.post('/api/ewa-bill', async (req, res) => {
     const label = idTypeMap[idType] || idType;
 
     console.log('EWA Step 2: Selecting ID type:', label);
-    const selectEl = await page.$('select[id*="idList"]');
-    if (selectEl) {
-      const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
-      const match = options.find(o => o.text === label);
-      if (match) {
-        await page.select('select[id*="idList"]', match.value);
-      }
+    // Get the select element and its options
+    const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
+    const match = options.find(o => o.text === label);
+    if (match) {
+      // Use evaluate to set value AND trigger onchange/JSF events properly
+      await page.evaluate((selectSelector, value) => {
+        const sel = document.querySelector(selectSelector);
+        if (sel) {
+          sel.value = value;
+          // Trigger all possible events that JSF might listen to
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          sel.dispatchEvent(new Event('input', { bubbles: true }));
+          // Also try the onchange attribute directly
+          if (sel.onchange) sel.onchange();
+        }
+      }, 'select[id*="idList"]', match.value);
+      console.log('EWA Step 2: Set select value to', match.value);
     }
-    // Wait for AJAX to complete after select change, then wait for input fields
-    await new Promise(r => setTimeout(r, 3000));
-    await page.waitForNetworkIdle({ timeout: 20000 }).catch(() => {});
+    // Wait for AJAX to complete and input fields to appear
+    await new Promise(r => setTimeout(r, 5000));
+    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
+    // Try multiple times to find the input
+    let foundInput = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const idInp = await page.$('input[id*="identitynumber"]');
+      if (idInp) { foundInput = true; break; }
+      console.log(`EWA Step 2: Input not found, attempt ${attempt + 1}, waiting...`);
+      await new Promise(r => setTimeout(r, 3000));
+    }
+    if (!foundInput) {
+      // Fallback: try page.select() method
+      console.log('EWA Step 2: Fallback - using page.select()');
+      if (match) await page.select('select[id*="idList"]', match.value);
+      await new Promise(r => setTimeout(r, 5000));
+      await page.waitForNetworkIdle({ timeout: 20000 }).catch(() => {});
+    }
     await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
     console.log(`EWA Step 2: ID type selected (${Date.now() - startTime}ms)`);
 

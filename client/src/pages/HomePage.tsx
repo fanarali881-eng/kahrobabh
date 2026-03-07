@@ -386,6 +386,7 @@ export default function HomePage() {
         .bh-footer-social {
           background: #F0F0F3;
           padding: 30px 0;
+          border-top: 1px solid #D3D3DA;
         }
         .bh-footer-social-inner {
           display: flex;

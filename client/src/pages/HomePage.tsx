@@ -276,9 +276,10 @@ export default function HomePage() {
         .bh-form-row {
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-end;
           gap: 12px;
           margin-bottom: 15px;
+          padding: 0 40px;
         }
         .bh-form-row:last-child {
           margin-bottom: 0;
@@ -288,6 +289,8 @@ export default function HomePage() {
           font-weight: 500 !important;
           color: #17171C !important;
           white-space: nowrap;
+          min-width: 100px;
+          text-align: right;
         }
         .bh-form-label .required {
           color: #A70717 !important;
@@ -299,7 +302,7 @@ export default function HomePage() {
           font-size: 14px !important;
           background: #fff !important;
           color: #17171C !important;
-          min-width: 240px;
+          width: 320px;
           direction: rtl;
         }
         .bh-form-input {

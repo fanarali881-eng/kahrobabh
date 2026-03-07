@@ -440,14 +440,16 @@ export default function HomePage() {
           color: #17171C !important;
         }
         .bh-footer-contact-number {
-          font-size: 24px !important;
+          font-size: 30px !important;
           font-weight: 700 !important;
           color: #E31B23 !important;
           direction: ltr;
         }
         .bh-footer-contact-sub {
-          font-size: 11px !important;
+          font-size: 10px !important;
+          font-weight: 600 !important;
           color: #4B4B57 !important;
+          text-align: center !important;
         }
 
         .bh-footer-bottom-links {

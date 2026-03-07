@@ -220,7 +220,7 @@ export default function HomePage() {
         .bh-content-title {
           font-size: 1.5rem !important;
           font-weight: 600 !important;
-          color: #17171C !important;
+          color: #0747C7 !important;
           line-height: 30px;
         }
         .bh-menu-link {
@@ -428,6 +428,7 @@ export default function HomePage() {
         <div className="bh-container">
           {/* Title row */}
           <div className="bh-content-header">
+            <h2 className="bh-content-title">دفع فاتورة الكهرباء والماء</h2>
             <div className="bh-menu-link">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4B4B57" strokeWidth="2" strokeLinecap="round">
                 <line x1="3" y1="6" x2="21" y2="6"/>
@@ -436,7 +437,6 @@ export default function HomePage() {
               </svg>
               <span>القائمة</span>
             </div>
-            <h2 className="bh-content-title">دفع فاتورة الكهرباء والماء</h2>
           </div>
 
           {/* Blue bar: Instructions */}

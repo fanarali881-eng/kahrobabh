@@ -110,11 +110,12 @@ export default function HomePage() {
         .bh-header-row2 {
           display: flex;
           justify-content: space-between;
-          align-items: flex-end;
-          padding: 10px 0 0 0;
+          align-items: center;
+          padding: 0;
           background: #fff;
           margin: 0;
           border-top: none;
+          min-height: 60px;
         }
         .bh-tabs-row {
           display: flex;
@@ -151,7 +152,7 @@ export default function HomePage() {
           font-weight: 600 !important;
           cursor: pointer;
           display: inline-block;
-          margin-top: -8px;
+
         }
         
         /* Navigation bar */

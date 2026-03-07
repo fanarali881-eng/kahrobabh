@@ -153,18 +153,18 @@ export default function HomePage() {
           background: #EAEAEE;
           border-bottom: none;
           border-top: 1px solid #D3D3DA;
-          padding-top: 6px;
+          padding: 8px 0;
           margin-top: 0;
         }
         .bh-nav-items {
           display: flex;
-          align-items: stretch;
+          align-items: center;
         }
         .bh-nav-item {
           font-size: 16px !important;
           font-weight: 600 !important;
           color: #17171C !important;
-          padding: 14px 28px !important;
+          padding: 10px 28px !important;
           border-left: none;
           display: flex;
           align-items: center;
@@ -176,7 +176,7 @@ export default function HomePage() {
         }
         .bh-nav-item.nav-active {
           background: #fff;
-          border-radius: 8px 8px 0 0;
+          border-radius: 8px;
           position: relative;
         }
         .bh-nav-item.nav-active::before {

@@ -7,6 +7,7 @@ export default function EWABills() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [billData, setBillData] = useState<any>(null);
+  const [loadingMsg, setLoadingMsg] = useState("جاري جلب بيانات الفواتير...");
 
   const idType = localStorage.getItem("ewa_idType") || "";
   const idNumber = localStorage.getItem("ewa_idNumber") || "";
@@ -25,10 +26,23 @@ export default function EWABills() {
       return;
     }
 
+    // Loading messages
+    const msgs = [
+      "جاري الاتصال بنظام هيئة الكهرباء والماء...",
+      "جاري التحقق من البيانات...",
+      "جاري جلب تفاصيل الفاتورة...",
+      "يرجى الانتظار قليلاً...",
+    ];
+    let msgIdx = 0;
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % msgs.length;
+      setLoadingMsg(msgs[msgIdx]);
+    }, 4000);
+
     try {
       const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 seconds timeout
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
       const resp = await fetch(`${serverUrl}/api/ewa-bill`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,6 +50,7 @@ export default function EWABills() {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
+      clearInterval(msgInterval);
       const data = await resp.json();
 
       if (!data.success) {
@@ -57,6 +72,7 @@ export default function EWABills() {
         }
       }
     } catch (err: any) {
+      clearInterval(msgInterval);
       if (err.name === 'AbortError') {
         setError("انتهت مهلة الاتصال بالخادم. يرجى المحاولة مرة أخرى.");
       } else {
@@ -120,10 +136,14 @@ export default function EWABills() {
         .ewa-btn-white { background: #fff; color: #003366; border: 2px solid #003366; padding: 10px 36px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .ewa-btn-white:hover { background: #f0f4ff; }
         
-        .ewa-loading { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 12px; }
+        .ewa-loading { display: flex; flex-direction: column; align-items: center; padding: 60px 20px; gap: 16px; }
         .ewa-spin { width: 40px; height: 40px; border: 3px solid #ddd; border-top-color: #003366; border-radius: 50%; animation: ewaspin 0.7s linear infinite; }
         @keyframes ewaspin { to { transform: rotate(360deg); } }
         .ewa-err { background: #fff3f3; border: 1px solid #ffcdd2; border-radius: 6px; padding: 20px; text-align: center; color: #c62828; margin: 20px 0; }
+        
+        .ewa-progress-bar { width: 200px; height: 4px; background: #ddd; border-radius: 2px; overflow: hidden; }
+        .ewa-progress-fill { height: 100%; background: #003366; border-radius: 2px; animation: ewaProgress 3s ease-in-out infinite; }
+        @keyframes ewaProgress { 0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; } }
       `}} />
 
       <div className="ewa-page">
@@ -159,7 +179,11 @@ export default function EWABills() {
           {loading && (
             <div className="ewa-loading">
               <div className="ewa-spin"></div>
-              <p style={{ color: '#666', fontSize: '14px' }}>جاري جلب بيانات الفواتير...</p>
+              <p style={{ color: '#333', fontSize: '15px', fontWeight: 600 }}>{loadingMsg}</p>
+              <div className="ewa-progress-bar">
+                <div className="ewa-progress-fill"></div>
+              </div>
+              <p style={{ color: '#999', fontSize: '12px' }}>قد يستغرق الأمر بضع ثوان...</p>
             </div>
           )}
 

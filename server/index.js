@@ -1548,41 +1548,82 @@ function findChromePath() {
   return undefined;
 }
 
+// ===== Browser Pool for Speed =====
+let ewaBrowser = null;
+let ewaReadyPage = null;
+let isPrewarming = false;
+
+async function getEwaBrowser() {
+  if (ewaBrowser && ewaBrowser.isConnected()) return ewaBrowser;
+  const chromePath = findChromePath();
+  const launchOptions = {
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
+  };
+  if (chromePath) launchOptions.executablePath = chromePath;
+  ewaBrowser = await puppeteer.launch(launchOptions);
+  console.log('EWA Browser launched');
+  return ewaBrowser;
+}
+
+async function prewarmEwaPage() {
+  if (isPrewarming) return;
+  isPrewarming = true;
+  try {
+    const browser = await getEwaBrowser();
+    const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    console.log('EWA Prewarm: Loading page...');
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+      waitUntil: 'domcontentloaded', timeout: 60000
+    });
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
+    await page.click('a[id*="payEWABillLink"]');
+    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
+    await new Promise(r => setTimeout(r, 1000));
+    ewaReadyPage = page;
+    console.log('EWA Prewarm: Form page ready!');
+  } catch(e) {
+    console.log('EWA Prewarm failed:', e.message);
+    ewaReadyPage = null;
+  }
+  isPrewarming = false;
+}
+
+// Prewarm on startup (after 5 seconds)
+setTimeout(() => prewarmEwaPage(), 5000);
+
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
   if (!idType || !idNumber || !accountNumber) {
     return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
   }
 
-  let browser;
+  const startTime = Date.now();
+  let page = null;
+  let usedPrewarm = false;
   try {
-    const chromePath = findChromePath();
-    const launchOptions = {
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
-    };
-    if (chromePath) launchOptions.executablePath = chromePath;
-    
-    browser = await puppeteer.launch(launchOptions);
-    const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-
-    // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
-    console.log('EWA Step 1: Opening page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'networkidle2', timeout: 90000
-    });
-    console.log('EWA Step 1: Page loaded');
-
-    // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
-    console.log('EWA Step 2: Looking for payEWABillLink...');
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
-    await page.click('a[id*="payEWABillLink"]');
-    console.log('EWA Step 2: Clicked payEWABillLink, waiting for form...');
-    // Wait for the form to appear instead of waitForNavigation
-    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-    await new Promise(r => setTimeout(r, 2000));
-    console.log('EWA Step 2: Form loaded');
+    // Try to use prewarmed page first
+    if (ewaReadyPage && !ewaReadyPage.isClosed()) {
+      page = ewaReadyPage;
+      ewaReadyPage = null;
+      usedPrewarm = true;
+      console.log('EWA: Using prewarmed page!');
+    } else {
+      // No prewarmed page - do it fresh
+      console.log('EWA: No prewarmed page, loading fresh...');
+      const browser = await getEwaBrowser();
+      page = await browser.newPage();
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+        waitUntil: 'domcontentloaded', timeout: 60000
+      });
+      await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
+      await page.click('a[id*="payEWABillLink"]');
+      await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    console.log(`EWA Step 1: Form ready (${Date.now() - startTime}ms)`);
 
     // الخطوة 3: اختيار نوع الهوية
     const idTypeMap = {
@@ -1600,53 +1641,46 @@ app.post('/api/ewa-bill', async (req, res) => {
     };
     const label = idTypeMap[idType] || idType;
 
-    // اختيار من القائمة المنسدلة بناءً على النص
-    console.log('EWA Step 3: Selecting ID type:', label);
+    console.log('EWA Step 2: Selecting ID type:', label);
     const selectEl = await page.$('select[id*="idList"]');
     if (selectEl) {
       const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
       const match = options.find(o => o.text === label);
       if (match) {
         await page.select('select[id*="idList"]', match.value);
-        console.log('EWA Step 3: Selected', match.value);
       }
     }
-    await new Promise(r => setTimeout(r, 5000));
-    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
+    // Wait for AJAX to load input fields after select change
+    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
+    console.log(`EWA Step 2: ID type selected (${Date.now() - startTime}ms)`);
 
     // الخطوة 4: تعبئة البيانات
-    console.log('EWA Step 4: Filling form...');
-    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
     const idInput = await page.$('input[id*="identitynumber"]');
     if (idInput) {
       await idInput.click({ clickCount: 3 });
       await idInput.type(idNumber);
-      console.log('EWA Step 4: Filled ID number');
     }
-    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 30000 });
+    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 15000 });
     const accInput = await page.$('input[id*="accountnumber"]');
     if (accInput) {
       await accInput.click({ clickCount: 3 });
       await accInput.type(accountNumber);
-      console.log('EWA Step 4: Filled account number');
     }
+    console.log(`EWA Step 3: Form filled (${Date.now() - startTime}ms)`);
 
     // الخطوة 5: الضغط على ارسال
-    console.log('EWA Step 5: Clicking submit...');
-    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 30000 });
+    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 15000 });
     await page.click('input[id*="form1:submit"]');
-    console.log('EWA Step 5: Submit clicked, waiting for result...');
-    // Wait for result page to appear
+    console.log(`EWA Step 4: Submit clicked (${Date.now() - startTime}ms)`);
     try {
       await page.waitForFunction(() => {
         const b = document.body.innerText;
         return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
       }, { timeout: 30000 });
-      console.log('EWA Step 5: Result page detected');
     } catch(e) {
-      console.log('EWA Step 5: Timeout waiting for result, continuing...');
+      console.log('EWA: Timeout waiting for result, continuing...');
     }
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
 
     // الخطوة 6: قراءة النتيجة
     const content = await page.content();
@@ -1764,13 +1798,21 @@ app.post('/api/ewa-bill', async (req, res) => {
       } catch(e) { console.log('Parse error:', e.message); }
     }
 
-    await browser.close();
+    // Close page (not browser) and start prewarming next page
+    const totalTime = Date.now() - startTime;
+    console.log(`EWA: Done in ${totalTime}ms (prewarm: ${usedPrewarm})`);
+    result.responseTime = totalTime;
+    if (page && !page.isClosed()) await page.close().catch(() => {});
     res.json(result);
+    // Prewarm next page in background
+    setTimeout(() => prewarmEwaPage(), 1000);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
-    if (browser) try { await browser.close(); } catch(e) {}
+    if (page && !page.isClosed()) await page.close().catch(() => {});
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
+    // Try to prewarm again
+    setTimeout(() => prewarmEwaPage(), 2000);
   }
 });
 

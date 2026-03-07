@@ -87,7 +87,7 @@ export default function HomePage() {
         }
         .bh-header-divider {
           border: none;
-          border-top: 2px solid #D3D3DA;
+          border-top: 2px solid #B0B0BA;
           margin: 0;
         }
         .bh-header-row1 {
@@ -159,7 +159,7 @@ export default function HomePage() {
         .bh-nav {
           background: #EAEAEE;
           border-bottom: none;
-          border-top: 2px solid #D3D3DA;
+          border-top: 2px solid #B0B0BA;
           padding: 8px 0;
           margin-top: 0;
         }
@@ -346,7 +346,7 @@ export default function HomePage() {
         .bh-footer-links {
           background: #F0F0F3;
           padding: 40px 0 30px 0;
-          border-top: 1px solid #D3D3DA;
+          border-top: 1px solid #B0B0BA;
         }
         .bh-footer-columns {
           display: flex;
@@ -362,7 +362,7 @@ export default function HomePage() {
           color: #17171C !important;
           margin-bottom: 16px !important;
           padding-bottom: 8px;
-          border-bottom: 2px solid #D3D3DA;
+          border-bottom: 2px solid #B0B0BA;
           display: block;
         }
         .bh-footer-col ul {
@@ -388,7 +388,6 @@ export default function HomePage() {
           padding: 30px 0;
         }
         .bh-footer-social > .bh-container {
-          border-top: 1px solid #D3D3DA;
           padding-top: 30px;
         }
         .bh-footer-social-inner {
@@ -462,8 +461,8 @@ export default function HomePage() {
           text-align: center;
         }
         .bh-footer-bottom-links > .bh-container {
-          border-top: 1px solid #D3D3DA;
-          padding-top: 16px;
+          border-bottom: 1px solid #B0B0BA;
+          padding-bottom: 16px;
         }
         .bh-footer-bottom-links a {
           font-size: 18px !important;
@@ -484,7 +483,6 @@ export default function HomePage() {
           background: #E2E2E7;
           padding: 20px 0;
           text-align: center;
-          border-top: 1px solid #D3D3DA;
         }
         .bh-footer-copyright p {
           font-size: 18px !important;

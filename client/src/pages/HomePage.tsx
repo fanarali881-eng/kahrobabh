@@ -17,7 +17,7 @@ export default function HomePage() {
 
   const fetchWeather = async () => {
     try {
-      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=26.23&longitude=50.58&current=temperature_2m,relative_humidity_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset&timezone=Asia/Bahrain&forecast_days=4');
+      const res = await fetch('/api/weather');
       const data = await res.json();
       setWeatherData(data);
     } catch (e) {
@@ -519,43 +519,53 @@ export default function HomePage() {
         }
         .weather-forecast {
           display: flex;
-          gap: 10px;
-          padding: 16px 18px;
-          justify-content: center;
+          gap: 6px;
+          padding: 12px 10px;
+          justify-content: flex-start;
           background: #e8ecf0;
           direction: rtl;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .weather-forecast::-webkit-scrollbar {
+          height: 4px;
+        }
+        .weather-forecast::-webkit-scrollbar-thumb {
+          background: #aaa;
+          border-radius: 2px;
         }
         .weather-forecast-day {
-          flex: 1;
+          flex: 0 0 auto;
+          min-width: 70px;
           background: #3d4f5f;
           border-radius: 10px;
-          padding: 12px 6px;
+          padding: 10px 4px;
           text-align: center;
-          font-size: 12px;
-          line-height: 1.5;
+          font-size: 11px;
+          line-height: 1.4;
           color: #fff;
         }
         .weather-forecast-name {
           font-weight: 600;
-          font-size: 13px;
+          font-size: 12px;
           color: #fff;
         }
         .weather-forecast-daynum {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 700;
           color: #fff;
         }
         .weather-forecast-month {
-          font-size: 12px;
+          font-size: 11px;
           color: #ccc;
         }
         .weather-forecast-icon {
-          font-size: 30px;
-          margin: 6px 0;
+          font-size: 26px;
+          margin: 4px 0;
         }
         .weather-forecast-temps {
           font-weight: 600;
-          font-size: 14px;
+          font-size: 12px;
           color: #fff;
         }
         .weather-link {
@@ -790,7 +800,7 @@ export default function HomePage() {
                     <div className="weather-popup-header">
                       <span className="weather-close" onClick={() => setShowWeather(false)}>✕</span>
                       <span className="weather-date">
-                        {(() => {
+                        {weatherData ? weatherData.currentDate : (() => {
                           const now = new Date();
                           const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
                           const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -802,41 +812,41 @@ export default function HomePage() {
                     {weatherData ? (
                       <>
                         <div className="weather-current">
-                          <div className="weather-current-icon"><img src="/weather-icon.svg" alt="" style={{ width: '60px', height: '60px' }} /></div>
-                          <div className="weather-current-desc">{getWeatherDesc(weatherData.current.weather_code)}</div>
+                          <div className="weather-current-icon"><img src={weatherData.weatherIcon || '/weather-icon.svg'} alt={weatherData.condition} style={{ width: '60px', height: '60px' }} /></div>
+                          <div className="weather-current-desc">{weatherData.condition}</div>
                           <div className="weather-current-row">
                             <div className="weather-info-col">
                               <div>الصغرى</div>
-                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_min[0])}°</div>
+                              <div className="weather-val">{weatherData.minTemp}°</div>
                               <div>الرطوبة</div>
-                              <div className="weather-val">{weatherData.current.relative_humidity_2m} %</div>
+                              <div className="weather-val">{weatherData.humidity} %</div>
                             </div>
                             <div className="weather-info-col weather-main-temp">
-                              <div className="weather-big-temp">{Math.round(weatherData.current.temperature_2m)} °C</div>
+                              <div className="weather-big-temp">{weatherData.currentTemp} °C</div>
                               <div>شروق الشمس</div>
-                              <div className="weather-val">{formatTime(weatherData.daily.sunrise[0])}</div>
+                              <div className="weather-val">{weatherData.sunrise}</div>
                             </div>
                             <div className="weather-info-col">
                               <div>العظمى</div>
-                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_max[0])}°</div>
+                              <div className="weather-val">{weatherData.maxTemp}°</div>
                               <div>غروب الشمس</div>
-                              <div className="weather-val">{formatTime(weatherData.daily.sunset[0])}</div>
+                              <div className="weather-val">{weatherData.sunset}</div>
                             </div>
                           </div>
                         </div>
                         <div className="weather-forecast">
-                          {[1, 2, 3].map(i => (
+                          {weatherData.forecast && weatherData.forecast.slice(0, 7).map((day: any, i: number) => (
                             <div className="weather-forecast-day" key={i}>
-                              <div className="weather-forecast-name">{getArabicDay(weatherData.daily.time[i])}</div>
-                              <div className="weather-forecast-daynum">{new Date(weatherData.daily.time[i]).getDate().toString().padStart(2,'0')}</div>
-                              <div className="weather-forecast-month">{getArabicMonth(weatherData.daily.time[i])}</div>
-                              <div className="weather-forecast-icon"><img src="/weather-icon.svg" alt="" style={{ width: '36px', height: '36px' }} /></div>
-                              <div className="weather-forecast-temps">{Math.round(weatherData.daily.temperature_2m_min[i])}°-{Math.round(weatherData.daily.temperature_2m_max[i])}°</div>
+                              <div className="weather-forecast-name">{day.dayName}</div>
+                              <div className="weather-forecast-daynum">{day.date.match(/\d+/)?.[0] || ''}</div>
+                              <div className="weather-forecast-month">{day.date.replace(/\d+/g, '').trim()}</div>
+                              <div className="weather-forecast-icon"><img src={day.icon || '/weather-icon.svg'} alt={day.condition} style={{ width: '36px', height: '36px' }} /></div>
+                              <div className="weather-forecast-temps">{day.minTemp}°-{day.maxTemp}°</div>
                             </div>
                           ))}
                         </div>
                         <div className="weather-link">
-                          لمزيد من المعلومات : <a href="https://bahrainweather.gov.bh" target="_blank" rel="noopener noreferrer">bahrainweather.gov.bh</a> ↗
+                          لمزيد من المعلومات : <a href="https://www.bahrainweather.gov.bh/ar/" target="_blank" rel="noopener noreferrer">bahrainweather.gov.bh</a> ↗
                         </div>
                       </>
                     ) : (

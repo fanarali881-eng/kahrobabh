@@ -639,6 +639,13 @@ export default function HomePage() {
                 <option value="bahraini">الرقم الشخصي البحريني</option>
                 <option value="saudi">الرقم الشخصي السعودي</option>
                 <option value="omani">الرقم الشخصي العماني</option>
+                <option value="qatari">الرقم الشخصي القطري</option>
+                <option value="kuwaiti">الرقم الشخصي الكويتي</option>
+                <option value="owners_union">رقم اتحاد الملاك</option>
+                <option value="gov_entity">رقم الجهة الحكومية</option>
+                <option value="passport">رقم الجواز</option>
+                <option value="commercial_reg">رقم السجل التجاري</option>
+                <option value="establishment">رقم المنشأة</option>
               </select>
             </div>
 

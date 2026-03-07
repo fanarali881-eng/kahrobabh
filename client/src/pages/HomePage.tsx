@@ -485,7 +485,8 @@ export default function HomePage() {
           margin: 4px 0 !important;
         }
         .bh-footer-copyright a {
-          color: #0747C7 !important;
+          color: #17171C !important;
+          text-decoration: underline !important;
         }
         
         /* Mobile responsive */

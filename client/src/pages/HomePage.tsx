@@ -165,7 +165,7 @@ export default function HomePage() {
           font-weight: 600 !important;
           color: #17171C !important;
           padding: 14px 28px !important;
-          border-left: 1px solid #D3D3DA;
+          border-left: none;
           display: flex;
           align-items: center;
           white-space: nowrap;
@@ -174,7 +174,12 @@ export default function HomePage() {
         .bh-nav-item:last-child {
           border-left: none;
         }
-        .bh-nav-item:first-child::before {
+        .bh-nav-item.nav-active {
+          background: #fff;
+          border-radius: 8px 8px 0 0;
+          position: relative;
+        }
+        .bh-nav-item.nav-active::before {
           content: "";
           display: inline-block;
           width: 3px;
@@ -405,7 +410,7 @@ export default function HomePage() {
         <div className="bh-nav">
           <div className="bh-container">
             <div className="bh-nav-items">
-              <a className="bh-nav-item">الصفحة الرئيسية</a>
+              <a className="bh-nav-item nav-active">الصفحة الرئيسية</a>
               <a className="bh-nav-item">الخدمات الإلكترونية حسب التصنيف</a>
               <a className="bh-nav-item">الخدمات الإلكترونية حسب المقدم</a>
               <a className="bh-nav-item">متجر تطبيقات الحكومة الإلكترونية</a>

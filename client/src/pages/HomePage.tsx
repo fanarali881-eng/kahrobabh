@@ -426,7 +426,7 @@ export default function HomePage() {
         .bh-footer-social-left {
           display: flex;
           flex-direction: column;
-          align-items: center;
+          align-items: flex-start;
           gap: 12px;
         }
         .bh-footer-contact-title {
@@ -738,7 +738,7 @@ export default function HomePage() {
               <div className="bh-footer-social-left">
                 <div className="bh-footer-contact-title">تواصل معنا</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '50px', objectFit: 'contain' }} />
+                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '38px', objectFit: 'contain' }} />
                   <div>
                     <div className="bh-footer-contact-number">80008001</div>
                     <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>

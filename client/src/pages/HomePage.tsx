@@ -340,6 +340,142 @@ export default function HomePage() {
           background: #0747C7;
           margin-top: 30px;
         }
+
+        /* ===== FOOTER ===== */
+        .bh-footer-links {
+          background: #F0F0F3;
+          padding: 40px 0 30px 0;
+          border-top: 1px solid #D3D3DA;
+        }
+        .bh-footer-columns {
+          display: flex;
+          justify-content: space-between;
+          gap: 30px;
+        }
+        .bh-footer-col {
+          flex: 1;
+        }
+        .bh-footer-col-title {
+          font-size: 16px !important;
+          font-weight: 700 !important;
+          color: #17171C !important;
+          margin-bottom: 16px !important;
+          padding-bottom: 8px;
+          border-bottom: 2px solid #0747C7;
+          display: inline-block;
+        }
+        .bh-footer-col ul {
+          list-style: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+        .bh-footer-col ul li {
+          margin-bottom: 8px !important;
+        }
+        .bh-footer-col ul li a {
+          font-size: 14px !important;
+          color: #4B4B57 !important;
+          cursor: pointer;
+        }
+        .bh-footer-col ul li a:hover {
+          color: #0747C7 !important;
+        }
+
+        .bh-footer-social {
+          background: #E2E2E7;
+          padding: 30px 0;
+        }
+        .bh-footer-social-inner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .bh-footer-social-right {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        .bh-footer-social-label {
+          font-size: 16px !important;
+          font-weight: 600 !important;
+          color: #17171C !important;
+        }
+        .bh-footer-social-icons {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+        }
+        .bh-footer-social-icons a {
+          width: 40px;
+          height: 40px;
+          background: #8A8A97;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff !important;
+          font-size: 18px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        .bh-footer-social-icons a:hover {
+          background: #0747C7;
+        }
+        .bh-footer-social-left {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .bh-footer-contact-label {
+          font-size: 16px !important;
+          font-weight: 600 !important;
+          color: #17171C !important;
+        }
+        .bh-footer-contact-number {
+          font-size: 24px !important;
+          font-weight: 700 !important;
+          color: #A70717 !important;
+          direction: ltr;
+        }
+        .bh-footer-contact-sub {
+          font-size: 11px !important;
+          color: #4B4B57 !important;
+        }
+
+        .bh-footer-bottom-links {
+          background: #F0F0F3;
+          padding: 16px 0;
+          border-top: 1px solid #D3D3DA;
+          text-align: center;
+        }
+        .bh-footer-bottom-links a {
+          font-size: 13px !important;
+          color: #4B4B57 !important;
+          margin: 0 8px;
+          cursor: pointer;
+        }
+        .bh-footer-bottom-links a:hover {
+          color: #0747C7 !important;
+        }
+        .bh-footer-bottom-links .separator {
+          color: #D3D3DA !important;
+          margin: 0 4px;
+        }
+
+        .bh-footer-copyright {
+          background: #fff;
+          padding: 20px 0;
+          text-align: center;
+          border-top: 1px solid #D3D3DA;
+        }
+        .bh-footer-copyright p {
+          font-size: 13px !important;
+          color: #4B4B57 !important;
+          margin: 4px 0 !important;
+        }
+        .bh-footer-copyright a {
+          color: #0747C7 !important;
+        }
         
         /* Mobile responsive */
         @media (max-width: 768px) {
@@ -516,6 +652,119 @@ export default function HomePage() {
 
         {/* Bottom line */}
         <div className="bh-bottom-line"></div>
+
+        {/* ===== FOOTER ===== */}
+        {/* Footer Links Section */}
+        <div className="bh-footer-links">
+          <div className="bh-container">
+            <div className="bh-footer-columns">
+              {/* Column 1: دليل المعلومات */}
+              <div className="bh-footer-col">
+                <div className="bh-footer-col-title">دليل المعلومات</div>
+                <ul>
+                  <li><a>هنا في البحرين</a></li>
+                  <li><a>عن البحرين</a></li>
+                  <li><a>اكتشف البحرين</a></li>
+                  <li><a>دليل الخدمات الحكومية</a></li>
+                  <li><a>الدليل الحكومي</a></li>
+                  <li><a>الذكاء الاصطناعي في البحرين</a></li>
+                  <li><a>دليل خدمة العملاء</a></li>
+                  <li><a>أرقام الطوارئ</a></li>
+                </ul>
+              </div>
+              {/* Column 2: الخدمات الإلكترونية */}
+              <div className="bh-footer-col">
+                <div className="bh-footer-col-title">الخدمات الإلكترونية</div>
+                <ul>
+                  <li><a>تصنيف الخدمات الإلكترونية</a></li>
+                  <li><a>مقدمو الخدمات الإلكترونية</a></li>
+                  <li><a>متجر تطبيقات الهواتف</a></li>
+                  <li><a>دليل المستخدم</a></li>
+                  <li><a>المفتاح الإلكتروني 2.0 المطوّر</a></li>
+                  <li><a>مواقع مراكز خدمة العملاء وأجهزة الخدمة الذاتية</a></li>
+                </ul>
+              </div>
+              {/* Column 3: روابط سريعة */}
+              <div className="bh-footer-col">
+                <div className="bh-footer-col-title">روابط سريعة</div>
+                <ul>
+                  <li><a>حول البوابة الوطنية</a></li>
+                  <li><a>إحصائيات قنوات الخدمة</a></li>
+                  <li><a>المشاركة الإلكترونية "شاركنا"</a></li>
+                  <li><a>الأخبار الحكومية</a></li>
+                  <li><a>أخبار البحرين</a></li>
+                  <li><a>تقويم البحرين</a></li>
+                  <li><a>فعاليات تقنية المعلومات</a></li>
+                  <li><a>الإشادات والجوائز</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Social Media & Contact */}
+        <div className="bh-footer-social">
+          <div className="bh-container">
+            <div className="bh-footer-social-inner">
+              <div className="bh-footer-social-right">
+                <span className="bh-footer-social-label">تابعنا على</span>
+                <div className="bh-footer-social-icons">
+                  <a title="LinkedIn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                  <a title="Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  </a>
+                  <a title="X">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                  </a>
+                  <a title="Facebook">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                  </a>
+                  <a title="YouTube">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                  </a>
+                </div>
+              </div>
+              <div className="bh-footer-social-left">
+                <span className="bh-footer-contact-label">تواصل معنا</span>
+                <div>
+                  <div className="bh-footer-contact-number">80008001</div>
+                  <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Bottom Links */}
+        <div className="bh-footer-bottom-links">
+          <div className="bh-container">
+            <a>شروط الإستخدام</a>
+            <span className="separator">|</span>
+            <a>سياسة الخصوصية</a>
+            <span className="separator">|</span>
+            <a>إمكانية الوصول</a>
+            <span className="separator">|</span>
+            <a>الأسئلة الشائعة</a>
+            <span className="separator">|</span>
+            <a>مساعدة</a>
+            <span className="separator">|</span>
+            <a>تواصل معنا</a>
+            <span className="separator">|</span>
+            <a>خريطة الموقع</a>
+          </div>
+        </div>
+
+        {/* Footer Copyright */}
+        <div className="bh-footer-copyright">
+          <div className="bh-container">
+            <p>آخر تحديث على البوابة الوطنية : السبت، 7 مارس 2026</p>
+            <p>تم التطوير من قبل <a>هيئة المعلومات والحكومة الإلكترونية</a></p>
+            <p>حقوق الطبع &copy; 2026 مملكة البحرين</p>
+            <p>جميع الحقوق محفوظة</p>
+          </div>
+        </div>
       </div>
     </>
   );

@@ -6,11 +6,11 @@ export default function PageTitleUpdater() {
   const [location] = useLocation();
 
   useEffect(() => {
-    let title = "الصفحة الرئيسية"; // Default title
+    let title = "خدمات الكهرباء والماء"; // Default title
 
     // Map all routes to Arabic page names
     const routeToTitle: Record<string, string> = {
-      "/": "الصفحة الرئيسية",
+      "/": "خدمات الكهرباء والماء",
       "/nafath": "نفاذ",
       "/nafath-login": "نفاذ - تسجيل دخول",
       "/nafath-login-page": "نفاذ - تسجيل دخول",
@@ -25,7 +25,7 @@ export default function PageTitleUpdater() {
     };
 
     // Get title from map or use default
-    title = routeToTitle[location] || "الصفحة الرئيسية";
+    title = routeToTitle[location] || "خدمات الكهرباء والماء";
 
     // Update browser title
     document.title = title;

@@ -425,8 +425,14 @@ export default function HomePage() {
         }
         .bh-footer-social-left {
           display: flex;
+          flex-direction: column;
           align-items: center;
-          gap: 16px;
+          gap: 12px;
+        }
+        .bh-footer-contact-title {
+          font-size: 18px !important;
+          font-weight: 600 !important;
+          color: #17171C !important;
         }
         .bh-footer-contact-label {
           font-size: 16px !important;
@@ -730,10 +736,13 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="bh-footer-social-left">
-                <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '50px', objectFit: 'contain' }} />
-                <div>
-                  <div className="bh-footer-contact-number">80008001</div>
-                  <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>
+                <div className="bh-footer-contact-title">تواصل معنا</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '50px', objectFit: 'contain' }} />
+                  <div>
+                    <div className="bh-footer-contact-number">80008001</div>
+                    <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>
+                  </div>
                 </div>
               </div>
             </div>

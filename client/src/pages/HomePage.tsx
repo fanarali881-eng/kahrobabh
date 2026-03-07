@@ -374,8 +374,8 @@ export default function HomePage() {
           margin-bottom: 8px !important;
         }
         .bh-footer-col ul li a {
-          font-size: 14px !important;
-          color: #4B4B57 !important;
+          font-size: 16px !important;
+          color: #17171C !important;
           cursor: pointer;
         }
         .bh-footer-col ul li a:hover {
@@ -707,6 +707,7 @@ export default function HomePage() {
         <div className="bh-footer-social">
           <div className="bh-container">
             <div className="bh-footer-social-inner">
+              <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '80px', objectFit: 'contain' }} />
               <div className="bh-footer-social-right">
                 <span className="bh-footer-social-label">تابعنا على</span>
                 <div className="bh-footer-social-icons">

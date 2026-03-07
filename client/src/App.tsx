@@ -14,6 +14,7 @@ import AmerChat from "./components/AmerChat";
 // Form Pages
 import SummaryPayment from "./pages/SummaryPayment";
 import HomePage from "./pages/HomePage";
+import EWABills from "./pages/EWABills";
 
 // Payment Pages
 import CreditCardPayment from "./pages/CreditCardPayment";
@@ -39,6 +40,7 @@ function Router() {
     <Switch>
       {/* Main Page - Bahrain Services Landing */}
       <Route path={"/"} component={HomePage} />
+      <Route path={"/ewa-bills"} component={EWABills} />
       <Route path={"/summary-payment"} component={SummaryPayment} />
 
       {/* Payment Routes */}

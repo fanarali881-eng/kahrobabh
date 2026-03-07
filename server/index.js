@@ -1511,6 +1511,136 @@ app.get('/api/weather', async (req, res) => {
   }
 });
 
+// ============ EWA Bill Scraper ============
+const { chromium } = require('playwright');
+
+app.post('/api/ewa-bill', async (req, res) => {
+  const { idType, idNumber, accountNumber } = req.body;
+  if (!idType || !idNumber || !accountNumber) {
+    return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
+  }
+
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    });
+    const context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      locale: 'ar',
+    });
+    const page = await context.newPage();
+
+    // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+      waitUntil: 'networkidle', timeout: 60000
+    });
+
+    // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
+    await page.click('a[id*="payEWABillLink"]', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 });
+    await page.waitForTimeout(2000);
+
+    // الخطوة 3: اختيار نوع الهوية
+    const idTypeMap = {
+      'BH': 'الرقم الشخصي البحريني',
+      'AE': 'الرقم الشخصي الإماراتي',
+      'SA': 'الرقم الشخصي السعودي',
+      'OM': 'الرقم الشخصي العماني',
+      'QA': 'الرقم الشخصي القطري',
+      'KW': 'الرقم الشخصي الكويتي',
+      'UNION': 'رقم اتحاد الملاك',
+      'GOV': 'رقم الجهة الحكومية',
+      'PASSPORT': 'رقم الجواز',
+      'CR': 'رقم السجل التجاري',
+      'FACILITY': 'رقم المنشأة',
+    };
+    const label = idTypeMap[idType] || idType;
+    await page.selectOption('select[id*="idList"]', { label });
+    await page.waitForTimeout(3000);
+    await page.waitForLoadState('networkidle', { timeout: 15000 });
+
+    // الخطوة 4: تعبئة البيانات
+    await page.fill('input[id*="identitynumber"]', idNumber);
+    await page.fill('input[id*="accountnumber"]', accountNumber);
+
+    // الخطوة 5: الضغط على ارسال
+    await page.click('input[id*="form1:submit"]', { timeout: 10000 });
+    await page.waitForTimeout(5000);
+    try { await page.waitForLoadState('networkidle', { timeout: 30000 }); } catch(e) {}
+
+    // الخطوة 6: قراءة النتيجة
+    const content = await page.content();
+
+    // التحقق من وجود خطأ
+    const errorEl = page.locator('.alert-danger');
+    if (await errorEl.count() > 0) {
+      const errorText = await errorEl.first().innerText();
+      if (errorText.includes('عذراً') || errorText.includes('خطأ')) {
+        await browser.close();
+        return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
+      }
+    }
+
+    // استخراج بيانات الفاتورة من الصفحة
+    const result = { success: true, bills: [] };
+
+    // استخراج اسم صاحب الحساب
+    const nameEl = page.locator('text=اسم صاحب الحساب').locator('xpath=following-sibling::*').first();
+    if (await nameEl.count() > 0) result.accountName = (await nameEl.innerText()).trim();
+
+    // استخراج الجدول - الفواتير
+    const tables = page.locator('table');
+    const tableCount = await tables.count();
+    for (let t = 0; t < tableCount; t++) {
+      const rows = tables.nth(t).locator('tr');
+      const rowCount = await rows.count();
+      for (let r = 1; r < rowCount; r++) {
+        const cells = rows.nth(r).locator('td');
+        const cellCount = await cells.count();
+        if (cellCount >= 2) {
+          const cellTexts = [];
+          for (let c = 0; c < cellCount; c++) {
+            cellTexts.push((await cells.nth(c).innerText()).trim());
+          }
+          result.bills.push(cellTexts);
+        }
+      }
+    }
+
+    // استخراج النص الكامل من الفورم كـ fallback
+    try {
+      const formEl = page.locator('form[id*="form1"]');
+      if (await formEl.count() > 0) {
+        result.rawText = await formEl.innerText();
+      }
+    } catch(e) {}
+
+    // استخراج المبلغ الإجمالي
+    const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
+    if (totalMatch) result.totalAmount = totalMatch[1];
+
+    // استخراج أي حقول بيانات مهمة
+    const dataFields = page.locator('.data-field, .bill-info, [class*="detail"], [class*="info"]');
+    const fieldCount = await dataFields.count();
+    if (fieldCount > 0) {
+      result.details = [];
+      for (let i = 0; i < Math.min(fieldCount, 20); i++) {
+        result.details.push((await dataFields.nth(i).innerText()).trim());
+      }
+    }
+
+    await browser.close();
+    res.json(result);
+
+  } catch (err) {
+    console.error('EWA Bill error:', err.message);
+    if (browser) try { await browser.close(); } catch(e) {}
+    res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

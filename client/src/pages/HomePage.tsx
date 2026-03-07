@@ -357,7 +357,7 @@ export default function HomePage() {
           flex: 1;
         }
         .bh-footer-col-title {
-          font-size: 16px !important;
+          font-size: 18px !important;
           font-weight: 700 !important;
           color: #17171C !important;
           margin-bottom: 16px !important;
@@ -374,7 +374,7 @@ export default function HomePage() {
           margin-bottom: 8px !important;
         }
         .bh-footer-col ul li a {
-          font-size: 16px !important;
+          font-size: 18px !important;
           color: #17171C !important;
           cursor: pointer;
           text-decoration: underline !important;
@@ -402,7 +402,7 @@ export default function HomePage() {
           gap: 20px;
         }
         .bh-footer-social-label {
-          font-size: 16px !important;
+          font-size: 18px !important;
           font-weight: 600 !important;
           color: #17171C !important;
         }
@@ -434,12 +434,12 @@ export default function HomePage() {
           gap: 12px;
         }
         .bh-footer-contact-title {
-          font-size: 18px !important;
+          font-size: 20px !important;
           font-weight: 600 !important;
           color: #17171C !important;
         }
         .bh-footer-contact-label {
-          font-size: 16px !important;
+          font-size: 18px !important;
           font-weight: 600 !important;
           color: #17171C !important;
         }
@@ -450,7 +450,7 @@ export default function HomePage() {
           direction: ltr;
         }
         .bh-footer-contact-sub {
-          font-size: 10px !important;
+          font-size: 12px !important;
           font-weight: 600 !important;
           color: #4B4B57 !important;
           text-align: center !important;
@@ -466,7 +466,7 @@ export default function HomePage() {
           padding-top: 16px;
         }
         .bh-footer-bottom-links a {
-          font-size: 16px !important;
+          font-size: 18px !important;
           color: #17171C !important;
           margin: 0 8px;
           cursor: pointer;
@@ -487,7 +487,7 @@ export default function HomePage() {
           border-top: 1px solid #D3D3DA;
         }
         .bh-footer-copyright p {
-          font-size: 16px !important;
+          font-size: 18px !important;
           color: #17171C !important;
           margin: 4px 0 !important;
         }

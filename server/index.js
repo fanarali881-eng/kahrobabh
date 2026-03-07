@@ -1535,7 +1535,6 @@ function findChromePath() {
     } catch(e) {}
   }
   
-  // Try system-wide search
   try {
     const result = execSync('which google-chrome || which google-chrome-stable || which chromium-browser || which chromium 2>/dev/null', { encoding: 'utf8' }).trim();
     if (result) {
@@ -1548,35 +1547,73 @@ function findChromePath() {
   return undefined;
 }
 
+// Browser pool - keep browser alive for faster requests
+let browserInstance = null;
+let browserLastUsed = 0;
+const BROWSER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+async function getBrowser() {
+  if (browserInstance && browserInstance.isConnected()) {
+    browserLastUsed = Date.now();
+    return browserInstance;
+  }
+  const chromePath = findChromePath();
+  const launchOptions = {
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process', '--disable-extensions']
+  };
+  if (chromePath) launchOptions.executablePath = chromePath;
+  browserInstance = await puppeteer.launch(launchOptions);
+  browserLastUsed = Date.now();
+  console.log('Browser launched');
+  return browserInstance;
+}
+
+// Close browser after inactivity
+setInterval(() => {
+  if (browserInstance && browserInstance.isConnected() && Date.now() - browserLastUsed > BROWSER_TIMEOUT) {
+    browserInstance.close().catch(() => {});
+    browserInstance = null;
+    console.log('Browser closed due to inactivity');
+  }
+}, 60000);
+
+// Pre-warm browser on startup
+setTimeout(() => { getBrowser().catch(() => {}); }, 5000);
+
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
   if (!idType || !idNumber || !accountNumber) {
     return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
   }
 
-  let browser;
+  let page;
   try {
-    const chromePath = findChromePath();
-    const launchOptions = {
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
-    };
-    if (chromePath) launchOptions.executablePath = chromePath;
+    const browser = await getBrowser();
+    page = await browser.newPage();
     
-    browser = await puppeteer.launch(launchOptions);
-    const page = await browser.newPage();
+    // Block images and CSS for speed
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const type = req.resourceType();
+      if (['image', 'stylesheet', 'font', 'media'].includes(type)) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+    
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
     // الخطوة 1: فتح صفحة خدمات الكهرباء والماء
     await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'networkidle2', timeout: 60000
+      waitUntil: 'domcontentloaded', timeout: 30000
     });
 
     // الخطوة 2: الضغط على دفع فاتورة الكهرباء والماء
     await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 10000 });
     await page.click('a[id*="payEWABillLink"]');
-    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
-    await new Promise(r => setTimeout(r, 2000));
+    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
 
     // الخطوة 3: اختيار نوع الهوية
     const idTypeMap = {
@@ -1594,7 +1631,8 @@ app.post('/api/ewa-bill', async (req, res) => {
     };
     const label = idTypeMap[idType] || idType;
 
-    // اختيار من القائمة المنسدلة بناءً على النص
+    // انتظار الفورم
+    await page.waitForSelector('select[id*="idList"]', { timeout: 10000 });
     const selectEl = await page.$('select[id*="idList"]');
     if (selectEl) {
       const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
@@ -1603,25 +1641,26 @@ app.post('/api/ewa-bill', async (req, res) => {
         await page.select('select[id*="idList"]', match.value);
       }
     }
-    await new Promise(r => setTimeout(r, 3000));
-    await page.waitForNetworkIdle({ timeout: 15000 }).catch(() => {});
+    // انتظار قصير بعد اختيار النوع
+    await new Promise(r => setTimeout(r, 1000));
 
     // الخطوة 4: تعبئة البيانات
     const idInput = await page.$('input[id*="identitynumber"]');
     if (idInput) {
       await idInput.click({ clickCount: 3 });
-      await idInput.type(idNumber);
+      await idInput.type(idNumber, { delay: 0 });
     }
     const accInput = await page.$('input[id*="accountnumber"]');
     if (accInput) {
       await accInput.click({ clickCount: 3 });
-      await accInput.type(accountNumber);
+      await accInput.type(accountNumber, { delay: 0 });
     }
 
     // الخطوة 5: الضغط على ارسال
     await page.click('input[id*="form1:submit"]');
-    await new Promise(r => setTimeout(r, 5000));
-    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
+    // انتظار النتيجة - بس لحد ما يحمل الـ DOM
+    await page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {});
+    await new Promise(r => setTimeout(r, 1500));
 
     // الخطوة 6: قراءة النتيجة
     const content = await page.content();
@@ -1629,17 +1668,77 @@ app.post('/api/ewa-bill', async (req, res) => {
     // التحقق من وجود خطأ
     const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
     if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
-      await browser.close();
+      if (page) await page.close().catch(() => {});
       return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
     }
 
     // استخراج بيانات الفاتورة من الصفحة
     const result = { success: true, bills: [] };
 
-    // استخراج النص الكامل من الفورم كـ fallback
+    // استخراج النص الكامل من الفورم
+    let rawText = '';
     try {
-      result.rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
+      rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
+      result.rawText = rawText;
     } catch(e) {}
+
+    // تحليل النص لاستخراج البيانات المنظمة
+    const parsedData = {};
+    if (rawText) {
+      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+      
+      // استخراج الحقول المعروفة
+      const fieldMap = [
+        { key: 'accountNumber', label: 'رقم الحساب' },
+        { key: 'customerName', label: 'تفاصيل العميل' },
+        { key: 'issueDate', label: 'تاريخ الاصدار' },
+        { key: 'billMonth', label: 'القائمة لشهر' },
+        { key: 'balance', label: 'الرصيد' },
+        { key: 'minPayment', label: 'الحد الأدنى للدفع' },
+      ];
+      
+      for (let i = 0; i < lines.length; i++) {
+        for (const field of fieldMap) {
+          if (lines[i].includes(field.label)) {
+            // القيمة عادة في السطر التالي أو بعده
+            for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+              const val = lines[j].trim();
+              if (val && !fieldMap.some(f => val.includes(f.label)) && val !== '*') {
+                parsedData[field.key] = val;
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      // استخراج العنوان (السطر بعد اسم العميل)
+      if (parsedData.customerName) {
+        const nameIdx = lines.findIndex(l => l === parsedData.customerName);
+        if (nameIdx >= 0 && nameIdx + 1 < lines.length) {
+          const nextLine = lines[nameIdx + 1];
+          if (nextLine && (nextLine.includes('كراج') || nextLine.includes('مبنى') || nextLine.includes('طريق') || nextLine.includes('شقة') || nextLine.includes('منزل') || nextLine.includes('محافظة'))) {
+            parsedData.address = nextLine;
+          }
+        }
+      }
+      
+      // استخراج مجموع المبالغ
+      const totalLine = lines.find(l => l.includes('مجموع المبالغ'));
+      if (totalLine) {
+        const totalMatch = totalLine.match(/([\d,.]+)/);
+        if (totalMatch) parsedData.totalAmount = totalMatch[1];
+      }
+      
+      // استخراج المبلغ المدفوع
+      const paidLine = lines.find(l => l.includes('مجموع المبلغ المدفوع'));
+      if (paidLine) {
+        const paidMatch = paidLine.match(/([\d,.]+)/);
+        if (paidMatch) parsedData.paidAmount = paidMatch[1];
+      }
+      
+      result.parsedData = parsedData;
+    }
 
     // استخراج الجداول
     const tableData = await page.$$eval('table', tables => {
@@ -1647,7 +1746,7 @@ app.post('/api/ewa-bill', async (req, res) => {
       tables.forEach(table => {
         const rows = table.querySelectorAll('tr');
         rows.forEach((row, idx) => {
-          if (idx === 0) return; // skip header
+          if (idx === 0) return;
           const cells = row.querySelectorAll('td');
           if (cells.length >= 2) {
             const cellTexts = Array.from(cells).map(c => c.textContent.trim());
@@ -1672,16 +1771,25 @@ app.post('/api/ewa-bill', async (req, res) => {
     }).catch(() => []);
     if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
 
-    // استخراج المبلغ الإجمالي
-    const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
-    if (totalMatch) result.totalAmount = totalMatch[1];
+    // استخراج المبلغ الإجمالي من عدة مصادر
+    let totalAmount = null;
+    // من parsedData
+    if (parsedData.totalAmount) totalAmount = parsedData.totalAmount;
+    // من الـ HTML
+    if (!totalAmount) {
+      const totalMatch = content.match(/(?:مجموع المبالغ|المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
+      if (totalMatch) totalAmount = totalMatch[1];
+    }
+    // من الـ balance
+    if (!totalAmount && parsedData.balance) totalAmount = parsedData.balance;
+    if (totalAmount) result.totalAmount = totalAmount;
 
-    await browser.close();
+    if (page) await page.close().catch(() => {});
     res.json(result);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
-    if (browser) try { await browser.close(); } catch(e) {}
+    if (page) try { await page.close(); } catch(e) {}
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
   }
 });

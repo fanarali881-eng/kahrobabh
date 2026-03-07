@@ -558,18 +558,7 @@ export default function HomePage() {
               </div>
               <div className="bh-header-actions">
                 <img src="/accessibility-icon.svg" alt="إمكانية الوصول" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
-                <svg width="30" height="30" viewBox="0 0 50 50" style={{ cursor: 'pointer' }}>
-                  <circle cx="35" cy="12" r="7" fill="#F5C518" stroke="#E8A900" strokeWidth="1"/>
-                  <line x1="35" y1="1" x2="35" y2="4" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="35" y1="20" x2="35" y2="23" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="24" y1="12" x2="27" y2="12" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="43" y1="12" x2="46" y2="12" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="27.5" y1="4.5" x2="29.5" y2="6.5" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="40.5" y1="17.5" x2="42.5" y2="19.5" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="27.5" y1="19.5" x2="29.5" y2="17.5" stroke="#F5C518" strokeWidth="2"/>
-                  <line x1="40.5" y1="6.5" x2="42.5" y2="4.5" stroke="#F5C518" strokeWidth="2"/>
-                  <path d="M20 38c0-6.075 4.925-11 11-11 4.2 0 7.85 2.35 9.7 5.8A8 8 0 0 1 40 48H14a9 9 0 0 1-1-17.9A11 11 0 0 1 20 26" fill="#B8BEC4" stroke="#8E949C" strokeWidth="1.5" fillOpacity="0.7"/>
-                </svg>
+                <img src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} />
                 <span className="bh-login-btn">تسجيل الدخول</span>
               </div>
             </div>

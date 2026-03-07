@@ -192,9 +192,10 @@ export default function HomePage() {
         
         /* Banner */
         .bh-banner {
-          margin: 20px 0;
+          margin: 30px auto 20px auto;
           padding: 0;
           position: relative;
+          max-width: 85%;
         }
         .bh-banner img {
           width: 100%;

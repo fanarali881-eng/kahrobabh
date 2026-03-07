@@ -747,7 +747,7 @@ export default function HomePage() {
               <div className="bh-footer-social-left">
                 <div className="bh-footer-contact-title">تواصل معنا</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '38px', objectFit: 'contain' }} />
+                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '55px', objectFit: 'contain' }} />
                   <div>
                     <div className="bh-footer-contact-number">80008001</div>
                     <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>

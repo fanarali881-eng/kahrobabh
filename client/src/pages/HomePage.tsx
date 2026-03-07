@@ -340,6 +340,7 @@ export default function HomePage() {
           height: 4px;
           background: #0747C7;
           margin-top: 30px;
+          margin-bottom: 0;
         }
 
         /* ===== FOOTER ===== */
@@ -347,7 +348,6 @@ export default function HomePage() {
           background: #F0F0F3;
           padding: 40px 0 30px 0;
           border-top: 1px solid #B0B0BA;
-          margin-top: 40px;
         }
         .bh-footer-columns {
           display: flex;

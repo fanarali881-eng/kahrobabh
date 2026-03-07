@@ -1563,23 +1563,18 @@ async function launchBrowser() {
 
 // Pre-warm: navigate to the form page and keep it ready
 async function prepareFormPage() {
-  if (readyPageLock) return; // Already preparing
+  if (readyPageLock) return;
   readyPageLock = true;
   try {
     const browser = await launchBrowser();
     const page = await browser.newPage();
-    await page.setRequestInterception(true);
-    page.on('request', (r) => {
-      if (['image', 'stylesheet', 'font', 'media'].includes(r.resourceType())) r.abort();
-      else r.continue();
-    });
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
     console.log('Pre-warm: Opening EWA page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'networkidle2', timeout: 60000 });
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 45000 });
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 90000 });
     await page.click('a[id*="payEWABillLink"]');
-    await page.waitForSelector('select[id*="idList"]', { timeout: 45000 });
+    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
     console.log('Pre-warm: Form page ready!');
     readyPage = page;
   } catch (err) {
@@ -1675,49 +1670,34 @@ function parseBillData(bodyText) {
   return data;
 }
 
-app.post('/api/ewa-bill', async (req, res) => {
-  const startTime = Date.now();
-  const { idType, idNumber, accountNumber } = req.body;
-  if (!idType || !idNumber || !accountNumber) {
-    return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
-  }
-
-  let page;
-  let usedReadyPage = false;
-  const debugLog = [];
-  const log = (msg) => { console.log(msg); debugLog.push(`[${Date.now()-startTime}ms] ${msg}`); };
-
+// Core scraping function - reusable with retry
+async function scrapeEWABill(idType, idNumber, accountNumber, log) {
+  const browser = await launchBrowser();
+  const page = await browser.newPage();
+  
   try {
-    // Always use fresh page (pre-warm disabled for debugging)
-    const browser = await launchBrowser();
-    page = await browser.newPage();
-    
-    // DON'T block any resources - let everything load
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1280, height: 800 });
 
-    log('Step 1: Opening EWA page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'networkidle2', timeout: 60000 });
-    log('Step 1: Page loaded');
-
-    // Step 2: Click pay bill link
-    log('Step 2: Looking for payEWABillLink...');
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 45000 });
-    await page.click('a[id*="payEWABillLink"]');
-    log('Step 2: Clicked payEWABillLink, waiting for form...');
-    await page.waitForSelector('select[id*="idList"]', { timeout: 45000 });
-    log('Step 2: Form loaded');
-
-    // Step 3: Get all form element IDs for debugging
-    const formDebug = await page.evaluate(() => {
-      const selects = Array.from(document.querySelectorAll('select')).map(s => ({ id: s.id, name: s.name, options: s.options.length }));
-      const inputs = Array.from(document.querySelectorAll('input')).map(i => ({ id: i.id, name: i.name, type: i.type, visible: i.offsetParent !== null }));
-      const buttons = Array.from(document.querySelectorAll('input[type="submit"], button[type="submit"]')).map(b => ({ id: b.id, name: b.name, type: b.type, value: b.value, visible: b.offsetParent !== null }));
-      return { selects, inputs, buttons };
+    // Step 1: Open page with domcontentloaded (much faster than networkidle2)
+    log('Opening EWA page...');
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { 
+      waitUntil: 'domcontentloaded', 
+      timeout: 90000 
     });
-    log('Step 3: Form elements: ' + JSON.stringify(formDebug));
+    log('Page DOM loaded');
 
-    // Step 3b: Select ID type
+    // Step 2: Wait for the pay bill link (this confirms JS has rendered)
+    log('Waiting for payEWABillLink...');
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 90000 });
+    await page.click('a[id*="payEWABillLink"]');
+    log('Clicked payEWABillLink');
+
+    // Step 3: Wait for form
+    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
+    log('Form loaded');
+
+    // Step 4: Select ID type
     const idTypeMap = {
       'BH': 'الرقم الشخصي البحريني',
       'AE': 'الرقم الشخصي الإماراتي',
@@ -1733,184 +1713,109 @@ app.post('/api/ewa-bill', async (req, res) => {
     };
     const labelText = idTypeMap[idType] || idType;
     const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
-    log('Step 3b: Options: ' + JSON.stringify(options));
     const matchOpt = options.find(o => o.text === labelText);
     if (matchOpt) {
       await page.select('select[id*="idList"]', matchOpt.value);
-      log('Step 3b: Selected: ' + matchOpt.value);
-    } else {
-      log('Step 3b: WARNING - No match for: ' + labelText);
+      log('Selected ID type: ' + matchOpt.value);
     }
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1000));
 
-    // Step 4: Fill form fields
-    log('Step 4: Filling form...');
+    // Step 5: Fill form
     const idInputEl = await page.$('input[id*="identitynumber"]');
     if (idInputEl) {
       await idInputEl.click({ clickCount: 3 });
-      await idInputEl.type(idNumber, { delay: 50 });
-      log('Step 4: ID number filled');
-    } else {
-      log('Step 4: WARNING - identitynumber input not found!');
+      await idInputEl.type(idNumber, { delay: 30 });
     }
-
     const accInputEl = await page.$('input[id*="accountnumber"]');
     if (accInputEl) {
       await accInputEl.click({ clickCount: 3 });
-      await accInputEl.type(accountNumber, { delay: 50 });
-      log('Step 4: Account number filled');
+      await accInputEl.type(accountNumber, { delay: 30 });
+    }
+    log('Form filled');
+
+    // Step 6: Submit
+    const submitBtn = await page.$('input[id*="submit"]') || await page.$('input[type="submit"]');
+    if (submitBtn) {
+      await submitBtn.click();
+      log('Submit clicked');
     } else {
-      log('Step 4: WARNING - accountnumber input not found!');
-    }
-
-    // Verify values were actually entered
-    const fieldValues = await page.evaluate(() => {
-      const idEl = document.querySelector('input[id*="identitynumber"]');
-      const accEl = document.querySelector('input[id*="accountnumber"]');
-      const selEl = document.querySelector('select[id*="idList"]');
-      return {
-        idValue: idEl ? idEl.value : 'NOT FOUND',
-        accValue: accEl ? accEl.value : 'NOT FOUND',
-        selectValue: selEl ? selEl.value : 'NOT FOUND',
-      };
-    });
-    log('Step 4: Field values after fill: ' + JSON.stringify(fieldValues));
-
-    // Step 5: Find and click submit
-    log('Step 5: Looking for submit button...');
-    
-    // Try multiple selectors for submit button
-    let submitClicked = false;
-    
-    // Method 1: input[id*="submit"]
-    const submitBtn1 = await page.$('input[id*="submit"]');
-    if (submitBtn1) {
-      const btnInfo = await page.evaluate(el => ({ id: el.id, type: el.type, value: el.value, visible: el.offsetParent !== null }), submitBtn1);
-      log('Step 5: Found submit by id: ' + JSON.stringify(btnInfo));
-      if (btnInfo.visible) {
-        await submitBtn1.click();
-        submitClicked = true;
-        log('Step 5: Clicked submit (method 1)');
-      }
-    }
-    
-    // Method 2: input[type="submit"]
-    if (!submitClicked) {
-      const submitBtn2 = await page.$('input[type="submit"]');
-      if (submitBtn2) {
-        const btnInfo = await page.evaluate(el => ({ id: el.id, type: el.type, value: el.value, visible: el.offsetParent !== null }), submitBtn2);
-        log('Step 5: Found submit by type: ' + JSON.stringify(btnInfo));
-        await submitBtn2.click();
-        submitClicked = true;
-        log('Step 5: Clicked submit (method 2)');
-      }
-    }
-    
-    // Method 3: JavaScript click on all submit inputs
-    if (!submitClicked) {
-      log('Step 5: No submit button found by selectors, trying JS click...');
-      const jsResult = await page.evaluate(() => {
-        const allInputs = document.querySelectorAll('input');
-        const submitInputs = [];
-        allInputs.forEach(inp => {
-          if (inp.type === 'submit' || inp.id.toLowerCase().includes('submit')) {
-            submitInputs.push({ id: inp.id, type: inp.type, value: inp.value });
-            inp.click();
-          }
-        });
-        // Also try buttons
-        const allButtons = document.querySelectorAll('button');
-        allButtons.forEach(btn => {
-          if (btn.type === 'submit') {
-            submitInputs.push({ tag: 'button', id: btn.id, type: btn.type });
-            btn.click();
-          }
-        });
-        return submitInputs;
-      });
-      log('Step 5: JS click results: ' + JSON.stringify(jsResult));
-      submitClicked = jsResult.length > 0;
-    }
-
-    // Method 4: Try form.submit()
-    if (!submitClicked) {
-      log('Step 5: Trying form.submit()...');
+      // Fallback: JS click
       await page.evaluate(() => {
-        const forms = document.querySelectorAll('form');
-        if (forms.length > 0) forms[0].submit();
+        const inp = document.querySelector('input[type="submit"]');
+        if (inp) inp.click();
       });
+      log('Submit via JS');
     }
 
-    log('Step 5: Submit done, waiting for result...');
+    // Step 7: Wait for result
+    await page.waitForFunction(() => {
+      const b = document.body.innerText;
+      return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
+    }, { timeout: 30000 });
+    log('Result received');
 
-    // Step 6: Wait for result
-    let bodyText = '';
+    await new Promise(r => setTimeout(r, 1000));
+    const bodyText = await page.evaluate(() => document.body.innerText);
     
-    // Wait with multiple attempts
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        await page.waitForFunction(() => {
-          const body = document.body.innerText;
-          return body.includes('تفاصيل الفاتورة') || 
-                 body.includes('مجموع المبالغ') ||
-                 body.includes('عذراً') ||
-                 body.includes('لا يوجد') ||
-                 body.includes('خطأ');
-        }, { timeout: attempt === 0 ? 30000 : 15000 });
-        log('Step 6: Result detected on attempt ' + (attempt+1));
-        break;
-      } catch (e) {
-        log('Step 6: waitForFunction attempt ' + (attempt+1) + ' timed out');
-        // Check current page state
-        const currentText = await page.evaluate(() => document.body.innerText.substring(0, 200));
-        log('Step 6: Current page text: ' + currentText.replace(/\n/g, ' | '));
+    await page.close().catch(() => {});
+    return bodyText;
+  } catch (err) {
+    await page.close().catch(() => {});
+    throw err;
+  }
+}
+
+app.post('/api/ewa-bill', async (req, res) => {
+  const startTime = Date.now();
+  const { idType, idNumber, accountNumber } = req.body;
+  if (!idType || !idNumber || !accountNumber) {
+    return res.status(400).json({ success: false, error: 'جميع الحقول مطلوبة' });
+  }
+
+  const debugLog = [];
+  const log = (msg) => { console.log(`[EWA ${Date.now()-startTime}ms] ${msg}`); debugLog.push(`[${Date.now()-startTime}ms] ${msg}`); };
+
+  // Retry up to 2 times
+  let lastError = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      log(`Attempt ${attempt}...`);
+      const bodyText = await scrapeEWABill(idType, idNumber, accountNumber, log);
+      
+      // Check for error response
+      if (bodyText.includes('عذراً') && !bodyText.includes('تفاصيل الفاتورة')) {
+        return res.json({ success: false, error: 'عذراً، لا يوجد طلب بالبيانات المدخلة', debugLog });
+      }
+
+      // Parse data
+      const data = parseBillData(bodyText);
+      const totalTime = Date.now() - startTime;
+      log('Done! Total: ' + totalTime + 'ms');
+
+      return res.json({
+        success: true,
+        parsedData: data,
+        totalAmount: data.totalAmount || data.balance || '0.000',
+        rawText: bodyText.substring(0, 3000),
+        responseTime: totalTime,
+        debugLog,
+      });
+    } catch (err) {
+      lastError = err;
+      log(`Attempt ${attempt} failed: ${err.message}`);
+      if (attempt < 2) {
+        log('Retrying in 3s...');
         await new Promise(r => setTimeout(r, 3000));
       }
     }
-
-    // Extra wait
-    await new Promise(r => setTimeout(r, 3000));
-    
-    bodyText = await page.evaluate(() => document.body.innerText);
-    log('Step 7: Body text length: ' + bodyText.length);
-    log('Step 7: Contains تفاصيل الفاتورة: ' + bodyText.includes('تفاصيل الفاتورة'));
-    log('Step 7: Contains تفاصيل العميل: ' + bodyText.includes('تفاصيل العميل'));
-    log('Step 7: Contains بيانات مطلوبة: ' + bodyText.includes('بيانات مطلوبة'));
-
-    // Check error
-    if (bodyText.includes('عذراً') && !bodyText.includes('تفاصيل الفاتورة')) {
-      await page.close().catch(() => {});
-      return res.json({ success: false, error: 'عذراً، لا يوجد طلب بالبيانات المدخلة', debugLog });
-    }
-
-    // Parse data
-    const data = parseBillData(bodyText);
-
-    // Screenshot
-    let debugScreenshot = '';
-    try { debugScreenshot = await page.screenshot({ encoding: 'base64' }); } catch(e) {}
-    
-    await page.close().catch(() => {});
-
-    const totalTime = Date.now() - startTime;
-    log('Done! Total time: ' + totalTime + 'ms');
-
-    res.json({
-      success: true,
-      parsedData: data,
-      totalAmount: data.totalAmount || data.balance || '0.000',
-      rawText: bodyText.substring(0, 3000),
-      responseTime: totalTime,
-      usedCache: usedReadyPage,
-      debugLog,
-      debugScreenshot: debugScreenshot ? `data:image/png;base64,${debugScreenshot}` : null
-    });
-
-  } catch (err) {
-    log('ERROR: ' + err.message);
-    if (page) try { await page.close(); } catch(e) {}
-    res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message, debugLog });
   }
+
+  // All attempts failed
+  res.status(500).json({ 
+    success: false, 
+    error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + (lastError ? lastError.message : 'Unknown error'), 
+    debugLog 
+  });
 });
 
 // Start server

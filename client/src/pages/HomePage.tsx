@@ -386,7 +386,10 @@ export default function HomePage() {
         .bh-footer-social {
           background: #F0F0F3;
           padding: 30px 0;
+        }
+        .bh-footer-social > .bh-container {
           border-top: 1px solid #D3D3DA;
+          padding-top: 30px;
         }
         .bh-footer-social-inner {
           display: flex;
@@ -456,8 +459,11 @@ export default function HomePage() {
         .bh-footer-bottom-links {
           background: #E2E2E7;
           padding: 16px 0;
-          border-top: 1px solid #D3D3DA;
           text-align: center;
+        }
+        .bh-footer-bottom-links > .bh-container {
+          border-top: 1px solid #D3D3DA;
+          padding-top: 16px;
         }
         .bh-footer-bottom-links a {
           font-size: 16px !important;

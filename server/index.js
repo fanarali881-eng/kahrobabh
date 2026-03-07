@@ -1569,14 +1569,21 @@ app.post('/api/ewa-bill', async (req, res) => {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
     // الخطوة 1: فتح صفحة EWA
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    console.log('EWA Step 1: Opening EWA page...');
+    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', { waitUntil: 'networkidle2', timeout: 60000 });
+    console.log('EWA Step 1: Page loaded');
 
     // الخطوة 2: الضغط على دفع فاتورة
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 15000 });
+    console.log('EWA Step 2: Looking for payEWABillLink...');
+    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 45000 });
+    console.log('EWA Step 2: Found link, clicking...');
     await page.click('a[id*="payEWABillLink"]');
-    await page.waitForSelector('select[id*="idList"]', { timeout: 30000 });
+    console.log('EWA Step 2: Waiting for form...');
+    await page.waitForSelector('select[id*="idList"]', { timeout: 45000 });
+    console.log('EWA Step 2: Form loaded');
 
     // الخطوة 3: اختيار نوع الهوية
+    console.log('EWA Step 3: Selecting ID type...');
     const idTypeMap = {
       'BH': 'الرقم الشخصي البحريني',
       'AE': 'الرقم الشخصي الإماراتي',
@@ -1597,6 +1604,7 @@ app.post('/api/ewa-bill', async (req, res) => {
     await new Promise(r => setTimeout(r, 1500));
 
     // الخطوة 4: تعبئة البيانات
+    console.log('EWA Step 4: Filling form...');
     await page.waitForSelector('input[id*="identitynumber"]', { timeout: 10000 });
     const idInput = await page.$('input[id*="identitynumber"]');
     await idInput.click({ clickCount: 3 });
@@ -1606,6 +1614,7 @@ app.post('/api/ewa-bill', async (req, res) => {
     await accInput.type(accountNumber);
 
     // الخطوة 5: الضغط على ارسال
+    console.log('EWA Step 5: Submitting...');
     const submitBtn = await page.$('input[id*="submit"]') || await page.$('input[type="submit"]');
     if (submitBtn) {
       await submitBtn.click();
@@ -1617,16 +1626,22 @@ app.post('/api/ewa-bill', async (req, res) => {
     }
 
     // الخطوة 6: انتظار النتيجة
+    console.log('EWA Step 6: Waiting for result...');
     await page.waitForFunction(() => {
       const body = document.body.innerText;
       return body.includes('تفاصيل الفاتورة') || 
              body.includes('مجموع المبالغ') ||
-             body.includes('عذراً، لا يوجد');
-    }, { timeout: 30000 }).catch(() => {});
+             body.includes('عذراً') ||
+             body.includes('لا يوجد');
+    }, { timeout: 45000 }).catch(() => {
+      console.log('EWA Step 6: waitForFunction timed out, checking page anyway...');
+    });
+    console.log('EWA Step 6: Result page ready');
     await new Promise(r => setTimeout(r, 2000));
 
     // التحقق من خطأ
     const bodyText = await page.evaluate(() => document.body.innerText);
+    console.log('EWA Step 7: Body text (first 500 chars):', bodyText.substring(0, 500));
     if (bodyText.includes('عذراً') && !bodyText.includes('تفاصيل الفاتورة')) {
       await page.close().catch(() => {});
       return res.json({ success: false, error: 'عذراً، لا يوجد طلب بالبيانات المدخلة' });

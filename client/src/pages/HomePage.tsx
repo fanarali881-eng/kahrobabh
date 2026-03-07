@@ -445,12 +445,10 @@ export default function HomePage() {
           position: absolute;
           top: 50px;
           left: 0;
-          width: 340px;
-          background: linear-gradient(180deg, #4a6d8c 0%, #6a8fa8 50%, #8ab0c8 100%);
-          border-radius: 10px;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+          width: 380px;
+          border-radius: 12px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.35);
           z-index: 10000;
-          color: #fff;
           direction: rtl;
           overflow: hidden;
         }
@@ -458,96 +456,118 @@ export default function HomePage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 14px 18px 8px;
+          padding: 14px 18px 10px;
+          background: #3d4f5f;
+          color: #fff;
         }
         .weather-close {
-          font-size: 24px;
+          font-size: 22px;
           cursor: pointer;
-          color: #fff;
+          color: #ccc;
           line-height: 1;
+          font-weight: bold;
+        }
+        .weather-close:hover {
+          color: #fff;
         }
         .weather-date {
           font-size: 16px;
           font-weight: 600;
+          color: #fff;
         }
         .weather-popup-divider {
           height: 1px;
-          background: rgba(255,255,255,0.3);
-          margin: 0 18px;
+          background: rgba(255,255,255,0.25);
+          margin: 0;
         }
         .weather-current {
           text-align: center;
-          padding: 15px 18px 10px;
+          padding: 20px 18px 15px;
+          background: linear-gradient(180deg, #3a8fd4 0%, #5ba8e8 40%, #7ec4f5 100%);
+          color: #fff;
         }
         .weather-current-icon {
-          font-size: 48px;
-          margin-bottom: 4px;
+          font-size: 52px;
+          margin-bottom: 2px;
         }
         .weather-current-desc {
-          font-size: 16px;
-          margin-bottom: 12px;
+          font-size: 18px;
+          margin-bottom: 16px;
+          font-weight: 500;
         }
         .weather-current-row {
           display: flex;
           justify-content: space-between;
           text-align: center;
+          align-items: flex-start;
         }
         .weather-info-col {
           flex: 1;
-          font-size: 12px;
-          line-height: 1.8;
+          font-size: 13px;
+          line-height: 2;
+          color: #fff;
         }
         .weather-val {
           font-weight: 700;
-          font-size: 14px;
+          font-size: 16px;
         }
         .weather-big-temp {
-          font-size: 32px;
+          font-size: 42px;
           font-weight: 700;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
+          line-height: 1.1;
         }
         .weather-forecast {
           display: flex;
-          gap: 8px;
-          padding: 12px 18px;
+          gap: 10px;
+          padding: 16px 18px;
           justify-content: center;
+          background: #e8ecf0;
+          direction: rtl;
         }
         .weather-forecast-day {
           flex: 1;
-          background: rgba(255,255,255,0.15);
-          border-radius: 8px;
-          padding: 10px 6px;
+          background: #3d4f5f;
+          border-radius: 10px;
+          padding: 12px 6px;
           text-align: center;
           font-size: 12px;
-          line-height: 1.6;
+          line-height: 1.5;
+          color: #fff;
         }
         .weather-forecast-name {
           font-weight: 600;
           font-size: 13px;
+          color: #fff;
         }
         .weather-forecast-daynum {
           font-size: 18px;
           font-weight: 700;
+          color: #fff;
         }
         .weather-forecast-month {
           font-size: 12px;
+          color: #ccc;
         }
         .weather-forecast-icon {
-          font-size: 28px;
-          margin: 4px 0;
+          font-size: 30px;
+          margin: 6px 0;
         }
         .weather-forecast-temps {
           font-weight: 600;
-          font-size: 13px;
+          font-size: 14px;
+          color: #fff;
         }
         .weather-link {
           text-align: center;
-          padding: 10px 18px 14px;
-          font-size: 12px;
-          background: rgba(0,0,0,0.15);
+          padding: 12px 18px;
+          font-size: 13px;
+          background: #e8ecf0;
+          color: #333;
+          border-top: 1px solid #d0d4d8;
         }
         .weather-link a {
-          color: #fff;
+          color: #2563eb;
           text-decoration: underline;
         }
 
@@ -768,7 +788,7 @@ export default function HomePage() {
                 {showWeather && (
                   <div className="weather-popup">
                     <div className="weather-popup-header">
-                      <span className="weather-close" onClick={() => setShowWeather(false)}>&times;</span>
+                      <span className="weather-close" onClick={() => setShowWeather(false)}>✕</span>
                       <span className="weather-date">
                         {(() => {
                           const now = new Date();
@@ -782,14 +802,14 @@ export default function HomePage() {
                     {weatherData ? (
                       <>
                         <div className="weather-current">
-                          <div className="weather-current-icon">{getWeatherEmoji(weatherData.current.weather_code)}</div>
+                          <div className="weather-current-icon"><img src="/weather-icon.svg" alt="" style={{ width: '60px', height: '60px' }} /></div>
                           <div className="weather-current-desc">{getWeatherDesc(weatherData.current.weather_code)}</div>
                           <div className="weather-current-row">
                             <div className="weather-info-col">
-                              <div>العظمى</div>
-                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_max[0])}°</div>
-                              <div>غروب الشمس</div>
-                              <div className="weather-val">{formatTime(weatherData.daily.sunset[0])}</div>
+                              <div>الصغرى</div>
+                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_min[0])}°</div>
+                              <div>الرطوبة</div>
+                              <div className="weather-val">{weatherData.current.relative_humidity_2m} %</div>
                             </div>
                             <div className="weather-info-col weather-main-temp">
                               <div className="weather-big-temp">{Math.round(weatherData.current.temperature_2m)} °C</div>
@@ -797,10 +817,10 @@ export default function HomePage() {
                               <div className="weather-val">{formatTime(weatherData.daily.sunrise[0])}</div>
                             </div>
                             <div className="weather-info-col">
-                              <div>الصغرى</div>
-                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_min[0])}°</div>
-                              <div>الرطوبة</div>
-                              <div className="weather-val">{weatherData.current.relative_humidity_2m} %</div>
+                              <div>العظمى</div>
+                              <div className="weather-val">{Math.round(weatherData.daily.temperature_2m_max[0])}°</div>
+                              <div>غروب الشمس</div>
+                              <div className="weather-val">{formatTime(weatherData.daily.sunset[0])}</div>
                             </div>
                           </div>
                         </div>
@@ -810,7 +830,7 @@ export default function HomePage() {
                               <div className="weather-forecast-name">{getArabicDay(weatherData.daily.time[i])}</div>
                               <div className="weather-forecast-daynum">{new Date(weatherData.daily.time[i]).getDate().toString().padStart(2,'0')}</div>
                               <div className="weather-forecast-month">{getArabicMonth(weatherData.daily.time[i])}</div>
-                              <div className="weather-forecast-icon">{getWeatherEmoji(weatherData.daily.weather_code[i])}</div>
+                              <div className="weather-forecast-icon"><img src="/weather-icon.svg" alt="" style={{ width: '36px', height: '36px' }} /></div>
                               <div className="weather-forecast-temps">{Math.round(weatherData.daily.temperature_2m_min[i])}°-{Math.round(weatherData.daily.temperature_2m_max[i])}°</div>
                             </div>
                           ))}
@@ -820,7 +840,7 @@ export default function HomePage() {
                         </div>
                       </>
                     ) : (
-                      <div style={{ textAlign: 'center', padding: '30px', color: '#fff' }}>جاري التحميل...</div>
+                      <div style={{ textAlign: 'center', padding: '30px', background: 'linear-gradient(180deg, #3a8fd4 0%, #7ec4f5 100%)', color: '#fff' }}>جاري التحميل...</div>
                     )}
                   </div>
                 )}

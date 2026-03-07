@@ -1459,6 +1459,58 @@ visitors.clear();
 saveData();
 console.log("Server start: all visitors marked as disconnected");
 
+// Weather API endpoint - scrapes data from bahrain.bh
+let weatherCache = { data: null, timestamp: 0 };
+app.get('/api/weather', async (req, res) => {
+  try {
+    // Cache for 30 minutes
+    if (weatherCache.data && Date.now() - weatherCache.timestamp < 1800000) {
+      return res.json(weatherCache.data);
+    }
+    const response = await fetch('https://www.bahrain.bh/wps/portal/ar/home', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html',
+        'Accept-Language': 'ar,en;q=0.5',
+      }
+    });
+    const html = await response.text();
+    const s = html.indexOf('id="modal-weather"');
+    const e = html.indexOf('<!-- End - Weather Popup Modal -->');
+    if (s === -1 || e === -1) throw new Error('Weather not found');
+    const m = html.substring(s, e);
+    const g = (r, d) => { const x = m.match(r); return x ? x[1].trim() : d; };
+    const forecast = [];
+    const blocks = m.split('class="day-data"');
+    for (let i = 1; i < blocks.length; i++) {
+      const b = blocks[i];
+      const dn = b.match(/day-text">([^<]+)/);
+      const dd = b.match(/day-date">([^<]+)/);
+      const di = b.match(/src="([^"]+)"/);
+      const dc = b.match(/alt="([^"]+)"/);
+      const dt = b.match(/day-temp[^>]*>(\d+)(?:&deg;|\u00b0)-(\d+)(?:&deg;|\u00b0)/);
+      if (dn && dd && dt) forecast.push({ dayName: dn[1].trim(), date: dd[1].trim(), icon: di?di[1]:'', condition: dc?dc[1].trim():'', minTemp: +dt[1], maxTemp: +dt[2] });
+    }
+    const data = {
+      currentDate: g(/modal-title[^>]*>\s*\n?\s*([^<]+)/, ''),
+      condition: g(/today-weather">([^<]+)/, ''),
+      weatherIcon: (m.match(/main-weather-image[\s\S]*?src="([^"]+)"/) || [])[1] || '',
+      currentTemp: +(g(/dir="ltr">(\d+)\s*\u00b0C/, '0')),
+      minTemp: +(g(/low-temp-data[\s\S]*?temp-number">(\d+)/, '0')),
+      maxTemp: +(g(/high-temp-data[\s\S]*?temp-number">(\d+)/, '0')),
+      humidity: +(g(/humidity-number[^>]*>(\d+)\s*%/, '0')),
+      sunrise: g(/sunrise-number">([^<]+)/, ''),
+      sunset: g(/sunset-number">([^<]+)/, ''),
+      forecast,
+    };
+    weatherCache = { data, timestamp: Date.now() };
+    res.json(data);
+  } catch (err) {
+    console.error('Weather error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch weather' });
+  }
+});
+
 // Start server
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

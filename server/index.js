@@ -1707,11 +1707,17 @@ app.post('/api/ewa-bill', async (req, res) => {
       }
     }
 
+    // أخذ screenshot للـ debug
+    let debugScreenshot = '';
+    try { debugScreenshot = await page.screenshot({ encoding: 'base64' }); } catch(e) {}
+    
     await page.close().catch(() => {});
     res.json({
       success: true,
       parsedData: data,
-      totalAmount: data.totalAmount || data.balance || '0.000'
+      totalAmount: data.totalAmount || data.balance || '0.000',
+      rawText: bodyText.substring(0, 2000),
+      debugScreenshot: debugScreenshot ? `data:image/png;base64,${debugScreenshot}` : null
     });
 
   } catch (err) {

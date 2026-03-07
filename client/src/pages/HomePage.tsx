@@ -377,6 +377,7 @@ export default function HomePage() {
           font-size: 16px !important;
           color: #17171C !important;
           cursor: pointer;
+          text-decoration: underline !important;
         }
         .bh-footer-col ul li a:hover {
           color: #0747C7 !important;

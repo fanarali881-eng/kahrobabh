@@ -480,8 +480,8 @@ export default function HomePage() {
           border-top: 1px solid #D3D3DA;
         }
         .bh-footer-copyright p {
-          font-size: 13px !important;
-          color: #4B4B57 !important;
+          font-size: 16px !important;
+          color: #17171C !important;
           margin: 4px 0 !important;
         }
         .bh-footer-copyright a {

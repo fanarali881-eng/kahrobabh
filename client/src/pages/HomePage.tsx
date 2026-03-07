@@ -692,9 +692,8 @@ export default function HomePage() {
             </div>
 
             {isLoadingForm && (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
                 <div className="bh-spinner"></div>
-                <span style={{ marginTop: '12px', fontSize: '14px', color: '#0747C7', fontWeight: 500 }}>الرجاء الانتظار</span>
               </div>
             )}
 

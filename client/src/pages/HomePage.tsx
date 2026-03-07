@@ -193,26 +193,14 @@ export default function HomePage() {
         /* Banner */
         .bh-banner {
           margin: 20px 0;
-          background: #E5ECF9;
-          border: 2px dashed #D3D3DA;
-          padding: 24px 30px;
-          text-align: center;
+          padding: 0;
           position: relative;
         }
-        .bh-banner-title {
-          font-size: 22px !important;
-          font-weight: 600 !important;
-          color: #17171C !important;
-          margin-bottom: 4px !important;
-        }
-        .bh-banner-subtitle {
-          font-size: 16px !important;
-          font-weight: 400 !important;
-          color: #4B4B57 !important;
-        }
-        .bh-banner a {
-          color: #0747C7 !important;
-          text-decoration: underline !important;
+        .bh-banner img {
+          width: 100%;
+          height: auto;
+          display: block;
+          border-radius: 4px;
         }
         
         /* Content area */
@@ -422,12 +410,7 @@ export default function HomePage() {
         {/* ===== BANNER ===== */}
         <div className="bh-container">
           <div className="bh-banner">
-            <div className="bh-banner-title">
-              استفد من خدمات <a href="#">التخويل الإلكتروني</a>
-            </div>
-            <div className="bh-banner-subtitle">
-              لإنجاز خدمات المكاتب الأمامية للجهات الحكومية
-            </div>
+            <img src="/eAuthorization_ar.png" alt="استفد من خدمات التخويل الإلكتروني" />
           </div>
         </div>
 

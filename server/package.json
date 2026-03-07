@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "build": "chmod +x render-build.sh && ./render-build.sh"
+    "build": "npm run install-chrome",
+    "install-chrome": "npx puppeteer browsers install chrome",
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",

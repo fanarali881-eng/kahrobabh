@@ -1513,6 +1513,40 @@ app.get('/api/weather', async (req, res) => {
 
 // ============ EWA Bill Scraper ============
 const puppeteer = require('puppeteer');
+const { execSync } = require('child_process');
+
+// Find Chrome executable path
+function findChromePath() {
+  const possiblePaths = [
+    require('path').join(__dirname, '.cache', 'puppeteer'),
+    '/opt/render/.cache/puppeteer',
+    '/opt/render/project/src/.cache/puppeteer',
+    '/opt/render/project/.cache/puppeteer',
+    process.env.HOME + '/.cache/puppeteer',
+  ];
+  
+  for (const cachePath of possiblePaths) {
+    try {
+      const result = execSync(`find ${cachePath} -name "chrome" -type f 2>/dev/null | head -1`, { encoding: 'utf8' }).trim();
+      if (result) {
+        console.log('Found Chrome at:', result);
+        return result;
+      }
+    } catch(e) {}
+  }
+  
+  // Try system-wide search
+  try {
+    const result = execSync('which google-chrome || which google-chrome-stable || which chromium-browser || which chromium 2>/dev/null', { encoding: 'utf8' }).trim();
+    if (result) {
+      console.log('Found system Chrome at:', result);
+      return result;
+    }
+  } catch(e) {}
+  
+  console.log('No Chrome found, using puppeteer default');
+  return undefined;
+}
 
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
@@ -1522,10 +1556,14 @@ app.post('/api/ewa-bill', async (req, res) => {
 
   let browser;
   try {
-    browser = await puppeteer.launch({
+    const chromePath = findChromePath();
+    const launchOptions = {
       headless: 'new',
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
-    });
+    };
+    if (chromePath) launchOptions.executablePath = chromePath;
+    
+    browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 

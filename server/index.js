@@ -1611,19 +1611,19 @@ app.post('/api/ewa-bill', async (req, res) => {
         console.log('EWA Step 3: Selected', match.value);
       }
     }
-    await new Promise(r => setTimeout(r, 3000));
-    await page.waitForNetworkIdle({ timeout: 15000 }).catch(() => {});
+    await new Promise(r => setTimeout(r, 5000));
+    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
 
     // الخطوة 4: تعبئة البيانات
     console.log('EWA Step 4: Filling form...');
-    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 10000 });
+    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
     const idInput = await page.$('input[id*="identitynumber"]');
     if (idInput) {
       await idInput.click({ clickCount: 3 });
       await idInput.type(idNumber);
       console.log('EWA Step 4: Filled ID number');
     }
-    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 10000 });
+    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 30000 });
     const accInput = await page.$('input[id*="accountnumber"]');
     if (accInput) {
       await accInput.click({ clickCount: 3 });
@@ -1633,7 +1633,7 @@ app.post('/api/ewa-bill', async (req, res) => {
 
     // الخطوة 5: الضغط على ارسال
     console.log('EWA Step 5: Clicking submit...');
-    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 10000 });
+    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 30000 });
     await page.click('input[id*="form1:submit"]');
     console.log('EWA Step 5: Submit clicked, waiting for result...');
     // Wait for result page to appear

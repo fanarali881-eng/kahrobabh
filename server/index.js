@@ -1650,7 +1650,9 @@ app.post('/api/ewa-bill', async (req, res) => {
         await page.select('select[id*="idList"]', match.value);
       }
     }
-    // Wait for AJAX to load input fields after select change
+    // Wait for AJAX to complete after select change, then wait for input fields
+    await new Promise(r => setTimeout(r, 3000));
+    await page.waitForNetworkIdle({ timeout: 20000 }).catch(() => {});
     await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
     console.log(`EWA Step 2: ID type selected (${Date.now() - startTime}ms)`);
 

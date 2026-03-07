@@ -388,6 +388,7 @@ export default function HomePage() {
           padding: 30px 0;
         }
         .bh-footer-social > .bh-container {
+          border-top: 1px solid #B0B0BA;
           padding-top: 30px;
         }
         .bh-footer-social-inner {

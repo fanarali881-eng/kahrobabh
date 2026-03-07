@@ -1701,6 +1701,40 @@ app.post('/api/ewa-bill', async (req, res) => {
     const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
     if (totalMatch) result.totalAmount = totalMatch[1];
 
+    // Parse rawText to extract structured data
+    if (result.rawText && result.rawText.includes('تفاصيل الفاتورة')) {
+      try {
+        const raw = result.rawText;
+        const parsedData = {};
+        // Extract account number - first 10-digit number after تفاصيل الفاتورة
+        const afterDetails = raw.substring(raw.indexOf('تفاصيل الفاتورة'));
+        const accMatch = afterDetails.match(/(\d{10})/);
+        if (accMatch) parsedData.accountNumber = accMatch[0];
+        // Extract customer name - it's after the 10-digit account number in the details section
+        const nameMatch = afterDetails.match(/\d{10}\n([^\n]+)/);
+        if (nameMatch) parsedData.customerName = nameMatch[1].trim();
+        // Extract address - line after customer name
+        const addrMatch = afterDetails.match(/\d{10}\n[^\n]+\n([^\n]+)/);
+        if (addrMatch) parsedData.address = addrMatch[1].trim();
+        // Extract date
+        const dateMatch = raw.match(/(\d{2}\/\d{2}\/\d{4})/);
+        if (dateMatch) parsedData.issueDate = dateMatch[1];
+        // Extract month
+        const monthMatch = raw.match(/(\d{2}\/\d{4})/);
+        if (monthMatch) parsedData.billMonth = monthMatch[1];
+        // Extract balance amount
+        const balanceMatch = raw.match(/(\d+\.\d{3})\nمجموع/);
+        if (balanceMatch) parsedData.balance = balanceMatch[1];
+        // Extract total amount
+        const totalM = raw.match(/مجموع المبالغ \(د\.ب\): ([\d.]+)/);
+        if (totalM) { parsedData.totalAmount = totalM[1]; result.totalAmount = totalM[1]; }
+        // Extract paid amount
+        const paidM = raw.match(/مجموع المبلغ المدفوع \(د\.ب\): ([\d.]+)/);
+        if (paidM) parsedData.paidAmount = paidM[1];
+        result.parsedData = parsedData;
+      } catch(e) { console.log('Parse error:', e.message); }
+    }
+
     await browser.close();
     res.json(result);
 

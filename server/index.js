@@ -1706,71 +1706,86 @@ app.post('/api/ewa-bill', async (req, res) => {
     const extractedData = await page.evaluate(() => {
       const data = {};
       const body = document.body.innerText;
-      const allText = body;
+      const lines = body.split('\n').map(l => l.trim()).filter(l => l);
       
-      // استخراج من النص الخام - البيانات تكون بسطر واحد مفصولة بـ tab
-      const lines = allText.split('\n').map(l => l.trim()).filter(l => l);
+      // البيانات بتكون كل قيمة بسطر لحالها:
+      // LINE: تفاصيل الفاتورة
+      // LINE: رقم الحساب
+      // LINE: تفاصيل العميل
+      // LINE: ...
+      // LINE: 1058988674
+      // LINE: مروان ...
+      // LINE: كراج ...
+      // LINE: 03/03/2026
+      // LINE: 03/2026
+      // LINE: 223.730
+      // LINE: مجموع المبالغ (د.ب):
+      // LINE: 223.730
+      // LINE: مجموع المبلغ المدفوع (د.ب):
+      // LINE: 0.000
       
-      // البحث عن السطر اللي فيه headers الجدول
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        
-        // السطر اللي فيه رقم الحساب + تفاصيل العميل + تاريخ = سطر الـ headers
-        if (line.includes('رقم الحساب') && line.includes('تفاصيل العميل') && line.includes('تاريخ الاصدار')) {
-          // السطر التالي فيه القيم (مفصولة بـ tab)
-          const headerParts = line.split('\t').map(s => s.trim()).filter(s => s);
-          
-          // القيم ممكن تكون بنفس السطر بعد الـ headers أو بالسطر التالي
-          let valueLine = '';
-          // نشوف إذا القيم بنفس السطر
-          const numMatch = line.match(/(\d{7,})/); // رقم حساب طويل
-          if (numMatch) {
-            // القيم موجودة بنفس السطر بعد الـ headers
-            const idx = line.indexOf(numMatch[0]);
-            valueLine = line.substring(idx);
-          } else if (i + 1 < lines.length) {
-            valueLine = lines[i + 1];
+      // نلاقي سطر "تفاصيل الفاتورة" ونبدأ منه
+      const startIdx = lines.findIndex(l => l === 'تفاصيل الفاتورة');
+      if (startIdx === -1) return data;
+      
+      const section = lines.slice(startIdx);
+      
+      // البحث عن رقم الحساب (10 أرقام)
+      for (let i = 0; i < section.length; i++) {
+        if (section[i].match(/^\d{7,}$/)) {
+          data.accountNumber = section[i];
+          // السطر التالي = اسم العميل
+          if (i + 1 < section.length && !section[i+1].match(/^[\d\/.,]+$/)) {
+            data.customerName = section[i + 1];
           }
-          
-          if (valueLine) {
-            const vals = valueLine.split('\t').map(s => s.trim()).filter(s => s);
-            if (vals.length >= 1) data.accountNumber = vals[0];
-            if (vals.length >= 2) data.customerName = vals[1];
-          }
+          break;
         }
-        
-        // البحث عن العنوان (كراج، مبنى، طريق...)
+      }
+      
+      // العنوان
+      for (const line of section) {
         if (line.includes('كراج') || line.includes('مبنى') || (line.includes('طريق') && line.includes('محافظة'))) {
           data.address = line;
+          break;
         }
-        
-        // تاريخ الاصدار بصيغة DD/MM/YYYY
-        const dateMatch = line.match(/(\d{2}\/\d{2}\/\d{4})/);
-        if (dateMatch && !data.issueDate) {
-          data.issueDate = dateMatch[1];
-          // القائمة لشهر بعد التاريخ
-          const parts = line.split('\t').map(s => s.trim()).filter(s => s);
-          for (const p of parts) {
-            if (p.match(/^\d{2}\/\d{4}$/)) data.billMonth = p;
+      }
+      
+      // تاريخ الاصدار DD/MM/YYYY
+      for (const line of section) {
+        if (line.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+          data.issueDate = line;
+          break;
+        }
+      }
+      
+      // القائمة لشهر MM/YYYY
+      for (const line of section) {
+        if (line.match(/^\d{2}\/\d{4}$/)) {
+          data.billMonth = line;
+          break;
+        }
+      }
+      
+      // الرصيد - رقم بصيغة XXX.XXX (قبل سطر مجموع المبالغ)
+      for (let i = 0; i < section.length; i++) {
+        if (section[i].includes('مجموع المبالغ')) break;
+        if (section[i].match(/^[\d,.]+$/) && section[i].includes('.')) {
+          const num = parseFloat(section[i].replace(/,/g, ''));
+          if (num > 0 && num < 100000) data.balance = section[i];
+        }
+      }
+      
+      // مجموع المبالغ - الرقم بالسطر التالي
+      for (let i = 0; i < section.length; i++) {
+        if (section[i].includes('مجموع المبالغ') && !section[i].includes('المدفوع')) {
+          if (i + 1 < section.length && section[i+1].match(/^[\d,.]+$/)) {
+            data.totalAmount = section[i + 1];
           }
         }
-        
-        // الرصيد - رقم بصيغة XXX.XXX
-        if (!data.balance && line.match(/^[\d,.]+$/) && line.includes('.')) {
-          const num = parseFloat(line.replace(/,/g, ''));
-          if (num > 0 && num < 100000) data.balance = line;
-        }
-        
-        // مجموع المبالغ
-        if (line.includes('مجموع المبالغ')) {
-          const m = line.match(/([\d,.]+)/);
-          if (m) data.totalAmount = m[1];
-        }
-        
-        // مجموع المبلغ المدفوع
-        if (line.includes('مجموع المبلغ المدفوع')) {
-          const m = line.match(/([\d,.]+)/);
-          if (m) data.paidAmount = m[1];
+        if (section[i].includes('مجموع المبلغ المدفوع')) {
+          if (i + 1 < section.length && section[i+1].match(/^[\d,.]+$/)) {
+            data.paidAmount = section[i + 1];
+          }
         }
       }
       

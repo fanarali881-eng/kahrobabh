@@ -276,10 +276,9 @@ export default function HomePage() {
         .bh-form-row {
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: center;
           gap: 12px;
           margin-bottom: 15px;
-          padding: 0 40px;
         }
         .bh-form-row:last-child {
           margin-bottom: 0;

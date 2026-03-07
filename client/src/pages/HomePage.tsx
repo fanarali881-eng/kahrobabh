@@ -326,8 +326,8 @@ export default function HomePage() {
           cursor: not-allowed;
         }
         .bh-btn-back {
-          background: #EAEAEE !important;
-          color: #17171C !important;
+          background: #0747C7 !important;
+          color: #fff !important;
           padding: 8px 28px !important;
           border-radius: 4px !important;
           font-size: 14px !important;

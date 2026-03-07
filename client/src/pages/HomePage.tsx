@@ -343,7 +343,7 @@ export default function HomePage() {
         .bh-bottom-line {
           height: 4px;
           background: #0747C7;
-          margin-top: 30px;
+          margin-top: 60px;
           margin-bottom: 0;
         }
 

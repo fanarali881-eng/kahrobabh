@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "build": "npx playwright install --with-deps chromium"
+    "build": "chmod +x render-build.sh && ./render-build.sh"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,6 @@
     "express": "^5.2.1",
     "mongoose": "^9.1.4",
     "socket.io": "^4.8.3",
-    "playwright": "^1.50.0"
+    "puppeteer": "^23.0.0"
   }
 }

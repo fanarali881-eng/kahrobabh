@@ -339,7 +339,9 @@ export default function EWABills() {
                 <table className="ewa-bills-table">
                   <thead>
                     <tr>
-                      {billData.bills[0].map((_: any, i: number) => (
+                      {billData.tableHeaders ? billData.tableHeaders.map((h: string, i: number) => (
+                        <th key={i}>{h}</th>
+                      )) : billData.bills[0].map((_: any, i: number) => (
                         <th key={i}>
                           {i === 0 ? 'الفاتورة' : i === 1 ? 'التاريخ' : i === 2 ? 'المبلغ' : i === 3 ? 'الحالة' : `عمود ${i + 1}`}
                         </th>

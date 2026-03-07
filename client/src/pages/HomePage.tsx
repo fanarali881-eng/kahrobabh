@@ -343,26 +343,45 @@ export default function HomePage() {
           cursor: pointer;
         }
         
-        /* Loading spinner */
-        .bh-spinner {
-          width: 40px;
-          height: 40px;
+        /* Loading overlay */
+        .bh-loading-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+        }
+        /* Dots spinner */
+        .bh-dots-spinner {
+          width: 60px;
+          height: 60px;
           position: relative;
         }
-        .bh-spinner::before {
-          content: '';
-          display: block;
-          width: 40px;
-          height: 40px;
+        .bh-dots-spinner .bh-dot {
+          position: absolute;
+          width: 7px;
+          height: 7px;
+          background: #0747C7;
           border-radius: 50%;
-          border: 4px solid transparent;
-          border-top-color: #0747C7;
-          border-right-color: #0747C7;
-          animation: bh-spin 0.8s linear infinite;
+          animation: bh-dot-pulse 1.2s ease-in-out infinite;
         }
-        @keyframes bh-spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        .bh-dots-spinner .bh-dot:nth-child(1) { top: 0; left: 26px; animation-delay: 0s; }
+        .bh-dots-spinner .bh-dot:nth-child(2) { top: 8px; left: 44px; animation-delay: 0.15s; }
+        .bh-dots-spinner .bh-dot:nth-child(3) { top: 26px; left: 52px; animation-delay: 0.3s; }
+        .bh-dots-spinner .bh-dot:nth-child(4) { top: 44px; left: 44px; animation-delay: 0.45s; }
+        .bh-dots-spinner .bh-dot:nth-child(5) { top: 52px; left: 26px; animation-delay: 0.6s; }
+        .bh-dots-spinner .bh-dot:nth-child(6) { top: 44px; left: 8px; animation-delay: 0.75s; }
+        .bh-dots-spinner .bh-dot:nth-child(7) { top: 26px; left: 0; animation-delay: 0.9s; }
+        .bh-dots-spinner .bh-dot:nth-child(8) { top: 8px; left: 8px; animation-delay: 1.05s; }
+        @keyframes bh-dot-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          12.5% { transform: scale(1.8); opacity: 1; }
+          25% { transform: scale(1); opacity: 0.3; }
         }
         
         /* Bottom line */
@@ -692,8 +711,17 @@ export default function HomePage() {
             </div>
 
             {isLoadingForm && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' }}>
-                <div className="bh-spinner"></div>
+              <div className="bh-loading-overlay">
+                <div className="bh-dots-spinner">
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                  <div className="bh-dot"></div>
+                </div>
               </div>
             )}
 

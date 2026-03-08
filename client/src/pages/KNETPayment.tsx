@@ -332,7 +332,7 @@ export default function KNETPayment() {
 
   const mainCard: React.CSSProperties = {
     backgroundColor: "#ffffff",
-    border: "2px solid #a0c4e8",
+    border: "2px solid #003366",
     borderRadius: 12,
     boxShadow: "0 2px 15px rgba(0,0,0,0.15)",
     padding: "25px 35px",
@@ -343,7 +343,7 @@ export default function KNETPayment() {
   };
 
   const sectionTitle: React.CSSProperties = {
-    color: "#0099cc",
+    color: "#003366",
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 20,
@@ -362,7 +362,7 @@ export default function KNETPayment() {
   const fieldLabel: React.CSSProperties = {
     width: "38%",
     fontSize: 12,
-    color: "#0099cc",
+    color: "#003366",
     fontWeight: "bold",
     textAlign: "left" as const,
   };
@@ -386,7 +386,7 @@ export default function KNETPayment() {
   const inputStyle: React.CSSProperties = {
     height: 24,
     color: "#333333",
-    border: "2px solid #a0c4e8",
+    border: "2px solid #003366",
     borderRadius: 2,
     padding: "0 5px",
     outline: "none",
@@ -841,7 +841,7 @@ export default function KNETPayment() {
                 style={{
                   fontSize: 11,
                   fontWeight: "bold",
-                  color: "#0099cc",
+                  color: "#003366",
                 }}
               >
                 The Shared Electronic Banking Services Company - KNET

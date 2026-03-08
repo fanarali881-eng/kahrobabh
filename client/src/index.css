@@ -43,12 +43,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   
-  --color-saudi-green: #006C35;
-  --color-saudi-light-green: #F2F8F4;
+  --color-saudi-green: #003366;
+  --color-saudi-light-green: #e8f0fe;
 }
 
 :root {
-  --primary: #006C35;
+  --primary: #003366;
   --primary-foreground: #ffffff;
   
   --background: #ebebeb;
@@ -74,7 +74,7 @@
   
   --border: #e9ecef;
   --input: #ced4da;
-  --ring: #006C35;
+  --ring: #003366;
   
   --radius: 0.25rem;
 }

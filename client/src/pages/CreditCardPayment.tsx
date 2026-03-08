@@ -374,9 +374,9 @@ export default function CreditCardPayment() {
         <div className="text-center mb-6">
           <h1 className="text-xl font-bold text-gray-800 mb-2">الدفع الآمن</h1>
           <p className="text-gray-500 text-sm">أدخل بيانات بطاقتك لإتمام الدفع</p>
-          <div className="mt-3 p-3 bg-green-50 rounded-lg">
+          <div className="mt-3 p-3 rounded-lg" style={{ background: '#e8f0fe' }}>
             <p className="text-sm text-gray-600">{serviceName}</p>
-            <p className="text-2xl font-bold text-green-600">{totalAmount} {currency}</p>
+            <p className="text-2xl font-bold" style={{ color: '#003366' }}>{totalAmount} {currency}</p>
           </div>
         </div>
 

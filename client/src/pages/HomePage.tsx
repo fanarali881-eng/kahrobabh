@@ -380,7 +380,8 @@ export default function HomePage() {
           font-weight: 500 !important;
           color: #17171C !important;
           white-space: nowrap;
-          min-width: 100px;
+          width: 140px;
+          min-width: 140px;
           text-align: right;
         }
         .bh-form-label .required {

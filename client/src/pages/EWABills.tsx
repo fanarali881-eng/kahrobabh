@@ -926,10 +926,12 @@ export default function EWABills() {
               <span className="ewa-info-label">{lang === 'ar' ? 'الرقم الشخصي البحريني :' : 'Bahraini Personal Number :'}</span>
               <span className="ewa-info-value">{idNumber}</span>
             </div>
-            <div className="ewa-info-row">
-              <span className="ewa-info-label">{lang === 'ar' ? 'عرض الفواتير :' : 'View Bills :'}</span>
-              <span className="ewa-info-value">{billData?.parsedBills?.length || 1}</span>
-            </div>
+            {!loading && billData?.parsedBills && billData.parsedBills.length > 0 && (
+              <div className="ewa-info-row">
+                <span className="ewa-info-label">{lang === 'ar' ? 'عرض الفواتير :' : 'View Bills :'}</span>
+                <span className="ewa-info-value">{billData.parsedBills.length}</span>
+              </div>
+            )}
           </div>
 
           {/* Loading State */}

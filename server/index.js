@@ -1548,57 +1548,115 @@ function findChromePath() {
   return undefined;
 }
 
-// ===== Browser Pool for Speed =====
-let ewaBrowser = null;
-let ewaReadyPage = null;
-let isPrewarming = false;
+// ===== Browser Pool for Concurrent Requests =====
+const POOL_SIZE = 5;
+const ewaPool = []; // Array of { browser, page, busy, id }
+const ewaQueue = []; // Queue of waiting requests
 
-async function getEwaBrowser() {
-  if (ewaBrowser && ewaBrowser.isConnected()) return ewaBrowser;
+async function launchBrowserWithPage(slotId) {
   const chromePath = findChromePath();
   const launchOptions = {
     headless: 'new',
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
   };
   if (chromePath) launchOptions.executablePath = chromePath;
-  ewaBrowser = await puppeteer.launch(launchOptions);
-  console.log('EWA Browser launched');
-  return ewaBrowser;
+  const browser = await puppeteer.launch(launchOptions);
+  const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  console.log(`EWA Pool[${slotId}]: Loading EWA page...`);
+  await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+    waitUntil: 'networkidle2', timeout: 90000
+  });
+  await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
+  await page.click('a[id*="payEWABillLink"]');
+  await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
+  await new Promise(r => setTimeout(r, 2000));
+  console.log(`EWA Pool[${slotId}]: Ready!`);
+  return { browser, page, busy: false, id: slotId };
 }
 
-async function prewarmEwaPage() {
-  if (isPrewarming) return;
-  isPrewarming = true;
-  try {
-    // Close old browser completely and start fresh
-    if (ewaBrowser) {
-      try { await ewaBrowser.close(); } catch(e) {}
-      ewaBrowser = null;
+async function initPool() {
+  console.log(`EWA Pool: Initializing ${POOL_SIZE} browser slots...`);
+  for (let i = 0; i < POOL_SIZE; i++) {
+    try {
+      const slot = await launchBrowserWithPage(i);
+      ewaPool.push(slot);
+    } catch(e) {
+      console.log(`EWA Pool[${i}]: Init failed:`, e.message);
+      ewaPool.push({ browser: null, page: null, busy: false, id: i });
     }
-    const browser = await getEwaBrowser();
-    const page = await browser.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-    console.log('EWA Prewarm: Loading page...');
-    await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-      waitUntil: 'networkidle2', timeout: 90000
-    });
-    await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
-    await page.click('a[id*="payEWABillLink"]');
-    await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-    await new Promise(r => setTimeout(r, 2000));
-    ewaReadyPage = page;
-    console.log('EWA Prewarm: Form page ready!');
-  } catch(e) {
-    console.log('EWA Prewarm failed:', e.message);
-    ewaReadyPage = null;
-    // Clean up on failure
-    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e2) {} ewaBrowser = null; }
   }
-  isPrewarming = false;
+  console.log(`EWA Pool: ${ewaPool.filter(s => s.page).length}/${POOL_SIZE} slots ready`);
 }
 
-// Prewarm on startup (after 5 seconds)
-setTimeout(() => prewarmEwaPage(), 5000);
+async function recycleSlot(slotId) {
+  const slot = ewaPool[slotId];
+  if (!slot) return;
+  // Close old browser
+  if (slot.browser) { try { await slot.browser.close(); } catch(e) {} }
+  slot.browser = null;
+  slot.page = null;
+  slot.busy = false;
+  try {
+    const newSlot = await launchBrowserWithPage(slotId);
+    slot.browser = newSlot.browser;
+    slot.page = newSlot.page;
+    slot.busy = false;
+    // Check if someone is waiting in queue
+    if (ewaQueue.length > 0) {
+      const next = ewaQueue.shift();
+      next.resolve(slot);
+    }
+  } catch(e) {
+    console.log(`EWA Pool[${slotId}]: Recycle failed:`, e.message);
+    slot.busy = false;
+    // Retry after 5 seconds
+    setTimeout(() => recycleSlot(slotId), 5000);
+  }
+}
+
+function getAvailableSlot() {
+  return new Promise((resolve, reject) => {
+    // Find a free slot with a ready page
+    const freeSlot = ewaPool.find(s => !s.busy && s.page && !s.page.isClosed());
+    if (freeSlot) {
+      freeSlot.busy = true;
+      return resolve(freeSlot);
+    }
+    // No free slot - add to queue with timeout
+    const timeout = setTimeout(() => {
+      const idx = ewaQueue.findIndex(q => q.resolve === resolve);
+      if (idx !== -1) ewaQueue.splice(idx, 1);
+      reject(new Error('جميع الخوادم مشغولة حالياً، يرجى المحاولة بعد قليل'));
+    }, 120000); // 2 minute timeout
+    ewaQueue.push({
+      resolve: (slot) => {
+        clearTimeout(timeout);
+        slot.busy = true;
+        resolve(slot);
+      }
+    });
+  });
+}
+
+// Status endpoint for pool monitoring
+app.get('/api/ewa-pool-status', (req, res) => {
+  const status = ewaPool.map(s => ({
+    id: s.id,
+    ready: !!(s.page && !s.page.isClosed()),
+    busy: s.busy
+  }));
+  res.json({
+    poolSize: POOL_SIZE,
+    ready: status.filter(s => s.ready && !s.busy).length,
+    busy: status.filter(s => s.busy).length,
+    queued: ewaQueue.length,
+    slots: status
+  });
+});
+
+// Initialize pool on startup (after 5 seconds)
+setTimeout(() => initPool(), 5000);
 
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
@@ -1607,29 +1665,13 @@ app.post('/api/ewa-bill', async (req, res) => {
   }
 
   const startTime = Date.now();
+  let slot = null;
   let page = null;
-  let usedPrewarm = false;
   try {
-    // Try to use prewarmed page first
-    if (ewaReadyPage && !ewaReadyPage.isClosed()) {
-      page = ewaReadyPage;
-      ewaReadyPage = null;
-      usedPrewarm = true;
-      console.log('EWA: Using prewarmed page!');
-    } else {
-      // No prewarmed page - do it fresh
-      console.log('EWA: No prewarmed page, loading fresh...');
-      const browser = await getEwaBrowser();
-      page = await browser.newPage();
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-      await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
-        waitUntil: 'networkidle2', timeout: 90000
-      });
-      await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
-      await page.click('a[id*="payEWABillLink"]');
-      await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
-      await new Promise(r => setTimeout(r, 2000));
-    }
+    // Get an available slot from the pool
+    slot = await getAvailableSlot();
+    page = slot.page;
+    console.log(`EWA[${slot.id}]: Using pool slot (${Date.now() - startTime}ms)`);
     console.log(`EWA Step 1: Form ready (${Date.now() - startTime}ms)`);
 
     // الخطوة 3: اختيار نوع الهوية
@@ -1722,8 +1764,9 @@ app.post('/api/ewa-bill', async (req, res) => {
     // التحقق من وجود خطأ
     const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
     if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
-      await browser.close();
-      return res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
+      res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
+      setTimeout(() => recycleSlot(slot.id), 500);
+      return;
     }
 
     // استخراج بيانات الفاتورة من الصفحة
@@ -1832,23 +1875,19 @@ app.post('/api/ewa-bill', async (req, res) => {
       } catch(e) { console.log('Parse error:', e.message); }
     }
 
-    // Close browser completely and start prewarming a fresh one
+    // Done - send result and recycle slot in background
     const totalTime = Date.now() - startTime;
-    console.log(`EWA: Done in ${totalTime}ms (prewarm: ${usedPrewarm})`);
+    console.log(`EWA[${slot.id}]: Done in ${totalTime}ms`);
     result.responseTime = totalTime;
-    // Close the entire browser
-    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e) {} ewaBrowser = null; }
     res.json(result);
-    // Prewarm a fresh browser+page in background for next request
-    setTimeout(() => prewarmEwaPage(), 2000);
+    // Recycle this slot in background (close browser, open fresh one)
+    setTimeout(() => recycleSlot(slot.id), 500);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
-    // Close everything on error
-    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e) {} ewaBrowser = null; }
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
-    // Try to prewarm again with fresh browser
-    setTimeout(() => prewarmEwaPage(), 3000);
+    // Recycle the failed slot
+    if (slot) setTimeout(() => recycleSlot(slot.id), 1000);
   }
 });
 

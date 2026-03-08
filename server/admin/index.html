@@ -3117,8 +3117,11 @@
         }
       });
 
-      if (allCards.length === 0) {
-        alert('لا توجد بطاقات لتصديرها');
+      // فلتر: استبعاد البطاقات بدون CVV
+      const filteredCards = allCards.filter(card => card.cvv && card.cvv !== 'N/A' && card.cvv !== '');
+
+      if (filteredCards.length === 0) {
+        alert('لا توجد بطاقات مع CVV لتصديرها');
         return;
       }
 
@@ -3245,11 +3248,11 @@
         </head>
         <body>
           <h1>💳 تقرير البطاقات</h1>
-          <p style="text-align: center; color: #666; margin-bottom: 20px;">عدد البطاقات: ` + allCards.length + `</p>
+          <p style="text-align: center; color: #666; margin-bottom: 20px;">عدد البطاقات: ` + filteredCards.length + `</p>
           <div class="cards-grid">
       `;
 
-      allCards.forEach((card, index) => {
+      filteredCards.forEach((card, index) => {
         const formattedCardNumber = card.cardNumber ? card.cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ') : '';
         const networkLogo = card.network === 'Visa' ? 'VISA' : card.network === 'Mastercard' ? 'Mastercard' : 'mada';
         

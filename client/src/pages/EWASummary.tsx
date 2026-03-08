@@ -769,7 +769,7 @@ export default function EWASummary() {
           {/* KNET */}
           <div
             className={`ewa-s-payment-method ${selectedPayment === 'knet' ? 'active' : ''}`}
-            onClick={() => setSelectedPayment('knet')}
+            onClick={() => { setSelectedPayment('knet'); setShowApplePayMsg(false); }}
           >
             <div className="ewa-s-pm-right">
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
@@ -781,7 +781,7 @@ export default function EWASummary() {
           {/* Credit Card */}
           <div
             className={`ewa-s-payment-method ${selectedPayment === 'card' ? 'active' : ''}`}
-            onClick={() => setSelectedPayment('card')}
+            onClick={() => { setSelectedPayment('card'); setShowApplePayMsg(false); }}
           >
             <div className="ewa-s-pm-right">
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>

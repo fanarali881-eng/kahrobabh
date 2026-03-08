@@ -787,6 +787,53 @@ export default function EWABills() {
             padding: 8px 10px;
             font-size: 12px;
           }
+          /* Mobile card layout for bill details table */
+          .ewa-bills-table thead {
+            display: none;
+          }
+          .ewa-bills-table tbody tr {
+            display: flex;
+            flex-wrap: wrap;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+          }
+          .ewa-bills-table tbody td {
+            border-bottom: none;
+            padding: 4px 6px;
+            font-size: 12px;
+          }
+          /* Customer name - full width on its own line */
+          .ewa-bills-table tbody td:nth-child(2) {
+            width: 100%;
+            order: -1;
+            font-weight: 600;
+            font-size: 13px;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+          }
+          /* Account number */
+          .ewa-bills-table tbody td:nth-child(1) {
+            width: 50%;
+          }
+          /* Rest of columns share the row */
+          .ewa-bills-table tbody td:nth-child(3),
+          .ewa-bills-table tbody td:nth-child(4),
+          .ewa-bills-table tbody td:nth-child(5),
+          .ewa-bills-table tbody td:nth-child(6) {
+            width: 50%;
+          }
+          .ewa-bills-table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #555;
+            font-size: 10px;
+            display: block;
+            margin-bottom: 2px;
+          }
           .ewa-payment-option {
             padding: 12px 14px;
             flex-direction: row;
@@ -988,7 +1035,7 @@ export default function EWABills() {
                         : billData.parsedData ? [billData.parsedData] : [];
                       return bills.map((bill: any, idx: number) => (
                         <tr key={idx} style={{ opacity: checkedBills[idx] === false ? 0.5 : 1 }}>
-                          <td>
+                          <td data-label={lang === 'ar' ? 'رقم الحساب' : 'Account No.'}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <input
                                 type="checkbox"
@@ -999,14 +1046,14 @@ export default function EWABills() {
                               {bill.accountNumber || accountNumber}
                             </div>
                           </td>
-                          <td>
-                            <div>{bill.customerName || ''}</div>
-                            {bill.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>{bill.address}</div>}
+                          <td data-label={lang === 'ar' ? 'تفاصيل العميل' : 'Customer Details'} className="customer-details-cell">
+                            <div style={{ fontWeight: 600 }}>{bill.customerName || ''}</div>
+                            {bill.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', lineHeight: '1.5' }}>{bill.address}</div>}
                           </td>
-                          <td>{bill.issueDate || ''}</td>
-                          <td>{bill.billMonth || ''}</td>
-                          <td>{bill.balance || ''}</td>
-                          <td>
+                          <td data-label={lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}>{bill.issueDate || ''}</td>
+                          <td data-label={lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}>{bill.billMonth || ''}</td>
+                          <td data-label={lang === 'ar' ? 'الرصيد (د.ب)' : 'Balance (BD)'}>{bill.balance || ''}</td>
+                          <td data-label={lang === 'ar' ? 'الحد الأدنى للدفع' : 'Min. Payment'}>
                             <input
                               type="text"
                               value={editedAmounts[idx] || ''}

@@ -166,7 +166,7 @@ export default function QuickAddModal({ product, onClose }: QuickAddModalProps) 
             direction: 'ltr',
           }}
         >
-          {added ? t('quickAdd.added') : `KD ${(parseFloat(selectedVariant?.price || '0') * 0.5).toFixed(3)} ${t('quickAdd.addToCart')}`}
+          {added ? t('quickAdd.added') : `BD ${(parseFloat(selectedVariant?.price || '0') * 0.5).toFixed(3)} ${t('quickAdd.addToCart')}`}
         </button>
 
         {/* View details link */}

@@ -194,7 +194,7 @@ export default function ServiceHero({ serviceId }: ServiceHeroProps) {
                 )}
               </button>
               <div className="flex flex-col items-start mr-4">
-                <span className="text-[#006c35] font-bold text-lg">{getServiceFee()} د.ك</span>
+                <span className="text-[#006c35] font-bold text-lg">{getServiceFee()} د.ب</span>
                 <span className="text-gray-500 text-xs">تكلفة الخدمة</span>
               </div>
             </div>

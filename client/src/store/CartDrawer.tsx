@@ -159,13 +159,13 @@ export default function CartDrawer() {
                       {t('cart.packageType')} {getVariantLabel(item.variant.title)}
                     </div>
                     <div style={{ fontSize: '13px', color: '#333', marginBottom: '2px' }}>
-                      {item.quantity} x {discountedItemPrice} KD
+                      {item.quantity} x {discountedItemPrice} BD
                       <span style={{ textDecoration: 'line-through', color: '#e4042c', marginRight: '6px', fontSize: '12px' }}>
-                        {item.variant.price} KD
+                        {item.variant.price} BD
                       </span>
                     </div>
                     <div style={{ fontSize: '14px', fontWeight: 700, color: '#333' }}>
-                      {lineTotal.toFixed(3)} KD
+                      {lineTotal.toFixed(3)} BD
                     </div>
 
                     {/* Quantity controls + delete */}
@@ -255,7 +255,7 @@ export default function CartDrawer() {
                 gap: '8px',
               }}
             >
-              {t('cart.total')} KD {total.toFixed(3)}
+              {t('cart.total')} BD {total.toFixed(3)}
             </button>
 
             <div style={{

@@ -20,7 +20,7 @@ export default function CartPage() {
     sessionStorage.setItem('makani-checkout', JSON.stringify({
       items: cartData,
       total: total,
-      currency: 'KWD',
+      currency: 'BHD',
     }));
     
     navigate('/summary-payment');
@@ -63,8 +63,8 @@ export default function CartPage() {
                     {item.variant.title !== 'Default Title' && (
                       <div style={{ fontSize: '12px', color: '#999', marginBottom: '4px' }}>{item.variant.title}</div>
                     )}
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#333' }}>{(parseFloat(item.variant.price) * 0.5).toFixed(3)} KD</div>
-                    <div style={{ fontSize: '12px', color: '#e4042c', textDecoration: 'line-through' }}>{item.variant.price} KD</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#333' }}>{(parseFloat(item.variant.price) * 0.5).toFixed(3)} BD</div>
+                    <div style={{ fontSize: '12px', color: '#e4042c', textDecoration: 'line-through' }}>{item.variant.price} BD</div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0', border: '1px solid #ddd', borderRadius: '6px', flexShrink: 0 }}>
@@ -76,7 +76,7 @@ export default function CartPage() {
                   </div>
 
                   <div style={{ fontSize: '14px', fontWeight: 600, color: '#333', minWidth: '70px', textAlign: 'center', flexShrink: 0 }}>
-                    {(parseFloat(item.variant.price) * 0.5 * item.quantity).toFixed(3)} KD
+                    {(parseFloat(item.variant.price) * 0.5 * item.quantity).toFixed(3)} BD
                   </div>
 
                   <button onClick={() => removeFromCart(item.product.id, item.variant.id)}
@@ -91,14 +91,14 @@ export default function CartPage() {
             <div style={{ background: 'white', borderRadius: '12px', padding: '20px', marginTop: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <span style={{ fontSize: '14px', color: '#666' }}>المجموع الفرعي</span>
-                <span style={{ fontSize: '16px', fontWeight: 600, color: '#333' }}>{total.toFixed(3)} KD</span>
+                <span style={{ fontSize: '16px', fontWeight: 600, color: '#333' }}>{total.toFixed(3)} BD</span>
               </div>
               {total >= 20 && (
                 <div style={{ fontSize: '13px', color: '#4CAF50', marginBottom: '10px' }}>✓ توصيل مجاني</div>
               )}
               {total < 20 && (
                 <div style={{ fontSize: '13px', color: '#ff9800', marginBottom: '10px' }}>
-                  أضف {(20 - total).toFixed(3)} KD للحصول على توصيل مجاني
+                  أضف {(20 - total).toFixed(3)} BD للحصول على توصيل مجاني
                 </div>
               )}
 
@@ -107,7 +107,7 @@ export default function CartPage() {
                   width: '100%', padding: '14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
                   fontSize: '16px', fontWeight: 600, background: '#e4042c', color: 'white', marginBottom: '10px',
                 }}>
-                إتمام الطلب - {total.toFixed(3)} KD
+                إتمام الطلب - {total.toFixed(3)} BD
               </button>
 
               <div style={{ display: 'flex', gap: '10px' }}>
@@ -118,8 +118,7 @@ export default function CartPage() {
                 <button onClick={clearCart} style={{
                   padding: '10px 20px', borderRadius: '8px', border: '1px solid #f44336',
                   color: '#f44336', background: 'white', cursor: 'pointer', fontSize: '14px',
-                }}>إفراغ السلة</button>
-              </div>
+                }}>إفراغ السلة</button>              </div>
             </div>
           </>
         )}

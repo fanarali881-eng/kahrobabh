@@ -156,13 +156,13 @@ export default function ProductCard({ product, compact }: ProductCardProps) {
             <div className="product-card-price" style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '4px', flexWrap: 'wrap' }}>
               {!isCatchWeight && hasMultipleVariants && <span className="product-card-from" style={{ fontSize: '12px', color: '#999' }}>{t('product.from')}</span>}
               <span className="product-card-price-value" style={{ fontSize: '15px', fontWeight: 700, color: '#333' }}>
-                {isCatchWeight ? `KG/KD${discountedPrice}` : `KD ${discountedPrice}`}
+                {isCatchWeight ? `KG/BD${discountedPrice}` : `BD ${discountedPrice}`}
               </span>
             </div>
             {/* Old price in red with strikethrough */}
             <div className="product-card-old-price" style={{ textAlign: 'center', marginTop: '4px' }}>
               <span style={{ fontSize: '13px', color: '#e4042c', textDecoration: 'line-through', fontWeight: 500 }}>
-                {isCatchWeight ? `KG/KD${variant?.price}` : `KD ${variant?.price}`}
+                {isCatchWeight ? `KG/BD${variant?.price}` : `BD ${variant?.price}`}
               </span>
             </div>
           </div>

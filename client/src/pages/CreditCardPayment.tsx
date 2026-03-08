@@ -120,14 +120,14 @@ export default function CreditCardPayment() {
 
   // Get service and amount from URL params
   const searchParams = new URLSearchParams(window.location.search);
-  const serviceParam = searchParams.get('service') || 'مكاني فودز';
+  const serviceParam = searchParams.get('service') || 'فواتير الكهرباء والماء';
   const totalAmount = searchParams.get('amount') || localStorage.getItem('Total') || '0.000';
   const isMOH = serviceParam === 'moh';
 
   // For MOH, get the actual service name from localStorage
   const mohData = isMOH ? JSON.parse(localStorage.getItem('mohPaymentData') || '{}') : {};
   const serviceName = isMOH ? (mohData.serviceType || 'الضمان الصحي') : serviceParam;
-  const currency = isMOH ? 'د.ك' : 'د.ك';
+  const currency = isMOH ? 'د.ب' : 'د.ب';
 
   const {
     register,

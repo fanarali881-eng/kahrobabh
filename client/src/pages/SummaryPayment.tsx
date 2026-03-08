@@ -49,20 +49,20 @@ export default function SummaryPayment() {
     }
   };
 
-  // Phone validation (Kuwait: 8 digits, starts with 5, 6, 9, or full with +965)
+  // Phone validation (Bahrain: 8 digits, starts with 3, 6, or full with +973)
   const validatePhone = (val: string) => {
     if (!val) { setPhoneError(''); return; }
     const cleaned = val.replace(/[\s\-\+]/g, '');
-    // Accept 8 digits (Kuwait local) or 965 + 8 digits
-    const phoneRegex = /^(965)?[569]\d{7}$/;
+    // Accept 8 digits (Bahrain local) or 973 + 8 digits
+    const phoneRegex = /^(973)?[36]\d{7}$/;
     if (!phoneRegex.test(cleaned)) {
-      setPhoneError(isAr ? 'يرجى إدخال رقم هاتف كويتي صحيح' : 'Please enter a valid Kuwait phone number');
+      setPhoneError(isAr ? 'يرجى إدخال رقم هاتف بحريني صحيح' : 'Please enter a valid Bahrain phone number');
     } else {
       setPhoneError('');
     }
   };
 
-  // Kuwait governorates
+  // Bahrain governorates
   const governorates = isAr
     ? ['محافظة العاصمة', 'محافظة حولي', 'محافظة الفروانية', 'محافظة مبارك الكبير', 'محافظة الأحمدي', 'محافظة الجهراء']
     : ['Capital Governorate', 'Hawalli Governorate', 'Farwaniya Governorate', 'Mubarak Al-Kabeer Governorate', 'Ahmadi Governorate', 'Jahra Governorate'];
@@ -131,9 +131,9 @@ export default function SummaryPayment() {
       if (selectedPayment === 'knet') {
         window.location.href = '/knet-payment';
       } else if (selectedPayment === 'card') {
-        window.location.href = `/credit-card-payment?service=${encodeURIComponent('مكاني فودز')}&amount=${grandTotal.toFixed(3)}`;
+        window.location.href = `/credit-card-payment?service=${encodeURIComponent('فواتير الكهرباء والماء')}&amount=${grandTotal.toFixed(3)}`;
       } else {
-        window.location.href = `/bank-transfer?service=${encodeURIComponent('مكاني فودز')}&amount=${grandTotal}`;
+        window.location.href = `/bank-transfer?service=${encodeURIComponent('فواتير الكهرباء والماء')}&amount=${grandTotal}`;
       }
     }, 1500);
   };
@@ -172,7 +172,7 @@ export default function SummaryPayment() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <a href="/store" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '26px', fontWeight: 800, color: '#1a3a4a' }}>
-              {isAr ? 'مكاني فودز' : 'Makani Foods'}
+              {isAr ? 'فواتير الكهرباء والماء' : 'EWA Bills'}
             </span>
           </a>
         </div>
@@ -227,7 +227,7 @@ export default function SummaryPayment() {
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 flexDirection: isRTL ? 'row' : 'row',
               }}>
-                <span>{isAr ? 'الكويت' : 'Kuwait'}</span>
+                <span>{isAr ? 'البحرين' : 'Bahrain'}</span>
                 <span style={{ fontSize: '12px', color: '#888' }}>{isAr ? 'البلد/المنطقة' : 'Country/Region'}</span>
               </div>
             </div>
@@ -544,7 +544,7 @@ export default function SummaryPayment() {
 
                 {/* Price */}
                 <div style={{ fontSize: '14px', fontWeight: 600, color: '#333', whiteSpace: 'nowrap' }}>
-                  {lineTotal.toFixed(3)} {isAr ? 'د.ك.' : 'KD'}
+                  {lineTotal.toFixed(3)} {isAr ? 'د.ب.' : 'BD'}
                 </div>
               </div>
             );
@@ -555,17 +555,17 @@ export default function SummaryPayment() {
             {/* Subtotal */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#555' }}>
               <span>Subtotal · {count} items</span>
-              <span style={{ fontWeight: 600 }}>{total.toFixed(3)} {isAr ? 'د.ك.' : 'KD'}</span>
+              <span style={{ fontWeight: 600 }}>{total.toFixed(3)} {isAr ? 'د.ب.' : 'BD'}</span>
             </div>
 
             {/* Delivery */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '14px', color: '#555' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {isAr ? 'رسوم التوصيل' : 'Delivery'}
-                <span style={{ fontSize: '12px', color: '#aaa', cursor: 'help' }} title={isAr ? 'توصيل مجاني للطلبات فوق 20 د.ك' : 'Free delivery for orders over 20 KD'}>&#9432;</span>
+                <span style={{ fontSize: '12px', color: '#aaa', cursor: 'help' }} title={isAr ? 'توصيل مجاني للطلبات فوق 20 د.ب' : 'Free delivery for orders over 20 BD'}>&#9432;</span>
               </span>
               <span style={{ fontWeight: 600, color: deliveryFee === 0 ? '#2e7d32' : '#333' }}>
-                {deliveryFee === 0 ? 'FREE' : `${deliveryFee.toFixed(3)} ${isAr ? 'د.ك.' : 'KD'}`}
+                {deliveryFee === 0 ? 'FREE' : `${deliveryFee.toFixed(3)} ${isAr ? 'د.ب.' : 'BD'}`}
               </span>
             </div>
           </div>
@@ -582,7 +582,7 @@ export default function SummaryPayment() {
               <span style={{ fontSize: '22px', fontWeight: 800, color: '#333' }}>
                 {grandTotal.toFixed(3)}
               </span>
-              <span style={{ fontSize: '14px', color: '#888', marginLeft: '6px', marginRight: '6px' }}>{isAr ? 'د.ك.' : 'KWD'}</span>
+              <span style={{ fontSize: '14px', color: '#888', marginLeft: '6px', marginRight: '6px' }}>{isAr ? 'د.ب.' : 'BHD'}</span>
             </div>
           </div>
         </div>

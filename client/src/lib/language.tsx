@@ -58,7 +58,7 @@ const translations: Record<string, Record<Lang, string>> = {
   "saudi_id": { ar: "الرقم الشخصي السعودي", en: "Saudi Personal Number" },
   "omani_id": { ar: "الرقم الشخصي العماني", en: "Omani Personal Number" },
   "qatari_id": { ar: "الرقم الشخصي القطري", en: "Qatari Personal Number" },
-  "kuwaiti_id": { ar: "الرقم الشخصي الكويتي", en: "Kuwaiti Personal Number" },
+  "bahraini_id": { ar: "الرقم الشخصي البحريني", en: "Bahraini Personal Number" },
   "owners_union": { ar: "رقم اتحاد الملاك", en: "Owners Union Number" },
   "gov_entity": { ar: "رقم الجهة الحكومية", en: "Government Entity Number" },
   "passport": { ar: "رقم الجواز", en: "Passport Number" },

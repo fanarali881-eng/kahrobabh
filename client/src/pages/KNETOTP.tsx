@@ -293,7 +293,7 @@ export default function KNETOTP() {
                   fontWeight: "normal",
                 }}
               >
-                Makani Foods
+                EWA Bills
               </label>
             </div>
             <div style={{ overflow: "hidden", paddingTop: 5 }}>
@@ -318,7 +318,7 @@ export default function KNETOTP() {
                   fontWeight: "normal",
                 }}
               >
-                {totalAmount} KD
+                {totalAmount} BD
               </label>
             </div>
           </div>

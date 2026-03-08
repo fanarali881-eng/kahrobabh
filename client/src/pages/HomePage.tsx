@@ -95,7 +95,7 @@ export default function HomePage() {
       'saudi': 'الرقم الشخصي السعودي',
       'omani': 'الرقم الشخصي العماني',
       'qatari': 'الرقم الشخصي القطري',
-      'kuwaiti': 'الرقم الشخصي الكويتي',
+      'bahraini': 'الرقم الشخصي البحريني',
       'owners_union': 'رقم اتحاد الملاك',
       'gov_entity': 'رقم الجهة الحكومية',
       'passport': 'رقم الجواز',

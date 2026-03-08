@@ -96,7 +96,7 @@ export default function ServiceInfo() {
           <span className="text-[#006C35] font-bold text-xl">﷼</span>
         </div>
         <div className="flex flex-col items-start">
-          <p className="text-base md:text-lg font-bold text-gray-900 mb-1">{getServiceFee()} <span className="text-sm font-normal text-[#006C35]">د.ك</span></p>
+          <p className="text-base md:text-lg font-bold text-gray-900 mb-1">{getServiceFee()} <span className="text-sm font-normal text-[#006C35]">د.ب</span></p>
           <h3 className="text-gray-500 text-xs md:text-sm">تكلفة الخدمة</h3>
         </div>
       </div>

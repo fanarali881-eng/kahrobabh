@@ -160,11 +160,11 @@ export default function ProductPage() {
             {/* Price */}
             <div className="product-price-section" style={{ marginBottom: '20px' }}>
               <span className="product-price" style={{ fontSize: '22px', fontWeight: 700, color: '#333' }}>
-                {isCatchWeight ? `KG/KD${discountedPrice}` : `KD ${discountedPrice}`}
+                {isCatchWeight ? `KG/BD${discountedPrice}` : `BD ${discountedPrice}`}
               </span>
               <div style={{ marginTop: '4px' }}>
                 <span style={{ fontSize: '15px', color: '#e4042c', textDecoration: 'line-through' }}>
-                  {isCatchWeight ? `KG/KD${variant?.price}` : `KD ${variant?.price}`}
+                  {isCatchWeight ? `KG/BD${variant?.price}` : `BD ${variant?.price}`}
                 </span>
               </div>
               <span style={{ background: '#e4042c', color: 'white', borderRadius: '20px', fontSize: '13px', fontWeight: 700, padding: '4px 14px', marginTop: '8px', display: 'inline-block' }}>

@@ -136,7 +136,7 @@ function RamadanPopup() {
               fontFamily: '"Makani Bold", Arial, sans-serif',
               letterSpacing: '1px',
             }}>
-              مكاني فودز
+              فواتير الكهرباء والماء
             </div>
             <div style={{
               fontSize: '12px',
@@ -145,7 +145,7 @@ function RamadanPopup() {
               letterSpacing: '2px',
               textTransform: 'uppercase',
             }}>
-              Makani Foods
+              EWA Bills
             </div>
 
             {/* Discount Text */}

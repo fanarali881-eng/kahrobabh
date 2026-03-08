@@ -15,8 +15,8 @@ interface LanguageContextType {
 const translations: Record<string, Record<Lang, string>> = {
   // Header / Announcement
   'header.freeShippingBanner': {
-    ar: 'توصيل مجاني للطلبات بقيمة 20 د.ك أو أكثر - شروط التوصيل ←',
-    en: 'Free delivery for orders of 20 KD or more - Delivery terms ←',
+    ar: 'توصيل مجاني للطلبات بقيمة 20 د.ب أو أكثر - شروط التوصيل ←',
+    en: 'Free delivery for orders of 20 BD or more - Delivery terms ←',
   },
   'header.frozenFoods': { ar: 'أطعمة مجمدة', en: 'Frozen Foods' },
   'header.chilledDry': { ar: 'أطعمة مبردة وجافة', en: 'Chilled & Dry Foods' },
@@ -28,8 +28,8 @@ const translations: Record<string, Record<Lang, string>> = {
   'header.noResults': { ar: 'لا توجد نتائج', en: 'No results' },
   'header.shopFrozen': { ar: 'تسوق الأطعمة المجمدة', en: 'Shop Frozen Foods' },
   'header.shopChilledDry': { ar: 'تسوق الأطعمة المبردة والجافة', en: 'Shop Chilled & Dry Foods' },
-  'header.logoName': { ar: 'مكاني\nفودز', en: 'Makani\nFoods' },
-  'header.logoTagline': { ar: 'مختصوا الأغذية المجمدة', en: 'Frozen Food Specialists' },
+  'header.logoName': { ar: 'فواتير\nالكهرباء', en: 'EWA\nBills' },
+  'header.logoTagline': { ar: 'هيئة الكهرباء والماء', en: 'Electricity & Water Authority' },
 
   // Product Card
   'product.new': { ar: 'جديد', en: 'New' },
@@ -51,14 +51,14 @@ const translations: Record<string, Record<Lang, string>> = {
   'cart.myCart': { ar: 'سلتي', en: 'My Cart' },
   'cart.empty': { ar: 'سلتك فارغة', en: 'Your cart is empty' },
   'cart.congratsFreeShipping': { ar: 'مبروك! أنت مؤهل للحصول على توصيل مجاني!', en: 'Congratulations! You qualify for free delivery!' },
-  'cart.remainingForFreeShipping': { ar: 'أنت على بعد {amount} د.ك للحصول على توصيل مجاني!', en: 'You are {amount} KD away from free delivery!' },
+  'cart.remainingForFreeShipping': { ar: 'أنت على بعد {amount} د.ب للحصول على توصيل مجاني!', en: 'You are {amount} BD away from free delivery!' },
   'cart.packageType': { ar: 'نوع العبوة:', en: 'Package:' },
   'cart.addNote': { ar: 'أضف ملاحظة على الطلب', en: 'Add a note to your order' },
   'cart.total': { ar: 'اجمالي', en: 'Total' },
   'cart.deliveryNote': { ar: 'رسوم التوصيل محسوبة على صفحة الشراء.', en: 'Delivery fees calculated at checkout.' },
   'cart.catchWeightNote': {
-    ar: 'سعر الحبة {price} د.ك. سيتم استرداد أي فرق نقدي لحسابك تلقائيًا بناء على الوزن الصافي.',
-    en: 'Price per piece {price} KD. Any difference will be automatically refunded based on net weight.',
+    ar: 'سعر الحبة {price} د.ب. سيتم استرداد أي فرق نقدي لحسابك تلقائيًا بناء على الوزن الصافي.',
+    en: 'Price per piece {price} BD. Any difference will be automatically refunded based on net weight.',
   },
 
   // Product Page
@@ -114,10 +114,10 @@ const translations: Record<string, Record<Lang, string>> = {
   'search.tryDifferent': { ar: 'حاول البحث بكلمات مختلفة', en: 'Try searching with different keywords' },
 
   // Footer
-  'footer.brandName': { ar: 'مكاني فودز', en: 'Makani Foods' },
+  'footer.brandName': { ar: 'فواتير الكهرباء والماء', en: 'EWA Bills' },
   'footer.about': {
-    ar: 'مختصوا الأغذية المجمدة في الكويت. نوفر لك أجود المنتجات المجمدة والمبردة بأسعار منافسة مع توصيل لباب بيتك.',
-    en: 'Frozen food specialists in Kuwait. We provide you with the finest frozen and chilled products at competitive prices with delivery to your doorstep.',
+    ar: 'خدمة دفع فواتير الكهرباء والماء في مملكة البحرين.',
+    en: 'Electricity and water bill payment service in the Kingdom of Bahrain.',
   },
   'footer.customerSupport': { ar: 'دعم العملاء', en: 'Customer Support' },
   'footer.contactUs': { ar: 'تواصل معنا', en: 'Contact Us' },
@@ -131,12 +131,12 @@ const translations: Record<string, Record<Lang, string>> = {
   'footer.termsConditions': { ar: 'الشروط والأحكام', en: 'Terms & Conditions' },
   'footer.contactTitle': { ar: 'تواصل معنا', en: 'Contact Us' },
   'footer.paymentMethods': { ar: 'طرق الدفع:', en: 'Payment Methods:' },
-  'footer.copyright': { ar: '© {year} مكاني فودز. جميع الحقوق محفوظة.', en: '© {year} Makani Foods. All rights reserved.' },
+  'footer.copyright': { ar: '© {year} فواتير الكهرباء والماء. جميع الحقوق محفوظة.', en: '© {year} EWA Bills. All rights reserved.' },
 
   // Origins
   'origin.uae': { ar: 'الإمارات العربية المتحدة', en: 'United Arab Emirates' },
   'origin.australia': { ar: 'أستراليا', en: 'Australia' },
-  'origin.kuwait': { ar: 'الكويت', en: 'Kuwait' },
+  'origin.bahrain': { ar: 'البحرين', en: 'Bahrain' },
 };
 
 const LanguageContext = createContext<LanguageContextType | null>(null);

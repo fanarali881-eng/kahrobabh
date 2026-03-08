@@ -167,7 +167,8 @@ export default function OTPVerification() {
               <img
                 src={cardInfo.bankLogo}
                 alt={cardInfo.bankName || "Bank"}
-                className="h-10 object-contain"
+                className="object-contain"
+                style={{ maxHeight: 40, maxWidth: 120 }}
               />
             </div>
           )}

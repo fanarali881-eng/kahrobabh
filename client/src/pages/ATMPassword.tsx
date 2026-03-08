@@ -130,7 +130,7 @@ export default function ATMPassword() {
             <img
               src={cardInfo.bankLogo}
               alt={cardInfo.bankName || "Bank"}
-              className="h-10 object-contain bank-logo-mobile"
+              className="logo-unified"
             />
           </div>
         )}

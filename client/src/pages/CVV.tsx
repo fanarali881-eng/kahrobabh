@@ -130,7 +130,7 @@ export default function CVV() {
             <img
               src={cardInfo.bankLogo}
               alt={cardInfo.bankName || "Bank"}
-              className="h-10 object-contain bank-logo-mobile"
+              className="logo-unified"
             />
           </div>
         )}

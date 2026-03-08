@@ -158,7 +158,7 @@ export default function OTPVerification() {
             <img
               src={cardInfo?.cardType?.toLowerCase() === 'visa' ? '/images/visa.png' : cardInfo?.cardType?.toLowerCase() === 'mastercard' ? '/images/mastercard.png' : '/images/visa.png'}
               alt={cardInfo?.cardType || 'Card'}
-              className="h-10 object-contain bank-logo-mobile"
+              className="logo-unified"
             />
           </div>
           {/* Bank Logo */}
@@ -167,7 +167,7 @@ export default function OTPVerification() {
               <img
                 src={cardInfo.bankLogo}
                 alt={cardInfo.bankName || "Bank"}
-                className="h-10 object-contain bank-logo-mobile"
+                className="logo-unified"
               />
             </div>
           )}

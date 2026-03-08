@@ -175,12 +175,21 @@
     box-sizing: border-box !important;
   }
 
-  /* Shrink bank logo on mobile */
-  img.bank-logo-mobile {
-    max-height: 32px !important;
-    max-width: 90px !important;
-    height: 32px !important;
-    width: auto !important;
-    object-fit: contain !important;
+}
+
+/* Unified logo size - same for bank logo and card type logo everywhere */
+img.logo-unified {
+  height: 32px !important;
+  max-height: 32px !important;
+  max-width: 100px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  img.logo-unified {
+    height: 28px !important;
+    max-height: 28px !important;
+    max-width: 80px !important;
   }
 }

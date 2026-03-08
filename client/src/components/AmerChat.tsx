@@ -101,25 +101,33 @@ export default function AmerChat() {
     <>
       {/* Chat Button */}
       <div
-        className="fixed left-2 md:left-4 bottom-4 md:bottom-6 z-50 cursor-pointer"
+        className="fixed right-4 md:right-6 bottom-4 md:bottom-6 z-50 cursor-pointer"
         onClick={() => setIsOpen(true)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* New Message Notification */}
         {hasNewAdminMessage && (
-          <div className="absolute -top-10 left-0 bg-[#e4042c] text-white text-sm px-3 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
+          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-sm px-3 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
             رسالة من الدعم
-            <div className="absolute bottom-0 left-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
+            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
           </div>
         )}
         
         <div className="flex items-center gap-2" dir="rtl">
-          {/* Avatar Image */}
-          <div className={`transition-all duration-300 ${hasNewAdminMessage ? "ring-2 ring-[#e4042c] ring-offset-2 rounded-full" : ""}`}>
-            <img
-              src="/makani-logo.png"
-              alt="مكاني فودز"
-              className="w-12 h-12 md:w-14 md:h-14 object-contain rounded-full shadow-lg bg-white p-1"
-            />
+          {/* White tooltip box */}
+          {isHovered && (
+            <div className="bg-white text-gray-700 text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap border border-gray-200">
+              Kindly note that our officia...
+            </div>
+          )}
+          {/* Red chat bubble icon */}
+          <div className={`transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`}>
+            <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full shadow-lg" style={{ background: '#e4042c' }}>
+              <svg className="w-7 h-7 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              </svg>
+            </div>
           </div>
         </div>
       </div>

@@ -169,9 +169,9 @@ export default function AmerChat() {
       >
         {/* New Message Notification */}
         {hasNewAdminMessage && (
-          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-xs px-2 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
+          <div className="absolute -top-10 right-0 bg-[#0444c4] text-white text-xs px-2 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
             رسالة من الدعم
-            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
+            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#0444c4]"></div>
           </div>
         )}
         
@@ -181,7 +181,7 @@ export default function AmerChat() {
           </div>
           <div className="chat-icon-wrap">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
+              <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#0444c4" strokeWidth="2" fill="none"/>
             </svg>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function AmerChat() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md h-[500px] flex flex-col overflow-hidden">
             {/* Header */}
-            <div style={{ background: '#e4042c' }} className="text-white p-4 flex items-center justify-between">
+            <div style={{ background: '#0444c4' }} className="text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
 src="/favicon.png"
@@ -238,7 +238,7 @@ src="/favicon.png"
                           ? "text-white rounded-br-none"
                           : "bg-white text-gray-800 shadow rounded-bl-none"
                       }`}
-                      style={msg.sender === "visitor" ? { background: '#e4042c' } : undefined}
+                      style={msg.sender === "visitor" ? { background: '#0444c4' } : undefined}
                     >
                       <p>{msg.text}</p>
                       <p className={`text-xs mt-1 ${msg.sender === "visitor" ? "text-white/70" : "text-gray-400"}`}>
@@ -260,16 +260,16 @@ src="/favicon.png"
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="اكتب رسالتك..."
-                  className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#e4042c]"
+                  className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[#0444c4]"
                   dir="rtl"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
                   className="text-white p-2 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: '#e4042c' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = '#c5031f')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = '#e4042c')}
+                  style={{ background: '#0444c4' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#0333a3')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = '#0444c4')}
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />

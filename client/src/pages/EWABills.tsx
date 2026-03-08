@@ -641,24 +641,153 @@ export default function EWABills() {
           text-decoration: underline !important;
         }
         @media (max-width: 768px) {
+          .ewa-bills-page {
+            font-size: 14px;
+            overflow-x: hidden;
+          }
+          .bh-container {
+            padding: 0 12px;
+          }
+          /* Header */
+          .bh-header-row1 {
+            padding: 8px 0;
+          }
+          .bh-logo img {
+            height: 45px;
+          }
           .bh-header-row2 {
             flex-direction: column;
-            gap: 10px;
-            align-items: flex-start;
+            gap: 8px;
+            align-items: stretch;
+            padding: 8px 0;
+            min-height: auto;
+          }
+          .bh-tabs-row {
+            gap: 12px;
+            justify-content: center;
+          }
+          .bh-tab {
+            font-size: 16px !important;
+            padding-bottom: 8px;
+          }
+          /* Navigation */
+          .bh-nav {
+            padding: 4px 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .bh-nav-items {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .bh-nav-item {
-            font-size: 14px !important;
+            font-size: 12px !important;
             padding: 8px 10px !important;
+            white-space: nowrap;
+            flex-shrink: 0;
           }
+          /* EWA Content */
+          .ewa-container {
+            padding: 16px 12px;
+          }
+          .ewa-blue-bar {
+            font-size: 13px;
+            padding: 10px 14px;
+          }
+          .ewa-info-card {
+            padding: 14px;
+          }
+          .ewa-info-row {
+            font-size: 13px;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 0;
+          }
+          .ewa-bills-table th,
+          .ewa-bills-table td {
+            padding: 8px 10px;
+            font-size: 12px;
+          }
+          .ewa-payment-option {
+            padding: 12px 14px;
+            flex-direction: row;
+          }
+          .ewa-payment-option-label {
+            font-size: 13px;
+          }
+          .ewa-payment-option-amount {
+            font-size: 15px;
+          }
+          .ewa-partial-input-row {
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 12px;
+          }
+          .ewa-buttons {
+            gap: 8px;
+          }
+          .ewa-btn-primary, .ewa-btn-secondary {
+            padding: 10px 24px;
+            font-size: 14px;
+            flex: 1;
+            text-align: center;
+          }
+          /* Footer */
           .bh-footer-columns {
             flex-direction: column;
+            gap: 20px;
+          }
+          .bh-footer-col-title {
+            font-size: 16px !important;
+          }
+          .bh-footer-col ul li a {
+            font-size: 14px !important;
           }
           .bh-footer-social-inner {
             flex-direction: column;
             gap: 20px;
+            text-align: center;
+          }
+          .bh-footer-social-right {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .bh-footer-social-left {
+            align-items: center;
+          }
+          .bh-footer-contact-number {
+            font-size: 24px !important;
+          }
+          .bh-footer-bottom-links a {
+            font-size: 14px !important;
+            display: inline-block;
+            margin: 4px 6px;
+          }
+          .bh-footer-copyright p {
+            font-size: 14px !important;
+          }
+        }
+
+        /* Small phones */
+        @media (max-width: 400px) {
+          .bh-logo img {
+            height: 38px;
+          }
+          .bh-tab {
+            font-size: 14px !important;
+          }
+          .bh-nav-item {
+            font-size: 11px !important;
+            padding: 6px 8px !important;
+          }
+          .ewa-bills-table th,
+          .ewa-bills-table td {
+            padding: 6px 8px;
+            font-size: 11px;
+          }
+          .ewa-payment-option-amount {
+            font-size: 14px;
           }
         }
       `}} />

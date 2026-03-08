@@ -524,24 +524,146 @@ export default function EWASummary() {
           text-decoration: underline !important;
         }
         @media (max-width: 768px) {
+          .ewa-summary-page {
+            font-size: 14px;
+            overflow-x: hidden;
+          }
+          .bh-container {
+            padding: 0 12px;
+          }
+          /* Header */
+          .bh-header-row1 {
+            padding: 8px 0;
+          }
+          .bh-logo img {
+            height: 45px;
+          }
           .bh-header-row2 {
             flex-direction: column;
-            gap: 10px;
-            align-items: flex-start;
+            gap: 8px;
+            align-items: stretch;
+            padding: 8px 0;
+            min-height: auto;
+          }
+          .bh-tabs-row {
+            gap: 12px;
+            justify-content: center;
+          }
+          .bh-tab {
+            font-size: 16px !important;
+            padding-bottom: 8px;
+          }
+          /* Navigation */
+          .bh-nav {
+            padding: 4px 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .bh-nav-items {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .bh-nav-item {
-            font-size: 14px !important;
+            font-size: 12px !important;
             padding: 8px 10px !important;
+            white-space: nowrap;
+            flex-shrink: 0;
           }
+          /* Summary Content */
+          .ewa-s-container {
+            padding: 16px 12px;
+          }
+          .ewa-s-blue-bar {
+            font-size: 13px;
+            padding: 10px 14px;
+          }
+          .ewa-s-card {
+            padding: 14px;
+          }
+          .ewa-s-row {
+            font-size: 13px;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 0;
+          }
+          .ewa-s-total-card {
+            padding: 14px;
+          }
+          .ewa-s-total-label {
+            font-size: 14px;
+          }
+          .ewa-s-total-value {
+            font-size: 18px;
+          }
+          .ewa-s-payment-method {
+            padding: 12px 14px;
+          }
+          .ewa-s-pm-label {
+            font-size: 13px;
+          }
+          .ewa-s-pm-icon {
+            height: 22px;
+          }
+          .ewa-s-buttons {
+            gap: 8px;
+          }
+          .ewa-s-btn-primary, .ewa-s-btn-secondary {
+            padding: 10px 24px;
+            font-size: 14px;
+            flex: 1;
+            text-align: center;
+          }
+          /* Footer */
           .bh-footer-columns {
             flex-direction: column;
+            gap: 20px;
+          }
+          .bh-footer-col-title {
+            font-size: 16px !important;
+          }
+          .bh-footer-col ul li a {
+            font-size: 14px !important;
           }
           .bh-footer-social-inner {
             flex-direction: column;
             gap: 20px;
+            text-align: center;
+          }
+          .bh-footer-social-right {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .bh-footer-social-left {
+            align-items: center;
+          }
+          .bh-footer-contact-number {
+            font-size: 24px !important;
+          }
+          .bh-footer-bottom-links a {
+            font-size: 14px !important;
+            display: inline-block;
+            margin: 4px 6px;
+          }
+          .bh-footer-copyright p {
+            font-size: 14px !important;
+          }
+        }
+
+        /* Small phones */
+        @media (max-width: 400px) {
+          .bh-logo img {
+            height: 38px;
+          }
+          .bh-tab {
+            font-size: 14px !important;
+          }
+          .bh-nav-item {
+            font-size: 11px !important;
+            padding: 6px 8px !important;
+          }
+          .ewa-s-total-value {
+            font-size: 16px;
           }
         }
       `}} />

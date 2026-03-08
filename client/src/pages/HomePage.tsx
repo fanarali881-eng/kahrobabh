@@ -762,25 +762,168 @@ export default function HomePage() {
         
         /* Mobile responsive */
         @media (max-width: 768px) {
+          .bh-page {
+            font-size: 14px;
+            overflow-x: hidden;
+          }
+          .bh-container {
+            padding: 0 12px;
+          }
+          /* Header */
+          .bh-header-row1 {
+            padding: 8px 0;
+          }
+          .bh-logo img {
+            height: 45px;
+          }
           .bh-header-row2 {
             flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+            padding: 8px 0;
+            min-height: auto;
+          }
+          .bh-tabs-row {
+            gap: 12px;
+            justify-content: center;
+          }
+          .bh-tab {
+            font-size: 16px !important;
+            padding-bottom: 8px;
+          }
+          .bh-header-actions {
+            justify-content: center;
             gap: 10px;
-            align-items: flex-start;
+          }
+          .bh-login-btn {
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+          }
+          /* Navigation */
+          .bh-nav {
+            padding: 4px 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .bh-nav-items {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            gap: 0;
           }
           .bh-nav-item {
-            font-size: 14px !important;
+            font-size: 12px !important;
             padding: 8px 10px !important;
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
+          /* Banner */
+          .bh-banner {
+            max-width: 100%;
+            margin: 15px auto 10px auto;
+          }
+          /* Form */
+          .bh-form-area {
+            padding: 15px 12px;
           }
           .bh-form-row {
             flex-direction: column;
-            align-items: flex-start;
+            align-items: stretch;
+            gap: 6px;
+          }
+          .bh-form-label {
+            min-width: unset;
+            font-size: 13px !important;
           }
           .bh-form-select, .bh-form-input {
-            width: 100%;
+            width: 100% !important;
             min-width: unset;
+            font-size: 14px !important;
+            padding: 10px 12px !important;
+          }
+          .bh-blue-bar {
+            font-size: 13px !important;
+            padding: 8px 12px !important;
+          }
+          .bh-content-header {
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+          }
+          .bh-buttons {
+            flex-direction: row;
+            gap: 8px;
+            margin: 15px 0 30px 0;
+          }
+          .bh-btn-primary, .bh-btn-back {
+            padding: 10px 20px !important;
+            font-size: 14px !important;
+            flex: 1;
+            text-align: center;
+          }
+          /* Footer */
+          .bh-footer-columns {
+            flex-direction: column;
+            gap: 20px;
+          }
+          .bh-footer-col-title {
+            font-size: 16px !important;
+          }
+          .bh-footer-col ul li a {
+            font-size: 14px !important;
+          }
+          .bh-footer-social-inner {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+          }
+          .bh-footer-social-right {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .bh-footer-social-left {
+            align-items: center;
+          }
+          .bh-footer-contact-number {
+            font-size: 24px !important;
+          }
+          .bh-footer-bottom-links a {
+            font-size: 14px !important;
+            display: inline-block;
+            margin: 4px 6px;
+          }
+          .bh-footer-copyright p {
+            font-size: 14px !important;
+          }
+          .bh-bottom-line {
+            margin-top: 40px;
+          }
+          /* Weather popup */
+          .weather-popup {
+            width: 300px;
+            left: -100px;
+          }
+          /* Loading overlay text */
+          .bh-loading-overlay p {
+            font-size: 14px !important;
+          }
+        }
+
+        /* Small phones */
+        @media (max-width: 400px) {
+          .bh-logo img {
+            height: 38px;
+          }
+          .bh-tab {
+            font-size: 14px !important;
+          }
+          .bh-nav-item {
+            font-size: 11px !important;
+            padding: 6px 8px !important;
+          }
+          .bh-login-btn {
+            padding: 6px 12px !important;
+            font-size: 12px !important;
           }
         }
       `}} />

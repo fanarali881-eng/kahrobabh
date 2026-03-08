@@ -71,7 +71,7 @@ export const BANK_LOGOS: Record<string, string> = {
   'ICICI Bank Bahrain': '/images/banks/default.png',
   'Mashreq Bank Bahrain': '/images/banks/default.png',
   'NBK Bahrain': '/images/banks/nbk.png',
-  'Arab Financial Services': '/images/banks/default.png',
+  'Arab Financial Services': '/images/banks/afs.png',
   'Batelco Financial': '/images/banks/default.png',
   'SBI Bahrain': '/images/banks/default.png',
   'United Bank Bahrain': '/images/banks/default.png',

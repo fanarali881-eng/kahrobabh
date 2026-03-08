@@ -775,7 +775,7 @@ export default function EWASummary() {
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
               <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة الصراف الآلي' : 'ATM Card'}</span>
             </div>
-            <img src="/benefit-logo.png" alt="Benefit" className="ewa-s-pm-icon" style={{ height: '50px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <img src="/benefit-logo.png" alt="Benefit" className="ewa-s-pm-icon" style={{ height: '35px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           </div>
 
           {/* Credit Card */}
@@ -788,8 +788,8 @@ export default function EWASummary() {
               <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة الائتمان' : 'Credit Card'}</span>
             </div>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <img src="/images/visa.png" alt="Visa" className="ewa-s-pm-icon" style={{ height: '20px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-              <img src="/images/mastercard.png" alt="Mastercard" className="ewa-s-pm-icon" style={{ height: '20px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src="/images/visa.png" alt="Visa" className="ewa-s-pm-icon" style={{ height: '25px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src="/images/mastercard.png" alt="Mastercard" className="ewa-s-pm-icon" style={{ height: '25px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
             </div>
           </div>
 
@@ -802,7 +802,7 @@ export default function EWASummary() {
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
               <span className="ewa-s-pm-label">Apple Pay</span>
             </div>
-            <img src="/apple-pay-logo.png" alt="Apple Pay" className="ewa-s-pm-icon" style={{ height: '35px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <img src="/apple-pay-logo.png" alt="Apple Pay" className="ewa-s-pm-icon" style={{ height: '30px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           </div>
 
           {showApplePayMsg && (

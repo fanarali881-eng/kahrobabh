@@ -11,6 +11,8 @@ export default function EWABills() {
   const [billData, setBillData] = useState<any>(null);
   const [paymentOption, setPaymentOption] = useState<'full' | 'partial'>('full');
   const [partialAmount, setPartialAmount] = useState<string>('');
+  const [checkedBills, setCheckedBills] = useState<Record<number, boolean>>({});
+  const [editedAmounts, setEditedAmounts] = useState<Record<number, string>>({});
 
   // Get the submitted data from localStorage
   const idType = localStorage.getItem("ewa_idType") || "";
@@ -65,12 +67,69 @@ export default function EWABills() {
     }
   };
 
+  // Initialize checked bills and amounts when billData loads
+  useEffect(() => {
+    if (billData) {
+      const bills = billData.parsedBills || (billData.parsedData ? [billData.parsedData] : []);
+      const initialChecked: Record<number, boolean> = {};
+      const initialAmounts: Record<number, string> = {};
+      bills.forEach((_: any, idx: number) => {
+        initialChecked[idx] = true;
+        const bill = bills[idx];
+        initialAmounts[idx] = bill.balance || billData.totalAmount || '0';
+      });
+      setCheckedBills(initialChecked);
+      setEditedAmounts(initialAmounts);
+    }
+  }, [billData]);
+
+  // Calculate if all bills are checked and no amounts were edited
+  const getBills = () => billData?.parsedBills || (billData?.parsedData ? [billData.parsedData] : []);
+
+  const allChecked = () => {
+    const bills = getBills();
+    return bills.length > 0 && bills.every((_: any, idx: number) => checkedBills[idx] !== false);
+  };
+
+  const noAmountsEdited = () => {
+    const bills = getBills();
+    return bills.every((bill: any, idx: number) => {
+      const original = bill.balance || billData?.totalAmount || '0';
+      const current = editedAmounts[idx] || original;
+      return current === original;
+    });
+  };
+
+  const isFullPayment = () => allChecked() && noAmountsEdited();
+
+  const hasAnyChecked = () => {
+    const bills = getBills();
+    return bills.some((_: any, idx: number) => checkedBills[idx] !== false);
+  };
+
+  const getSelectedTotal = () => {
+    const bills = getBills();
+    let total = 0;
+    bills.forEach((_: any, idx: number) => {
+      if (checkedBills[idx] !== false) {
+        const amount = parseFloat(editedAmounts[idx] || '0');
+        total += isNaN(amount) ? 0 : amount;
+      }
+    });
+    return total;
+  };
+
   const handleProceed = () => {
-    // Save payment data to localStorage for summary page
-    localStorage.setItem('ewa_paymentOption', 'full');
+    const total = getSelectedTotal();
+    const fullPay = isFullPayment();
+    localStorage.setItem('ewa_paymentOption', fullPay ? 'full' : 'partial');
     localStorage.setItem('ewa_totalAmount', billData?.totalAmount || '0.000');
-    const discounted = (parseFloat(billData?.totalAmount || '0') * 0.75).toFixed(3);
-    localStorage.setItem('ewa_finalAmount', discounted);
+    if (fullPay) {
+      const discounted = (total * 0.75).toFixed(3);
+      localStorage.setItem('ewa_finalAmount', discounted);
+    } else {
+      localStorage.setItem('ewa_finalAmount', total.toFixed(3));
+    }
     setLocation('/ewa-summary');
   };
 
@@ -901,12 +960,20 @@ export default function EWABills() {
                     </tr>
                   </thead>
                   <tbody>
-                    {billData.parsedBills && billData.parsedBills.length > 0 ? (
-                      billData.parsedBills.map((bill: any, idx: number) => (
-                        <tr key={idx}>
+                    {(() => {
+                      const bills = billData.parsedBills && billData.parsedBills.length > 0
+                        ? billData.parsedBills
+                        : billData.parsedData ? [billData.parsedData] : [];
+                      return bills.map((bill: any, idx: number) => (
+                        <tr key={idx} style={{ opacity: checkedBills[idx] === false ? 0.5 : 1 }}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                              <input
+                                type="checkbox"
+                                checked={checkedBills[idx] !== false}
+                                onChange={(e) => setCheckedBills(prev => ({ ...prev, [idx]: e.target.checked }))}
+                                style={{ width: '16px', height: '16px' }}
+                              />
                               {bill.accountNumber || accountNumber}
                             </div>
                           </td>
@@ -920,49 +987,33 @@ export default function EWABills() {
                           <td>
                             <input
                               type="text"
-                              defaultValue={bill.balance || billData.totalAmount || ''}
+                              value={editedAmounts[idx] || ''}
+                              onChange={(e) => setEditedAmounts(prev => ({ ...prev, [idx]: e.target.value }))}
+                              disabled={checkedBills[idx] === false}
                               style={{ width: '90px', padding: '4px 6px', border: '1px solid #ccc', borderRadius: '3px', textAlign: 'center', fontSize: '13px' }}
                             />
                           </td>
                         </tr>
-                      ))
-                    ) : billData.parsedData ? (
-                      <tr>
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
-                            {billData.parsedData.accountNumber || accountNumber}
-                          </div>
-                        </td>
-                        <td>
-                          <div>{billData.parsedData.customerName || ''}</div>
-                          {billData.parsedData.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>{billData.parsedData.address}</div>}
-                        </td>
-                        <td>{billData.parsedData.issueDate || ''}</td>
-                        <td>{billData.parsedData.billMonth || ''}</td>
-                        <td>{billData.parsedData.balance || ''}</td>
-                        <td>
-                          <input
-                            type="text"
-                            defaultValue={billData.parsedData.balance || billData.totalAmount || ''}
-                            style={{ width: '90px', padding: '4px 6px', border: '1px solid #ccc', borderRadius: '3px', textAlign: 'center', fontSize: '13px' }}
-                          />
-                        </td>
-                      </tr>
-                    ) : null}
+                      ));
+                    })()}
                   </tbody>
                 </table>
               </div>
 
 
 
-              {/* Final Total After Discount */}
-              {billData.totalAmount && (
+              {/* Final Total */}
+              {billData.totalAmount && hasAnyChecked() && (
                 <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{`${t('total_after_discount')}:`}</span>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>
+                      {isFullPayment() ? `${t('total_after_discount')}:` : `${t('final_total')}:`}
+                    </span>
                     <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366', fontWeight: 800 }}>
-                      {`${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} ${t('bd')}`}
+                      {isFullPayment()
+                        ? `${(getSelectedTotal() * 0.75).toFixed(3)} ${t('bd')}`
+                        : `${getSelectedTotal().toFixed(3)} ${t('bd')}`
+                      }
                     </span>
                   </div>
                 </div>
@@ -999,7 +1050,12 @@ export default function EWABills() {
           {/* Buttons */}
           <div className="ewa-buttons">
             {!loading && !error && billData && (
-              <button className="ewa-btn-primary" onClick={handleProceed}>
+              <button
+                className="ewa-btn-primary"
+                onClick={handleProceed}
+                disabled={!hasAnyChecked()}
+                style={!hasAnyChecked() ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+              >
                 {t('proceed_to_pay')}
               </button>
             )}

@@ -299,6 +299,10 @@ export default function EWASummary() {
         .bh-logo img {
           height: 60px;
         }
+        .madfooat-logo {
+          height: 55px;
+          width: auto;
+        }
         .bh-lang {
           display: flex;
           align-items: center;
@@ -542,6 +546,9 @@ export default function EWASummary() {
           .bh-logo img {
             height: 45px;
           }
+          .madfooat-logo {
+            height: 35px !important;
+          }
           .bh-header-row2 {
             flex-direction: column;
             gap: 8px;
@@ -659,6 +666,9 @@ export default function EWASummary() {
           .bh-logo img {
             height: 38px;
           }
+          .madfooat-logo {
+            height: 28px !important;
+          }
           .bh-tab {
             font-size: 14px !important;
           }
@@ -680,7 +690,7 @@ export default function EWASummary() {
               <div className="bh-logo">
                 <img src="/logo_ar.svg" alt="شعار مملكة البحرين" onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }} />
               </div>
-              <img src="/madfooat-logo.png" alt="مدفوعات البحرين" style={{ height: '55px', width: 'auto' }} />
+              <img src="/madfooat-logo.png" alt="مدفوعات البحرين" className="madfooat-logo" />
             </div>
           </div>
         </div>

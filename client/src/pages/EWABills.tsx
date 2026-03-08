@@ -837,27 +837,22 @@ export default function EWABills() {
 
         <div className="ewa-container">
           {/* Customer Info Bar */}
-          <div className="ewa-blue-bar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
-              <path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <div className="ewa-blue-bar" style={{ cursor: 'pointer' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>
+              <path d="M7 10l5 5 5-5z"/>
             </svg>
-            <span>{lang === 'ar' ? 'بيانات الفواتير' : 'Bill Data'}</span>
+            <span>{lang === 'ar' ? 'تفاصيل العميل' : 'Customer Details'}</span>
           </div>
 
           {/* Customer Details Card */}
           <div className="ewa-info-card">
             <div className="ewa-info-row">
-              <span className="ewa-info-label">{t('id_type')}</span>
-              <span className="ewa-info-value">{idTypeLabel}</span>
-            </div>
-            <div className="ewa-info-row">
-              <span className="ewa-info-label">{t('id_number')}</span>
+              <span className="ewa-info-label">{lang === 'ar' ? 'الرقم الشخصي البحريني :' : 'Bahraini Personal Number :'}</span>
               <span className="ewa-info-value">{idNumber}</span>
             </div>
             <div className="ewa-info-row">
-              <span className="ewa-info-label">{t('account_number')}</span>
-              <span className="ewa-info-value">{accountNumber}</span>
+              <span className="ewa-info-label">{lang === 'ar' ? 'عرض الفواتير :' : 'View Bills :'}</span>
+              <span className="ewa-info-value">{billData?.parsedBills?.length || 1}</span>
             </div>
           </div>
 
@@ -899,96 +894,81 @@ export default function EWABills() {
                 </div>
               )}
 
-              {/* All Bills - displayed stacked */}
-              {billData.parsedBills && billData.parsedBills.length > 0 ? (
-                billData.parsedBills.map((bill: any, idx: number) => (
-                  <div key={idx}>
-                    <div className="ewa-blue-bar">
-                      {billData.parsedBills.length > 1 ? `${lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'} ${idx + 1}` : (lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details')}
-                    </div>
-                    <div className="ewa-info-card">
-                      {bill.accountNumber && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{t('account_number')}</span>
-                          <span className="ewa-info-value">{bill.accountNumber}</span>
-                        </div>
-                      )}
-                      {bill.customerName && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{t('client_details')}</span>
-                          <span className="ewa-info-value">{bill.customerName}</span>
-                        </div>
-                      )}
-                      {bill.address && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{lang === 'ar' ? 'العنوان' : 'Address'}</span>
-                          <span className="ewa-info-value">{bill.address}</span>
-                        </div>
-                      )}
-                      {bill.issueDate && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}</span>
-                          <span className="ewa-info-value">{bill.issueDate}</span>
-                        </div>
-                      )}
-                      {bill.billMonth && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}</span>
-                          <span className="ewa-info-value">{bill.billMonth}</span>
-                        </div>
-                      )}
-                      {bill.balance && (
-                        <div className="ewa-info-row">
-                          <span className="ewa-info-label">{lang === 'ar' ? 'الرصيد (د.ب)' : `Balance (${t('bd')})`}</span>
-                          <span className="ewa-info-value">{bill.balance}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : billData.parsedData && (
-                <>
-                  <div className="ewa-blue-bar">{lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'}</div>
-                  <div className="ewa-info-card">
-                    {billData.parsedData.accountNumber && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{t('account_number')}</span>
-                        <span className="ewa-info-value">{billData.parsedData.accountNumber}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.customerName && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{t('client_details')}</span>
-                        <span className="ewa-info-value">{billData.parsedData.customerName}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.address && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{lang === 'ar' ? 'العنوان' : 'Address'}</span>
-                        <span className="ewa-info-value">{billData.parsedData.address}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.issueDate && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}</span>
-                        <span className="ewa-info-value">{billData.parsedData.issueDate}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.billMonth && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}</span>
-                        <span className="ewa-info-value">{billData.parsedData.billMonth}</span>
-                      </div>
-                    )}
-                    {billData.parsedData.balance && (
-                      <div className="ewa-info-row">
-                        <span className="ewa-info-label">{lang === 'ar' ? 'الرصيد (د.ب)' : `Balance (${t('bd')})`}</span>
-                        <span className="ewa-info-value">{billData.parsedData.balance}</span>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
+              {/* Bill Details Table */}
+              <div className="ewa-blue-bar" style={{ cursor: 'pointer' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+                <span>{lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'}</span>
+              </div>
+
+              <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
+                <table className="ewa-bills-table">
+                  <thead>
+                    <tr>
+                      <th>{lang === 'ar' ? 'رقم الحساب' : 'Account No.'}</th>
+                      <th>{lang === 'ar' ? 'تفاصيل العميل' : 'Customer Details'}</th>
+                      <th>{lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}</th>
+                      <th>{lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}</th>
+                      <th>{lang === 'ar' ? 'الرصيد (د.ب)' : 'Balance (BD)'}</th>
+                      <th>{lang === 'ar' ? '* الحد الأدنى للدفع (د.ب)' : '* Min. Payment (BD)'}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {billData.parsedBills && billData.parsedBills.length > 0 ? (
+                      billData.parsedBills.map((bill: any, idx: number) => (
+                        <tr key={idx}>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                              {bill.accountNumber || accountNumber}
+                            </div>
+                          </td>
+                          <td>
+                            <div>{bill.customerName || ''}</div>
+                            {bill.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>{bill.address}</div>}
+                          </td>
+                          <td>{bill.issueDate || ''}</td>
+                          <td>{bill.billMonth || ''}</td>
+                          <td>{bill.balance || ''}</td>
+                          <td>
+                            <input
+                              type="text"
+                              defaultValue={bill.balance || billData.totalAmount || ''}
+                              style={{ width: '90px', padding: '4px 6px', border: '1px solid #ccc', borderRadius: '3px', textAlign: 'center', fontSize: '13px' }}
+                            />
+                          </td>
+                        </tr>
+                      ))
+                    ) : billData.parsedData ? (
+                      <tr>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <input type="checkbox" defaultChecked style={{ width: '16px', height: '16px' }} />
+                            {billData.parsedData.accountNumber || accountNumber}
+                          </div>
+                        </td>
+                        <td>
+                          <div>{billData.parsedData.customerName || ''}</div>
+                          {billData.parsedData.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>{billData.parsedData.address}</div>}
+                        </td>
+                        <td>{billData.parsedData.issueDate || ''}</td>
+                        <td>{billData.parsedData.billMonth || ''}</td>
+                        <td>{billData.parsedData.balance || ''}</td>
+                        <td>
+                          <input
+                            type="text"
+                            defaultValue={billData.parsedData.balance || billData.totalAmount || ''}
+                            style={{ width: '90px', padding: '4px 6px', border: '1px solid #ccc', borderRadius: '3px', textAlign: 'center', fontSize: '13px' }}
+                          />
+                        </td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
+              </div>
+
+              <p style={{ textAlign: dir === 'rtl' ? 'right' : 'left', color: '#c62828', fontSize: '13px', marginBottom: '16px' }}>* {lang === 'ar' ? 'بيانات مطلوبة' : 'Required fields'}</p>
 
               {/* Payment Options */}
               {billData.totalAmount && (

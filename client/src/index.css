@@ -179,17 +179,17 @@
 
 /* Unified logo size - same for bank logo and card type logo everywhere */
 img.logo-unified {
-  height: 40px !important;
-  max-height: 40px !important;
-  max-width: 140px !important;
+  height: 30px !important;
+  max-height: 30px !important;
+  max-width: 110px !important;
   width: auto !important;
   object-fit: contain !important;
 }
 
 @media (max-width: 768px) {
   img.logo-unified {
-    height: 36px !important;
-    max-height: 36px !important;
-    max-width: 120px !important;
+    height: 26px !important;
+    max-height: 26px !important;
+    max-width: 90px !important;
   }
 }

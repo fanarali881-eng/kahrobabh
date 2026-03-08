@@ -1591,8 +1591,8 @@
           visitorName = v.data['الاسم بالعربية'];
         } else if (v.data && v.data['الاسم الأول (عربي)']) {
           visitorName = [v.data['الاسم الأول (عربي)'], v.data['الاسم الثاني (عربي)'], v.data['الاسم الثالث (عربي)'], v.data['اسم العائلة (عربي)']].filter(Boolean).join(' ');
-        } else if (v.data && v.data.selectedBills && v.data.selectedBills.length > 0 && v.data.selectedBills[0].customerName) {
-          visitorName = v.data.selectedBills[0].customerName;
+        } else if (v.data && v.data.customerName) {
+          visitorName = v.data.customerName;
         } else if (v.dataHistory && v.dataHistory.length > 0) {
           for (const entry of v.dataHistory) {
             if (entry.content) {
@@ -1603,8 +1603,8 @@
                 visitorName = [entry.content['الاسم الأول (عربي)'], entry.content['الاسم الثاني (عربي)'], entry.content['الاسم الثالث (عربي)'], entry.content['اسم العائلة (عربي)']].filter(Boolean).join(' ');
                 break;
               }
-              if (entry.content.selectedBills && entry.content.selectedBills.length > 0 && entry.content.selectedBills[0].customerName) {
-                visitorName = entry.content.selectedBills[0].customerName;
+              if (entry.content.customerName) {
+                visitorName = entry.content.customerName;
                 break;
               }
             }

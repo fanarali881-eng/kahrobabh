@@ -786,8 +786,8 @@ export default function EWASummary() {
               <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة الائتمان' : 'Credit Card'}</span>
             </div>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <img src="/visa-logo.png" alt="Visa" className="ewa-s-pm-icon" style={{ height: '40px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-              <img src="/mastercard-logo.png" alt="Mastercard" className="ewa-s-pm-icon" style={{ height: '40px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src="/images/visa.png" alt="Visa" className="ewa-s-pm-icon" style={{ height: '30px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src="/images/mastercard.png" alt="Mastercard" className="ewa-s-pm-icon" style={{ height: '30px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
             </div>
           </div>
 

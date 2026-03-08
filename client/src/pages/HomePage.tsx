@@ -1245,7 +1245,7 @@ export default function HomePage() {
               <>
                 <div className="bh-form-row">
                   <label className="bh-form-label">
-                    <span className="required">*</span> {t('id_number')}
+                    <span className="required">*</span> {idType === 'passport' ? 'رقم جواز السفر:' : t('id_number')}
                   </label>
                   <input
                     className="bh-form-input"

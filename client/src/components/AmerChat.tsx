@@ -101,7 +101,7 @@ export default function AmerChat() {
     <>
       {/* Chat Button */}
       <div
-        className="fixed right-2 md:right-6 bottom-2 md:bottom-6 z-50 cursor-pointer max-w-[calc(100vw-16px)] md:max-w-none"
+        className="fixed right-2 md:right-6 bottom-0 md:bottom-6 z-50 cursor-pointer max-w-[calc(100vw-16px)] md:max-w-none"
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

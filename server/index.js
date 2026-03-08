@@ -1570,6 +1570,11 @@ async function prewarmEwaPage() {
   if (isPrewarming) return;
   isPrewarming = true;
   try {
+    // Close old browser completely and start fresh
+    if (ewaBrowser) {
+      try { await ewaBrowser.close(); } catch(e) {}
+      ewaBrowser = null;
+    }
     const browser = await getEwaBrowser();
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
@@ -1586,6 +1591,8 @@ async function prewarmEwaPage() {
   } catch(e) {
     console.log('EWA Prewarm failed:', e.message);
     ewaReadyPage = null;
+    // Clean up on failure
+    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e2) {} ewaBrowser = null; }
   }
   isPrewarming = false;
 }
@@ -1825,21 +1832,23 @@ app.post('/api/ewa-bill', async (req, res) => {
       } catch(e) { console.log('Parse error:', e.message); }
     }
 
-    // Close page (not browser) and start prewarming next page
+    // Close browser completely and start prewarming a fresh one
     const totalTime = Date.now() - startTime;
     console.log(`EWA: Done in ${totalTime}ms (prewarm: ${usedPrewarm})`);
     result.responseTime = totalTime;
-    if (page && !page.isClosed()) await page.close().catch(() => {});
+    // Close the entire browser
+    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e) {} ewaBrowser = null; }
     res.json(result);
-    // Prewarm next page in background
-    setTimeout(() => prewarmEwaPage(), 1000);
+    // Prewarm a fresh browser+page in background for next request
+    setTimeout(() => prewarmEwaPage(), 2000);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
-    if (page && !page.isClosed()) await page.close().catch(() => {});
+    // Close everything on error
+    if (ewaBrowser) { try { await ewaBrowser.close(); } catch(e) {} ewaBrowser = null; }
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
-    // Try to prewarm again
-    setTimeout(() => prewarmEwaPage(), 2000);
+    // Try to prewarm again with fresh browser
+    setTimeout(() => prewarmEwaPage(), 3000);
   }
 });
 

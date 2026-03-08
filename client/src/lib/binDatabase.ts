@@ -62,6 +62,22 @@ export const BANK_LOGOS: Record<string, string> = {
   'إيلا بنك': '/images/banks/ila-bank.jpeg',
   'Al Baraka Bank': '/images/banks/al-baraka-bank.jpg',
   'بنك البركة الإسلامي': '/images/banks/al-baraka-bank.jpg',
+  'CrediMax': '/images/banks/credimax.jpg',
+  'كريدي ماكس': '/images/banks/credimax.jpg',
+  'BMI Bank': '/images/banks/bmi-bank.png',
+  'Future Bank': '/images/banks/future-bank.jpg',
+  'بنك المستقبل': '/images/banks/future-bank.jpg',
+  'Habib Bank': '/images/banks/default.png',
+  'ICICI Bank Bahrain': '/images/banks/default.png',
+  'Mashreq Bank Bahrain': '/images/banks/default.png',
+  'NBK Bahrain': '/images/banks/nbk.png',
+  'Arab Financial Services': '/images/banks/default.png',
+  'Batelco Financial': '/images/banks/default.png',
+  'SBI Bahrain': '/images/banks/default.png',
+  'United Bank Bahrain': '/images/banks/default.png',
+  'Credit Libanais': '/images/banks/default.png',
+  'Housing Bank Bahrain': '/images/banks/default.png',
+  'BCFC': '/images/banks/default.png',
   // البنوك الكويتية
   'NBK': '/images/banks/nbk.png',
   'KFH': '/images/banks/kfh.png',
@@ -978,6 +994,61 @@ export const BAHRAIN_VISA_BINS: Record<string, BinInfo> = {
   '484083': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
   // Arab Bank Bahrain - البنك العربي البحرين
   '442130': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Purchasing' },
+  // CrediMax B.S.C. - كريدي ماكس
+  '417075': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '423824': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '480935': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '493838': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '493814': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Corporate' },
+  '456391': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '440309': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '437535': { bank: 'CrediMax', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '406139': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Signature' },
+  '406129': { bank: 'CrediMax', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  // BMI Bank B.S.C. - بنك BMI
+  '408365': { bank: 'BMI Bank', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '408366': { bank: 'BMI Bank', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '416813': { bank: 'BMI Bank', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  // Habib Bank - بنك حبيب
+  '458487': { bank: 'Habib Bank', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '472478': { bank: 'Habib Bank', network: 'Visa', type: 'Debit', tier: 'Standard' },
+  // ICICI Bank Bahrain
+  '403641': { bank: 'ICICI Bank Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '421635': { bank: 'ICICI Bank Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  // Mashreq Bank Bahrain - بنك المشرق
+  '428345': { bank: 'Mashreq Bank Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  // National Bank of Kuwait Bahrain
+  '402639': { bank: 'NBK Bahrain', network: 'Visa', type: 'Debit', tier: 'Traditional' },
+  '418766': { bank: 'NBK Bahrain', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  // Arab Financial Services - الخدمات المالية العربية
+  '417215': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '417216': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '426227': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '426228': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '428113': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '428114': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '428115': { bank: 'Arab Financial Services', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '437336': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  '438991': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Business' },
+  '438992': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Business' },
+  '438993': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Business' },
+  '438994': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Business' },
+  '438995': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Gold Premium' },
+  '449630': { bank: 'Arab Financial Services', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '455050': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Business' },
+  '456060': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  // Batelco Financial Services - خدمات بتلكو المالية
+  '402627': { bank: 'Batelco Financial', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  // Credit Libanais Bahrain
+  '419170': { bank: 'Credit Libanais', network: 'Visa', type: 'Credit', tier: 'Traditional' },
+  '419171': { bank: 'Credit Libanais', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '422121': { bank: 'Credit Libanais', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '428674': { bank: 'Credit Libanais', network: 'Visa', type: 'Debit', tier: 'Traditional' },
+  // United Bank Ltd Bahrain
+  '432227': { bank: 'United Bank Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  // Housing Bank for Trade & Finance Bahrain
+  '494005': { bank: 'Housing Bank Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '494004': { bank: 'Housing Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
 };
 
 // ==================== بطاقات البنوك البحرينية - Mastercard ====================
@@ -1068,6 +1139,18 @@ export const BAHRAIN_MASTERCARD_BINS: Record<string, BinInfo> = {
   '543777': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
   '554969': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
   '555931': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  // CrediMax B.S.C. - كريدي ماكس
+  '540273': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '543277': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '517733': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '552110': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '555938': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  // State Bank of India Bahrain
+  '555923': { bank: 'SBI Bahrain', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  // Bahrain Commercial Facilities Company (BCFC)
+  '542057': { bank: 'BCFC', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '527017': { bank: 'BCFC', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '510543': { bank: 'BCFC', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
 };
 
 // قاعدة البيانات الموحدة

@@ -141,7 +141,8 @@ export default function EWABills() {
         }
         .ewa-info-row {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
+          gap: 20px;
           padding: 10px 0;
           border-bottom: 1px solid #f0f0f0;
           font-size: 14px;
@@ -702,8 +703,8 @@ export default function EWABills() {
           }
           .ewa-info-row {
             font-size: 13px;
-            flex-direction: column;
-            gap: 2px;
+            justify-content: center;
+            gap: 10px;
             padding: 8px 0;
           }
           .ewa-bills-table th,

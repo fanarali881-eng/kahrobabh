@@ -24,7 +24,7 @@ export default function PageLayout({
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col items-center justify-center p-4",
+        "min-h-screen flex flex-col items-center p-4 pt-8 sm:justify-center sm:pt-4",
         variantStyles[variant],
         className
       )}

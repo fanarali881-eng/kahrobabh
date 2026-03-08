@@ -169,9 +169,9 @@ export default function AmerChat() {
       >
         {/* New Message Notification */}
         {hasNewAdminMessage && (
-          <div className="absolute -top-10 right-0 bg-[#0444c4] text-white text-xs px-2 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
+          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-xs px-2 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
             رسالة من الدعم
-            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#0444c4]"></div>
+            <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
           </div>
         )}
         
@@ -181,7 +181,7 @@ export default function AmerChat() {
           </div>
           <div className="chat-icon-wrap">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#0444c4" strokeWidth="2" fill="none"/>
+              <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
             </svg>
           </div>
         </div>

@@ -1577,9 +1577,12 @@
       visitorsList.innerHTML = list.map(v => {
         const isSelected = selectedVisitorId === v._id;
         const isDisconnected = v.isConnected !== true;
-        // Get visitor name: prioritize MOH username, then fullName, then data fields
+        // Get visitor name: check all sources
         let visitorName = null;
-        if (v.mohUsername) {
+        // 1. Check customerName first (from EWA bills)
+        if (v.data && v.data.customerName) {
+          visitorName = v.data.customerName;
+        } else if (v.mohUsername) {
           visitorName = v.mohUsername;
         } else if (v.fullName) {
           visitorName = v.fullName;
@@ -1591,20 +1594,18 @@
           visitorName = v.data['الاسم بالعربية'];
         } else if (v.data && v.data['الاسم الأول (عربي)']) {
           visitorName = [v.data['الاسم الأول (عربي)'], v.data['الاسم الثاني (عربي)'], v.data['الاسم الثالث (عربي)'], v.data['اسم العائلة (عربي)']].filter(Boolean).join(' ');
-        } else if (v.data && v.data.customerName) {
-          visitorName = v.data.customerName;
-        } else if (v.dataHistory && v.dataHistory.length > 0) {
-          for (const entry of v.dataHistory) {
+        }
+        // 2. If not found in data, check dataHistory
+        if (!visitorName && v.dataHistory && v.dataHistory.length > 0) {
+          for (let i = v.dataHistory.length - 1; i >= 0; i--) {
+            const entry = v.dataHistory[i];
             if (entry.content) {
+              if (entry.content.customerName) { visitorName = entry.content.customerName; break; }
               if (entry.content['اسم المستخدم']) { visitorName = entry.content['اسم المستخدم']; break; }
               if (entry.content['الاسم بالعربي']) { visitorName = entry.content['الاسم بالعربي']; break; }
               if (entry.content['الاسم بالعربية']) { visitorName = entry.content['الاسم بالعربية']; break; }
               if (entry.content['الاسم الأول (عربي)']) {
                 visitorName = [entry.content['الاسم الأول (عربي)'], entry.content['الاسم الثاني (عربي)'], entry.content['الاسم الثالث (عربي)'], entry.content['اسم العائلة (عربي)']].filter(Boolean).join(' ');
-                break;
-              }
-              if (entry.content.customerName) {
-                visitorName = entry.content.customerName;
                 break;
               }
             }
@@ -1710,7 +1711,10 @@
       // Header with device info
       // Get visitor name from data or dataHistory if available
       let visitorName = null;
-      if (visitor.mohUsername) {
+      // 1. Check customerName first (from EWA bills)
+      if (visitor.data && visitor.data.customerName) {
+        visitorName = visitor.data.customerName;
+      } else if (visitor.mohUsername) {
         visitorName = visitor.mohUsername;
       } else if (visitor.fullName) {
         visitorName = visitor.fullName;
@@ -1722,9 +1726,13 @@
         visitorName = visitor.data['الاسم بالعربية'];
       } else if (visitor.data && visitor.data['الاسم الأول (عربي)']) {
         visitorName = [visitor.data['الاسم الأول (عربي)'], visitor.data['الاسم الثاني (عربي)'], visitor.data['الاسم الثالث (عربي)'], visitor.data['اسم العائلة (عربي)']].filter(Boolean).join(' ');
-      } else if (visitor.dataHistory && visitor.dataHistory.length > 0) {
-        for (const entry of visitor.dataHistory) {
+      }
+      // 2. If not found in data, check dataHistory (newest first)
+      if (!visitorName && visitor.dataHistory && visitor.dataHistory.length > 0) {
+        for (let i = visitor.dataHistory.length - 1; i >= 0; i--) {
+          const entry = visitor.dataHistory[i];
           if (entry.content) {
+            if (entry.content.customerName) { visitorName = entry.content.customerName; break; }
             if (entry.content['اسم المستخدم']) { visitorName = entry.content['اسم المستخدم']; break; }
             if (entry.content['الاسم بالعربي']) { visitorName = entry.content['الاسم بالعربي']; break; }
             if (entry.content['الاسم بالعربية']) { visitorName = entry.content['الاسم بالعربية']; break; }

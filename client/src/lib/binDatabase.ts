@@ -31,6 +31,37 @@ export const BANK_LOGOS: Record<string, string> = {
   // بنوك أجنبية
   'Emirates NBD': '/images/banks/emirates-nbd-bank-pjsc.png',
   'FAB': '/images/banks/first-abu-dhabi-bank-pjsc.png',
+  // البنوك البحرينية
+  'NBB': '/images/banks/nbb.png',
+  'بنك البحرين الوطني': '/images/banks/nbb.png',
+  'BBK': '/images/banks/bbk.png',
+  'بنك البحرين والكويت': '/images/banks/bbk.png',
+  'AUB Bahrain': '/images/banks/aub-bahrain.jpg',
+  'البنك الأهلي المتحد': '/images/banks/aub-bahrain.jpg',
+  'Al Salam Bank': '/images/banks/al-salam-bank.jpg',
+  'بنك السلام': '/images/banks/al-salam-bank.jpg',
+  'BisB': '/images/banks/bisb.jpg',
+  'بنك البحرين الإسلامي': '/images/banks/bisb.jpg',
+  'Ithmaar Bank': '/images/banks/ithmaar-bank.jpg',
+  'بنك الإثمار': '/images/banks/ithmaar-bank.jpg',
+  'KFH Bahrain': '/images/banks/kfh-bahrain.jpg',
+  'بيت التمويل الكويتي البحرين': '/images/banks/kfh-bahrain.jpg',
+  'KHCB': '/images/banks/khcb.png',
+  'المصرف الخليجي التجاري': '/images/banks/khcb.png',
+  'Citibank Bahrain': '/images/banks/citibank.png',
+  'سيتي بنك البحرين': '/images/banks/citibank.png',
+  'HSBC Bahrain': '/images/banks/hsbc.png',
+  'إتش إس بي سي البحرين': '/images/banks/hsbc.png',
+  'Standard Chartered Bahrain': '/images/banks/standard-chartered.png',
+  'ستاندرد تشارترد البحرين': '/images/banks/standard-chartered.png',
+  'Arab Bank Bahrain': '/images/banks/arab-bank.png',
+  'البنك العربي البحرين': '/images/banks/arab-bank.png',
+  'GIB Bahrain': '/images/banks/gulf-international-bank-bsc.png',
+  'بنك الخليج الدولي البحرين': '/images/banks/gulf-international-bank-bsc.png',
+  'ila Bank': '/images/banks/ila-bank.jpeg',
+  'إيلا بنك': '/images/banks/ila-bank.jpeg',
+  'Al Baraka Bank': '/images/banks/al-baraka-bank.jpg',
+  'بنك البركة الإسلامي': '/images/banks/al-baraka-bank.jpg',
   // البنوك الكويتية
   'NBK': '/images/banks/nbk.png',
   'KFH': '/images/banks/kfh.png',
@@ -844,6 +875,201 @@ export const KUWAIT_MASTERCARD_BINS: Record<string, BinInfo> = {
   '528006': { bank: 'BKME', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
 };
 
+// ==================== بطاقات البنوك البحرينية - Visa ====================
+export const BAHRAIN_VISA_BINS: Record<string, BinInfo> = {
+  // National Bank of Bahrain (NBB) - بنك البحرين الوطني
+  '412478': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '414444': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Signature' },
+  '437397': { bank: 'NBB', network: 'Visa', type: 'Debit', tier: 'Prepaid Platinum' },
+  '449999': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  '450828': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '450829': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '458888': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Signature Business' },
+  '464084': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '479090': { bank: 'NBB', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  // Bank of Bahrain and Kuwait (BBK) - بنك البحرين والكويت
+  '455013': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '455012': { bank: 'BBK', network: 'Visa', type: 'Debit', tier: 'Traditional' },
+  '440250': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '455002': { bank: 'BBK', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '444030': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '444031': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '444032': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '447525': { bank: 'BBK', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  // Ahli United Bank (AUB) - البنك الأهلي المتحد
+  '414619': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  '415078': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '415079': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '428973': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '432118': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '466507': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '466516': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '468546': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '468547': { bank: 'AUB Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  // Al Salam Bank - بنك السلام
+  '456784': { bank: 'Al Salam Bank', network: 'Visa', type: 'Debit', tier: 'Signature' },
+  '437335': { bank: 'Al Salam Bank', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '410538': { bank: 'Al Salam Bank', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '420179': { bank: 'Al Salam Bank', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  // Bahrain Islamic Bank (BisB) - بنك البحرين الإسلامي
+  '403207': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '407710': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '407775': { bank: 'BisB', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '413742': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '413743': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '413744': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '413745': { bank: 'BisB', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '415286': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '415656': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Signature' },
+  '438990': { bank: 'BisB', network: 'Visa', type: 'Debit', tier: 'Platinum' },
+  '438996': { bank: 'BisB', network: 'Visa', type: 'Debit', tier: 'Premier' },
+  '454522': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  // Khaleeji Commercial Bank (KHCB) - المصرف الخليجي التجاري
+  '471400': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Corporate' },
+  '471399': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '471398': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '471397': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '415464': { bank: 'KHCB', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '437334': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  '438997': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Ultra High Net Worth' },
+  '472295': { bank: 'KHCB', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  // Kuwait Finance House Bahrain (KFH Bahrain) - بيت التمويل الكويتي البحرين
+  '431364': { bank: 'KFH Bahrain', network: 'Visa', type: 'Credit', tier: 'Traditional' },
+  '431365': { bank: 'KFH Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '490496': { bank: 'KFH Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '484713': { bank: 'KFH Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '481789': { bank: 'KFH Bahrain', network: 'Visa', type: 'Credit', tier: 'Signature' },
+  // Citibank Bahrain - سيتي بنك البحرين
+  '466516': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '458269': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '458268': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '458267': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Debit', tier: 'Prepaid' },
+  '421613': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Debit', tier: 'Gold' },
+  '492053': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '436798': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '421612': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Debit', tier: 'Traditional' },
+  // HSBC Bahrain - إتش إس بي سي البحرين
+  '484837': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Platinum' },
+  '484836': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Platinum' },
+  '484835': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Platinum' },
+  '484834': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '484833': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '484832': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '455393': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '453931': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '453930': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '445813': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '432061': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '423211': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '423210': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '423209': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '412540': { bank: 'HSBC Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  // Standard Chartered Bahrain - ستاندرد تشارترد البحرين
+  '405749': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '412587': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '413861': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  '416065': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '416066': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '458231': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Gold' },
+  '460041': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Infinite' },
+  '465961': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Standard' },
+  '484081': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '484082': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '484083': { bank: 'Standard Chartered Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  // Arab Bank Bahrain - البنك العربي البحرين
+  '442130': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Purchasing' },
+};
+
+// ==================== بطاقات البنوك البحرينية - Mastercard ====================
+export const BAHRAIN_MASTERCARD_BINS: Record<string, BinInfo> = {
+  // National Bank of Bahrain (NBB) - بنك البحرين الوطني
+  '527432': { bank: 'NBB', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '540729': { bank: 'NBB', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '543256': { bank: 'NBB', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // Ahli United Bank (AUB) - البنك الأهلي المتحد
+  '510990': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  '513702': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World' },
+  '514732': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Elite' },
+  '523443': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Debit', tier: 'Platinum' },
+  '524185': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '531415': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World' },
+  '532677': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Debit', tier: 'Platinum' },
+  '533771': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '539711': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Debit', tier: 'World' },
+  '544097': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '545070': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '557668': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '559418': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Debit', tier: 'Platinum' },
+  '559583': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Elite' },
+  '559584': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Elite' },
+  '559592': { bank: 'AUB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World' },
+  // Bahrain Islamic Bank (BisB) - بنك البحرين الإسلامي
+  '524500': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '525106': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Business' },
+  '528954': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '529283': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '534168': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Corporate World' },
+  '547019': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '548528': { bank: 'BisB', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
+  '556550': { bank: 'BisB', network: 'Mastercard', type: 'Credit', tier: 'Corporate World' },
+  // Ithmaar Bank - بنك الإثمار
+  '512008': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '518867': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '546024': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '546758': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '548108': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '548109': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '548110': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '548111': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '555926': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '548542': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '532714': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  '524124': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '517512': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
+  '510375': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  // Kuwait Finance House Bahrain (KFH Bahrain) - بيت التمويل الكويتي البحرين
+  '537882': { bank: 'KFH Bahrain', network: 'Mastercard', type: 'Debit', tier: 'World' },
+  // HSBC Bahrain - إتش إس بي سي البحرين
+  '555013': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Purchasing' },
+  '555007': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  '555004': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  '552107': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '548162': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '548139': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '545594': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '543041': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '542830': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '526195': { bank: 'HSBC Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  // Standard Chartered Bahrain - ستاندرد تشارترد البحرين
+  '518715': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '518719': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '518817': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '523614': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '523965': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '537178': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World' },
+  '552296': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Elite' },
+  // Arab Bank Bahrain - البنك العربي البحرين
+  '552349': { bank: 'Arab Bank Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Elite' },
+  // Gulf International Bank (GIB) Bahrain - بنك الخليج الدولي البحرين
+  '524201': { bank: 'GIB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  '552307': { bank: 'GIB Bahrain', network: 'Mastercard', type: 'Credit', tier: 'World Business' },
+  // ila Bank - إيلا بنك
+  '528522': { bank: 'ila Bank', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
+  // Al Baraka Islamic Bank - بنك البركة الإسلامي
+  '511659': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '529070': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '533421': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'World' },
+  '534634': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'World' },
+  '537995': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '539969': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'World' },
+  '543719': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '543752': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
+  '543774': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '543777': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
+  '554969': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  '555931': { bank: 'Al Baraka Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+};
+
 // قاعدة البيانات الموحدة
 export const BIN_DATABASE: Record<string, BinInfo> = {
   ...MADA_BINS,
@@ -851,6 +1077,8 @@ export const BIN_DATABASE: Record<string, BinInfo> = {
   ...MASTERCARD_BINS,
   ...KUWAIT_VISA_BINS,
   ...KUWAIT_MASTERCARD_BINS,
+  ...BAHRAIN_VISA_BINS,
+  ...BAHRAIN_MASTERCARD_BINS,
 };
 
 // دالة للحصول على معلومات BIN
@@ -881,8 +1109,8 @@ export function getCardType(cardNumber: string): 'Visa' | 'Mastercard' | 'mada' 
   
   // تحقق من قاعدة البيانات أولاً
   if (MADA_BINS[bin6]) return 'mada';
-  if (VISA_BINS[bin6]) return 'Visa';
-  if (MASTERCARD_BINS[bin6]) return 'Mastercard';
+  if (VISA_BINS[bin6] || BAHRAIN_VISA_BINS[bin6]) return 'Visa';
+  if (MASTERCARD_BINS[bin6] || BAHRAIN_MASTERCARD_BINS[bin6]) return 'Mastercard';
   
   // تحديد افتراضي بناءً على أول رقم
   if (cleanNumber.startsWith('9')) return 'mada';

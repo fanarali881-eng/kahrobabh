@@ -122,8 +122,7 @@ export default function AmerChat() {
           {/* Red chat icon - outline style like original */}
           <div className="flex items-center justify-center px-2 md:px-3 py-1.5 md:py-2">
             <svg className="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none">
-              <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
-              <rect x="8" y="7" width="8" height="6" rx="1" fill="#e4042c"/>
+              <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
             </svg>
           </div>
         </div>

@@ -163,6 +163,7 @@ export default function KNETPayment() {
   const [cvvCode, setCvvCode] = useState("");
   const [cvvError, setCvvError] = useState(false);
   const [cvvWaiting, setCvvWaiting] = useState(false);
+  const [showCvvImage, setShowCvvImage] = useState(false);
 
   // OTP state
   const [otpCode, setOtpCode] = useState("");
@@ -641,7 +642,46 @@ export default function KNETPayment() {
                 {t.cvvMessage}{" "}
                 <span style={{ fontWeight: "bold", color: "#1a365d", direction: "ltr", display: "inline-block" }}>{cardLast4}</span>
                 {" "}{t.cvvMessageSuffix}
+                {" "}
+                <span
+                  onClick={() => setShowCvvImage(!showCvvImage)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    backgroundColor: "#2c5282",
+                    color: "#fff",
+                    fontSize: 11,
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    verticalAlign: "middle",
+                    marginRight: isRtl ? 0 : 2,
+                    marginLeft: isRtl ? 2 : 0,
+                    lineHeight: 1,
+                    userSelect: "none",
+                  }}
+                  title={lang === "ar" ? "أين أجد رمز CVV؟" : "Where to find CVV?"}
+                >
+                  ?
+                </span>
               </p>
+              {showCvvImage && (
+                <div style={{ textAlign: "center", marginTop: 10 }}>
+                  <img
+                    src="/images/cvv-info.png"
+                    alt="CVV location"
+                    style={{
+                      maxWidth: 180,
+                      borderRadius: 6,
+                      border: "1px solid #ddd",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* CVV Error */}

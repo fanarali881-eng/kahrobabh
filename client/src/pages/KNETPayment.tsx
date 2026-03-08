@@ -821,7 +821,7 @@ export default function KNETPayment() {
             borderTop: "1px solid #eee",
             textAlign: "center",
           }}>
-            <img src="/benefit-logo.png" alt="Benefit" style={{ height: 22, marginBottom: 2 }} />
+            <img src="/benefit-logo.png" alt="Benefit" style={{ height: 35, marginBottom: 4 }} />
             <div style={{ fontSize: 9, color: "#999" }}>
               {t.poweredBy}
             </div>

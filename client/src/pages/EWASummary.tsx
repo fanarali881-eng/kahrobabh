@@ -300,7 +300,7 @@ export default function EWASummary() {
           height: 60px;
         }
         .madfooat-logo {
-          height: 55px;
+          height: 45px;
           width: auto;
         }
         .bh-lang {

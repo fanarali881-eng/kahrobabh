@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
 
@@ -15,6 +15,24 @@ export default function HomePage() {
   const [showWeather, setShowWeather] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [weatherData, setWeatherData] = useState<any>(null);
+  const loginPopupRef = useRef<HTMLDivElement>(null);
+  const weatherPopupRef = useRef<HTMLDivElement>(null);
+  const loginBtnRef = useRef<HTMLSpanElement>(null);
+  const weatherBtnRef = useRef<HTMLImageElement>(null);
+
+  // Close popups when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showLoginPopup && loginPopupRef.current && !loginPopupRef.current.contains(e.target as Node) && loginBtnRef.current && !loginBtnRef.current.contains(e.target as Node)) {
+        setShowLoginPopup(false);
+      }
+      if (showWeather && weatherPopupRef.current && !weatherPopupRef.current.contains(e.target as Node) && weatherBtnRef.current && !weatherBtnRef.current.contains(e.target as Node)) {
+        setShowWeather(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showLoginPopup, showWeather]);
 
   const fetchWeather = async () => {
     try {
@@ -961,11 +979,11 @@ export default function HomePage() {
               </div>
               <div className="bh-header-actions" style={{ position: 'relative' }}>
                 <img src="/accessibility-icon.svg" alt="إمكانية الوصول" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
-                <img src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
-                <span className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>تسجيل الدخول</span>
+                <img ref={weatherBtnRef} src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
+                <span ref={loginBtnRef} className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>تسجيل الدخول</span>
 
                 {showLoginPopup && (
-                  <div style={{
+                  <div ref={loginPopupRef} style={{
                     position: 'absolute',
                     top: '100%',
                     left: '50%',
@@ -1001,7 +1019,7 @@ export default function HomePage() {
                 )}
 
                 {showWeather && (
-                  <div className="weather-popup">
+                  <div ref={weatherPopupRef} className="weather-popup">
                     <div className="weather-popup-header">
                       <span className="weather-close" onClick={() => setShowWeather(false)}>✕</span>
                       <span className="weather-date">

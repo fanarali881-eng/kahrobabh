@@ -115,17 +115,17 @@ export default function AmerChat() {
         )}
         
         <div className={`flex items-center gap-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
-          {/* Red chat icon with white inside */}
-          <div className="flex items-center justify-center px-3 py-2">
-            <div className="w-8 h-8 flex items-center justify-center rounded-md" style={{ background: '#e4042c' }}>
-              <svg className="w-5 h-5" fill="white" viewBox="0 0 24 24">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-              </svg>
-            </div>
-          </div>
           {/* Text section - bold */}
           <div className="px-2 py-2 text-gray-700 text-sm font-bold whitespace-nowrap">
             Kindly note that our officia...
+          </div>
+          {/* Red chat icon with white inside - moved to right */}
+          <div className="flex items-center justify-center px-3 py-2">
+            <div className="w-7 h-7 flex items-center justify-center rounded" style={{ background: '#e4042c', opacity: 0.75 }}>
+              <svg className="w-4 h-4" fill="white" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+              </svg>
+            </div>
           </div>
         </div>
       </div>

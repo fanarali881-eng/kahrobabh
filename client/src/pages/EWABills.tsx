@@ -167,8 +167,8 @@ export default function EWABills() {
           margin-bottom: 16px;
         }
         .ewa-bills-table th {
-          background: #2962FF;
-          color: white;
+          background: #e0e0e0;
+          color: #333;
           padding: 12px 16px;
           font-size: 13px;
           font-weight: 600;
@@ -884,6 +884,13 @@ export default function EWABills() {
           {/* Bill Data */}
           {!loading && !error && billData && (
             <>
+              <div className="ewa-blue-bar" style={{ cursor: 'pointer', marginBottom: 0, borderRadius: '8px 8px 0 0' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>
+                  <path d="M7 10l5 5 5-5z"/>
+                </svg>
+                <span>{lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'}</span>
+              </div>
+
               <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
                 <table className="ewa-bills-table">
                   <thead>

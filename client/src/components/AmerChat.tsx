@@ -101,14 +101,14 @@ export default function AmerChat() {
     <>
       {/* Chat Button */}
       <div
-        className="fixed right-4 md:right-6 bottom-4 md:bottom-6 z-50 cursor-pointer"
+        className="fixed right-2 md:right-6 bottom-2 md:bottom-6 z-50 cursor-pointer max-w-[calc(100vw-16px)] md:max-w-none"
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* New Message Notification */}
         {hasNewAdminMessage && (
-          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-sm px-3 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
+          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-xs md:text-sm px-2 md:px-3 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
             رسالة من الدعم
             <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
           </div>
@@ -116,13 +116,13 @@ export default function AmerChat() {
         
         <div className={`flex items-center gap-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
           {/* Text section - bold */}
-          <div className="px-2 py-2 text-gray-700 text-sm font-bold whitespace-nowrap">
+          <div className="px-2 py-1.5 md:py-2 text-gray-700 text-[11px] md:text-sm font-bold whitespace-nowrap">
             Kindly note that our officia...
           </div>
           {/* Red chat icon with white inside - moved to right */}
-          <div className="flex items-center justify-center px-3 py-2">
-            <div className="w-8 h-8 flex items-center justify-center rounded" style={{ border: '1.5px solid #e4042c', background: '#fff' }}>
-              <svg className="w-4 h-4" fill="#e4042c" viewBox="0 0 24 24">
+          <div className="flex items-center justify-center px-2 md:px-3 py-1.5 md:py-2">
+            <div className="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded" style={{ border: '1.5px solid #e4042c', background: '#fff' }}>
+              <svg className="w-3 h-3 md:w-4 md:h-4" fill="#e4042c" viewBox="0 0 24 24">
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
               </svg>
             </div>

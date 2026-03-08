@@ -73,7 +73,7 @@ export default function EWASummary() {
           line-height: 1.5;
         }
         .ewa-s-header {
-          background: linear-gradient(135deg, #0444c4 0%, #2a6cf5 100%);
+          background: #0444c4;
           padding: 16px 0;
           color: white;
         }
@@ -232,7 +232,7 @@ export default function EWASummary() {
           opacity: 1;
         }
         .ewa-s-btn-primary:hover {
-          background: #0555d5;
+          background: #0333a3;
         }
         .ewa-s-btn-primary:disabled {
           opacity: 0.5;
@@ -334,7 +334,7 @@ export default function EWASummary() {
         .bh-tab.active {
           font-weight: 600 !important;
           color: #17171C !important;
-          border-bottom: 4px solid #0747C7 !important;
+          border-bottom: 4px solid #0444c4 !important;
         }
         .bh-header-actions {
           display: flex;
@@ -342,7 +342,7 @@ export default function EWASummary() {
           gap: 12px;
         }
         .bh-login-btn {
-          background: #045c7c !important;
+          background: #0333a3 !important;
           color: #fff !important;
           padding: 12px 24px !important;
           border-radius: 6px !important;
@@ -383,7 +383,7 @@ export default function EWASummary() {
           display: inline-block;
           width: 3px;
           height: 16px;
-          background: #0747C7;
+          background: #0444c4;
           margin-left: 10px;
           border-radius: 2px;
         }
@@ -424,7 +424,7 @@ export default function EWASummary() {
           text-decoration: underline !important;
         }
         .bh-footer-col ul li a:hover {
-          color: #0747C7 !important;
+          color: #0444c4 !important;
         }
         .bh-footer-social {
           background: #F0F0F3;
@@ -468,7 +468,7 @@ export default function EWASummary() {
           transition: background 0.2s;
         }
         .bh-footer-social-icons a:hover {
-          background: #0747C7;
+          background: #0444c4;
         }
         .bh-footer-social-left {
           display: flex;
@@ -505,7 +505,7 @@ export default function EWASummary() {
           text-decoration: underline !important;
         }
         .bh-footer-bottom-links a:hover {
-          color: #0747C7 !important;
+          color: #0444c4 !important;
         }
         .bh-footer-bottom-links .separator {
           color: #D3D3DA !important;

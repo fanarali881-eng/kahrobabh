@@ -136,7 +136,7 @@ function RamadanPopup() {
               fontFamily: '"Makani Bold", Arial, sans-serif',
               letterSpacing: '1px',
             }}>
-              فواتير الكهرباء والماء
+              هيئة الكهرباء والماء
             </div>
             <div style={{
               fontSize: '12px',
@@ -173,7 +173,7 @@ function RamadanPopup() {
               fontSize: '13px',
               marginBottom: '24px',
             }}>
-              على فواتير الكهرباء والماء عند دفع كامل المبلغ
+              على فواتير هيئة الكهرباء والماء عند دفع كامل المبلغ
             </div>
 
             {/* Divider */}

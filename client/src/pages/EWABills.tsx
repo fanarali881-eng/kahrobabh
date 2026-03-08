@@ -225,16 +225,31 @@ export default function EWABills() {
           padding: 60px 20px;
           gap: 16px;
         }
-        .ewa-spinner {
-          width: 48px;
-          height: 48px;
-          border: 4px solid #e0e0e0;
-          border-top-color: #003366;
-          border-radius: 50%;
-          animation: ewa-spin 0.8s linear infinite;
+        .ewa-dots-spinner {
+          width: 60px;
+          height: 60px;
+          position: relative;
         }
-        @keyframes ewa-spin {
-          to { transform: rotate(360deg); }
+        .ewa-dots-spinner .ewa-dot {
+          position: absolute;
+          width: 7px;
+          height: 7px;
+          background: #003366;
+          border-radius: 50%;
+          animation: ewa-dot-pulse 1.2s ease-in-out infinite;
+        }
+        .ewa-dots-spinner .ewa-dot:nth-child(1) { top: 0; left: 26px; animation-delay: 0s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(2) { top: 8px; left: 44px; animation-delay: 0.15s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(3) { top: 26px; left: 52px; animation-delay: 0.3s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(4) { top: 44px; left: 44px; animation-delay: 0.45s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(5) { top: 52px; left: 26px; animation-delay: 0.6s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(6) { top: 44px; left: 8px; animation-delay: 0.75s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(7) { top: 26px; left: 0; animation-delay: 0.9s; }
+        .ewa-dots-spinner .ewa-dot:nth-child(8) { top: 8px; left: 8px; animation-delay: 1.05s; }
+        @keyframes ewa-dot-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.3; }
+          12.5% { transform: scale(1.8); opacity: 1; }
+          25% { transform: scale(1); opacity: 0.3; }
         }
         .ewa-error-box {
           background: #fff3f3;
@@ -297,9 +312,17 @@ export default function EWABills() {
           {/* Loading State */}
           {loading && (
             <div className="ewa-loading">
-              <div className="ewa-spinner"></div>
+              <div className="ewa-dots-spinner">
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+                <div className="ewa-dot"></div>
+              </div>
               <p style={{ color: '#666', fontSize: '15px' }}>جاري جلب بيانات الفواتير من هيئة الكهرباء والماء...</p>
-              <p style={{ color: '#999', fontSize: '13px' }}>قد يستغرق هذا بضع ثوانٍ</p>
             </div>
           )}
 

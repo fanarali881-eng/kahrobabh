@@ -177,7 +177,7 @@ export default function AmerChat() {
         
         <div className={`chat-inner ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
           <div className="chat-text">
-            Kindly note that our officia...
+            Chat now
           </div>
           <div className="chat-icon-wrap">
             <svg viewBox="0 0 24 24" fill="none">

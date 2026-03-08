@@ -800,7 +800,7 @@ export default function EWASummary() {
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
               <span className="ewa-s-pm-label">Apple Pay</span>
             </div>
-            <img src="/apple-pay-logo.png" alt="Apple Pay" className="ewa-s-pm-icon" style={{ height: '45px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <img src="/apple-pay-logo.png" alt="Apple Pay" className="ewa-s-pm-icon" style={{ height: '35px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           </div>
 
           {showApplePayMsg && (

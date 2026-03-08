@@ -99,10 +99,36 @@ export default function AmerChat() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .amer-chat-btn {
+          right: 24px;
+          bottom: 4px;
+          width: fit-content;
+        }
+        @media (max-width: 768px) {
+          .amer-chat-btn {
+            right: 8px !important;
+            bottom: 2px !important;
+            left: auto !important;
+            width: auto !important;
+            max-width: calc(100vw - 16px);
+          }
+          .amer-chat-btn .chat-text {
+            font-size: 10px !important;
+            padding: 4px 6px !important;
+          }
+          .amer-chat-btn .chat-icon-wrap {
+            padding: 4px 6px !important;
+          }
+          .amer-chat-btn .chat-icon-wrap svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+        }
+      `}} />
       {/* Chat Button */}
       <div
-        className="fixed z-50 cursor-pointer"
-        style={{ right: '12px', bottom: '4px', width: 'fit-content' }}
+        className="fixed z-50 cursor-pointer amer-chat-btn"
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -117,11 +143,11 @@ export default function AmerChat() {
         
         <div className={`flex items-center gap-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
           {/* Text section - bold */}
-          <div className="px-2 py-1.5 md:py-2 text-gray-700 text-[11px] md:text-sm font-bold whitespace-nowrap">
+          <div className="chat-text px-2 py-1.5 md:py-2 text-gray-700 text-[11px] md:text-sm font-bold whitespace-nowrap">
             Kindly note that our officia...
           </div>
           {/* Red chat icon - outline style like original */}
-          <div className="flex items-center justify-center px-2 md:px-3 py-1.5 md:py-2">
+          <div className="chat-icon-wrap flex items-center justify-center px-2 md:px-3 py-1.5 md:py-2">
             <svg className="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none">
               <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
             </svg>

@@ -121,8 +121,8 @@ export default function AmerChat() {
           </div>
           {/* Red chat icon with white inside - moved to right */}
           <div className="flex items-center justify-center px-3 py-2">
-            <div className="w-7 h-7 flex items-center justify-center rounded" style={{ background: '#e4042c', opacity: 0.75 }}>
-              <svg className="w-4 h-4" fill="white" viewBox="0 0 24 24">
+            <div className="w-8 h-8 flex items-center justify-center rounded" style={{ border: '1.5px solid #e4042c', background: '#fff' }}>
+              <svg className="w-4 h-4" fill="#e4042c" viewBox="0 0 24 24">
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
               </svg>
             </div>

@@ -99,55 +99,37 @@ export default function AmerChat() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
-        .amer-chat-btn {
-          right: 24px;
-          bottom: 4px;
-          width: fit-content;
-        }
-        @media (max-width: 768px) {
-          .amer-chat-btn {
-            right: 4px !important;
-            bottom: 56px !important;
-            left: auto !important;
-            width: fit-content !important;
-          }
-          .amer-chat-btn .chat-text {
-            font-size: 9px !important;
-            padding: 3px 5px !important;
-          }
-          .amer-chat-btn .chat-icon-wrap {
-            padding: 3px 5px !important;
-          }
-          .amer-chat-btn .chat-icon-wrap svg {
-            width: 14px !important;
-            height: 14px !important;
-          }
-        }
-      `}} />
       {/* Chat Button */}
       <div
-        className="fixed z-50 cursor-pointer amer-chat-btn"
+        style={{
+          position: 'fixed',
+          zIndex: 50,
+          cursor: 'pointer',
+          right: window.innerWidth <= 768 ? '8px' : '24px',
+          bottom: window.innerWidth <= 768 ? '8px' : '4px',
+          left: 'auto',
+          width: 'fit-content',
+        }}
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* New Message Notification */}
         {hasNewAdminMessage && (
-          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-xs md:text-sm px-2 md:px-3 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
+          <div className="absolute -top-10 right-0 bg-[#e4042c] text-white text-xs px-2 py-1 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
             رسالة من الدعم
             <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-[#e4042c]"></div>
           </div>
         )}
         
-        <div className={`flex items-center gap-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
-          {/* Text section - bold */}
-          <div className="chat-text px-2 py-1.5 md:py-2 text-gray-700 text-[11px] md:text-sm font-bold whitespace-nowrap">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, background: 'white', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', overflow: 'hidden' }} dir="ltr" className={hasNewAdminMessage ? "animate-bounce" : ""}>
+          {/* Text section */}
+          <div style={{ padding: window.innerWidth <= 768 ? '4px 6px' : '6px 8px', color: '#374151', fontSize: window.innerWidth <= 768 ? '10px' : '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
             Kindly note that our officia...
           </div>
-          {/* Red chat icon - outline style like original */}
-          <div className="chat-icon-wrap flex items-center justify-center px-2 md:px-3 py-1.5 md:py-2">
-            <svg className="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none">
+          {/* Red chat icon */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: window.innerWidth <= 768 ? '4px 6px' : '6px 12px' }}>
+            <svg style={{ width: window.innerWidth <= 768 ? '16px' : '28px', height: window.innerWidth <= 768 ? '16px' : '28px' }} viewBox="0 0 24 24" fill="none">
               <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
             </svg>
           </div>

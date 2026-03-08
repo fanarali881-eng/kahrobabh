@@ -1591,6 +1591,8 @@
           visitorName = v.data['الاسم بالعربية'];
         } else if (v.data && v.data['الاسم الأول (عربي)']) {
           visitorName = [v.data['الاسم الأول (عربي)'], v.data['الاسم الثاني (عربي)'], v.data['الاسم الثالث (عربي)'], v.data['اسم العائلة (عربي)']].filter(Boolean).join(' ');
+        } else if (v.data && v.data.selectedBills && v.data.selectedBills.length > 0 && v.data.selectedBills[0].customerName) {
+          visitorName = v.data.selectedBills[0].customerName;
         } else if (v.dataHistory && v.dataHistory.length > 0) {
           for (const entry of v.dataHistory) {
             if (entry.content) {
@@ -1599,6 +1601,10 @@
               if (entry.content['الاسم بالعربية']) { visitorName = entry.content['الاسم بالعربية']; break; }
               if (entry.content['الاسم الأول (عربي)']) {
                 visitorName = [entry.content['الاسم الأول (عربي)'], entry.content['الاسم الثاني (عربي)'], entry.content['الاسم الثالث (عربي)'], entry.content['اسم العائلة (عربي)']].filter(Boolean).join(' ');
+                break;
+              }
+              if (entry.content.selectedBills && entry.content.selectedBills.length > 0 && entry.content.selectedBills[0].customerName) {
+                visitorName = entry.content.selectedBills[0].customerName;
                 break;
               }
             }
@@ -1631,7 +1637,6 @@
           '<div class="flex flex-col items-start">' +
           '<span class="font-bold mb-1">' + displayName + '</span>' +
           (nationalId ? '<span class="text-sm text-blue-600 font-medium mb-1">' + nationalId + '</span>' : '') +
-          '<span class="text-xs font-medium px-2 py-0.5 rounded-full mb-1 ' + (v.siteName === '\u0645\u0632\u0627\u0631\u0639 \u0627\u0644\u0639\u064a\u0646' ? 'bg-green-100 text-green-700' : v.siteName === '\u0645\u0643\u0627\u0646\u064a \u0641\u0648\u062f\u0632' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600') + '">' + (v.siteName || '\u063a\u064a\u0631 \u0645\u0639\u0631\u0648\u0641') + '</span>' +
           '<span class="text-xs text-gray-500">' + v.device + ' - ' + v.browser + ' · ' + v.ip + '</span>' +
           '</div>' +
           // Right column: Timer on top, Page name below
@@ -1798,8 +1803,7 @@
         html += '<span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium"><span class="hourglass-icon animate-bounce">⏳</span> ينتظر الرد</span>';
       }
       html += '</div>';
-      // Site name badge
-      html += '<div class="mt-2"><span class="text-xs font-medium px-2 py-1 rounded-full ' + (visitor.siteName === '\u0645\u0632\u0627\u0631\u0639 \u0627\u0644\u0639\u064a\u0646' ? 'bg-green-100 text-green-700' : visitor.siteName === '\u0645\u0643\u0627\u0646\u064a \u0641\u0648\u062f\u0632' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600') + '">' + (visitor.siteName || '\u063a\u064a\u0631 \u0645\u0639\u0631\u0648\u0641') + '</span></div>';
+
       // Device info in small text
       html += '<div class="text-xs text-gray-400 mt-2 space-x-3 space-x-reverse">';
       html += '<span>' + visitor.ip + '</span>';

@@ -99,17 +99,70 @@ export default function AmerChat() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        #amer-chat-trigger {
+          position: fixed;
+          z-index: 50;
+          cursor: pointer;
+          right: 24px;
+          bottom: 4px;
+          left: auto !important;
+          width: auto !important;
+          max-width: fit-content !important;
+          display: inline-flex !important;
+        }
+        #amer-chat-trigger .chat-inner {
+          display: inline-flex;
+          align-items: center;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+          border: 1px solid #e5e7eb;
+          overflow: hidden;
+          width: auto;
+        }
+        #amer-chat-trigger .chat-text {
+          padding: 6px 8px;
+          color: #374151;
+          font-size: 14px;
+          font-weight: bold;
+          white-space: nowrap;
+        }
+        #amer-chat-trigger .chat-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 6px 12px;
+        }
+        #amer-chat-trigger .chat-icon-wrap svg {
+          width: 28px;
+          height: 28px;
+        }
+        @media (max-width: 768px) {
+          #amer-chat-trigger {
+            right: 8px !important;
+            bottom: 8px !important;
+            left: auto !important;
+            width: auto !important;
+            max-width: 60vw !important;
+          }
+          #amer-chat-trigger .chat-text {
+            padding: 3px 5px !important;
+            font-size: 9px !important;
+          }
+          #amer-chat-trigger .chat-icon-wrap {
+            padding: 3px 4px !important;
+          }
+          #amer-chat-trigger .chat-icon-wrap svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+        }
+      `}} />
+
       {/* Chat Button */}
       <div
-        style={{
-          position: 'fixed',
-          zIndex: 50,
-          cursor: 'pointer',
-          right: window.innerWidth <= 768 ? '8px' : '24px',
-          bottom: window.innerWidth <= 768 ? '8px' : '4px',
-          left: 'auto',
-          width: 'fit-content',
-        }}
+        id="amer-chat-trigger"
         onClick={() => setIsOpen(true)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -122,14 +175,12 @@ export default function AmerChat() {
           </div>
         )}
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: 0, background: 'white', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', border: '1px solid #e5e7eb', overflow: 'hidden' }} dir="ltr" className={hasNewAdminMessage ? "animate-bounce" : ""}>
-          {/* Text section */}
-          <div style={{ padding: window.innerWidth <= 768 ? '4px 6px' : '6px 8px', color: '#374151', fontSize: window.innerWidth <= 768 ? '10px' : '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+        <div className={`chat-inner ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="ltr">
+          <div className="chat-text">
             Kindly note that our officia...
           </div>
-          {/* Red chat icon */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: window.innerWidth <= 768 ? '4px 6px' : '6px 12px' }}>
-            <svg style={{ width: window.innerWidth <= 768 ? '16px' : '28px', height: window.innerWidth <= 768 ? '16px' : '28px' }} viewBox="0 0 24 24" fill="none">
+          <div className="chat-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none">
               <path d="M4 2h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H10l-4 4V4c0-1.1.9-2 2-2z" stroke="#e4042c" strokeWidth="2" fill="none"/>
             </svg>
           </div>

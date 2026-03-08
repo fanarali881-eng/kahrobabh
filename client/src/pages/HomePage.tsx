@@ -13,6 +13,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState(0);
   const [activeNavItem, setActiveNavItem] = useState(0);
   const [showWeather, setShowWeather] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [weatherData, setWeatherData] = useState<any>(null);
 
   const fetchWeather = async () => {
@@ -818,7 +819,43 @@ export default function HomePage() {
               <div className="bh-header-actions" style={{ position: 'relative' }}>
                 <img src="/accessibility-icon.svg" alt="إمكانية الوصول" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
                 <img src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
-                <span className="bh-login-btn">تسجيل الدخول</span>
+                <span className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>تسجيل الدخول</span>
+
+                {showLoginPopup && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    marginTop: 8,
+                    backgroundColor: '#fff',
+                    border: '2px solid #003366',
+                    borderRadius: 10,
+                    padding: '15px 20px',
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
+                    zIndex: 1000,
+                    minWidth: 280,
+                    textAlign: 'center',
+                    direction: 'rtl' as const,
+                  }}>
+                    <span onClick={() => setShowLoginPopup(false)} style={{
+                      position: 'absolute',
+                      top: 5,
+                      left: 10,
+                      cursor: 'pointer',
+                      fontSize: 18,
+                      color: '#999',
+                      fontWeight: 'bold',
+                    }}>&times;</span>
+                    <p style={{
+                      margin: 0,
+                      fontSize: 14,
+                      color: '#003366',
+                      fontWeight: 'bold',
+                      lineHeight: 1.8,
+                    }}>بإمكانك الدفع من خلال خدمة الدفع السريع أدناه</p>
+                  </div>
+                )}
 
                 {showWeather && (
                   <div className="weather-popup">

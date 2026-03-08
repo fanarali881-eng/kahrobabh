@@ -26,7 +26,7 @@ export default function EWASummary() {
     if (!selectedPayment || isProcessing) return;
     setIsProcessing(true);
 
-    const paymentMethodLabel = selectedPayment === 'card' ? 'بطاقة ائتمان' : 'بطاقة الصراف الآلي';
+    const paymentMethodLabel = selectedPayment === 'card' ? 'بطاقة الائتمان' : 'بطاقة الصراف الآلي';
 
     sendData({
       data: {
@@ -783,11 +783,11 @@ export default function EWASummary() {
           >
             <div className="ewa-s-pm-right">
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
-              <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة ائتمان (Visa / Mastercard)' : 'Credit Card (Visa / Mastercard)'}</span>
+              <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة الائتمان' : 'Credit Card'}</span>
             </div>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <img src="/visa-logo.png" alt="Visa" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-              <img src="/mastercard-logo.png" alt="Mastercard" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <img src="/visa-logo.png" alt="Visa" className="ewa-s-pm-icon" style={{ height: '40px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src="/mastercard-logo.png" alt="Mastercard" className="ewa-s-pm-icon" style={{ height: '40px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
             </div>
           </div>
 

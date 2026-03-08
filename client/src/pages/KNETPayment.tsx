@@ -598,12 +598,13 @@ export default function KNETPayment() {
               </div>
 
               {/* Center: Title */}
-              <div style={{ textAlign: "center", flex: 1, padding: "0 10px" }}>
+              <div style={{ textAlign: "center", flex: 1, padding: "0 8px" }}>
                 <div style={{
                   color: RED,
-                  fontSize: 13,
+                  fontSize: 11,
                   fontWeight: "bold",
                   letterSpacing: 0.3,
+                  whiteSpace: "nowrap",
                 }}>
                   {t.cvvTitle}
                 </div>

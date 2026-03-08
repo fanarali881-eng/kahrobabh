@@ -1036,19 +1036,21 @@ export default function EWABills() {
                       return bills.map((bill: any, idx: number) => (
                         <tr key={idx} style={{ opacity: checkedBills[idx] === false ? 0.5 : 1 }}>
                           <td data-label={lang === 'ar' ? 'رقم الحساب' : 'Account No.'}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            {bill.accountNumber || accountNumber}
+                          </td>
+                          <td data-label={lang === 'ar' ? 'تفاصيل العميل' : 'Customer Details'} className="customer-details-cell">
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                               <input
                                 type="checkbox"
                                 checked={checkedBills[idx] !== false}
                                 onChange={(e) => setCheckedBills(prev => ({ ...prev, [idx]: e.target.checked }))}
-                                style={{ width: '16px', height: '16px' }}
+                                style={{ width: '20px', height: '20px', flexShrink: 0, marginTop: '2px' }}
                               />
-                              {bill.accountNumber || accountNumber}
+                              <div>
+                                <div style={{ fontWeight: 600 }}>{bill.customerName || ''}</div>
+                                {bill.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', lineHeight: '1.5' }}>{bill.address}</div>}
+                              </div>
                             </div>
-                          </td>
-                          <td data-label={lang === 'ar' ? 'تفاصيل العميل' : 'Customer Details'} className="customer-details-cell">
-                            <div style={{ fontWeight: 600 }}>{bill.customerName || ''}</div>
-                            {bill.address && <div style={{ fontSize: '11px', color: '#666', marginTop: '4px', lineHeight: '1.5' }}>{bill.address}</div>}
                           </td>
                           <td data-label={lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}>{bill.issueDate || ''}</td>
                           <td data-label={lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}>{bill.billMonth || ''}</td>

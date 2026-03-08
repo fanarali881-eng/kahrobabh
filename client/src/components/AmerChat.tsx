@@ -107,22 +107,21 @@ export default function AmerChat() {
         }
         @media (max-width: 768px) {
           .amer-chat-btn {
-            right: 8px !important;
-            bottom: 2px !important;
+            right: 4px !important;
+            bottom: 56px !important;
             left: auto !important;
-            width: auto !important;
-            max-width: calc(100vw - 16px);
+            width: fit-content !important;
           }
           .amer-chat-btn .chat-text {
-            font-size: 10px !important;
-            padding: 4px 6px !important;
+            font-size: 9px !important;
+            padding: 3px 5px !important;
           }
           .amer-chat-btn .chat-icon-wrap {
-            padding: 4px 6px !important;
+            padding: 3px 5px !important;
           }
           .amer-chat-btn .chat-icon-wrap svg {
-            width: 18px !important;
-            height: 18px !important;
+            width: 14px !important;
+            height: 14px !important;
           }
         }
       `}} />

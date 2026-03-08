@@ -74,7 +74,7 @@ export default function EWABills() {
       const initialChecked: Record<number, boolean> = {};
       const initialAmounts: Record<number, string> = {};
       bills.forEach((_: any, idx: number) => {
-        initialChecked[idx] = true;
+        initialChecked[idx] = false;
         const bill = bills[idx];
         initialAmounts[idx] = bill.balance || billData.totalAmount || '0';
       });

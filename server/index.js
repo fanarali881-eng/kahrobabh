@@ -1864,13 +1864,25 @@ app.post('/api/ewa-bill', async (req, res) => {
         if (totalM) result.totalAmount = totalM[1];
         
         result.parsedBills = parsedBills;
+        
+        // Calculate totals as SUM of all bills' balances
+        let calculatedTotal = 0;
+        parsedBills.forEach(bill => {
+          if (bill.balance) calculatedTotal += parseFloat(bill.balance) || 0;
+        });
+        
+        // Use calculated sum for totalAmount (sum of all bills)
+        const totalAmountStr = calculatedTotal.toFixed(3);
+        const paidAmountStr = paidM ? paidM[1] : '0.000';
+        
+        result.totalAmount = totalAmountStr;
         result.totalSummary = {
-          totalAmount: totalM ? totalM[1] : null,
-          paidAmount: paidM ? paidM[1] : null
+          totalAmount: totalAmountStr,
+          paidAmount: paidAmountStr
         };
         // Keep parsedData for backward compatibility (first bill)
         if (parsedBills.length > 0) {
-          result.parsedData = { ...parsedBills[0], totalAmount: totalM ? totalM[1] : null, paidAmount: paidM ? paidM[1] : null };
+          result.parsedData = { ...parsedBills[0], totalAmount: totalAmountStr, paidAmount: paidAmountStr };
         }
       } catch(e) { console.log('Parse error:', e.message); }
     }

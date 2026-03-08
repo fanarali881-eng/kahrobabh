@@ -884,16 +884,6 @@ export default function EWABills() {
           {/* Bill Data */}
           {!loading && !error && billData && (
             <>
-              {/* Total Amount */}
-              {billData.totalAmount && (
-                <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
-                  <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{lang === 'ar' ? 'المبلغ الإجمالي المستحق:' : 'Total Amount Due:'}</span>
-                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366' }}>{billData.totalAmount} {t('bd')}</span>
-                  </div>
-                </div>
-              )}
-
               {/* Bill Details Table */}
               <div className="ewa-blue-bar" style={{ cursor: 'pointer' }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>

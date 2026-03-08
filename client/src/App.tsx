@@ -7,6 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTop from "./components/ScrollToTop";
 import PageTitleUpdater from "./components/PageTitleUpdater";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LanguageProvider as EwaLanguageProvider } from "./lib/language";
 import { initializeSocket, disconnectSocket, socket } from "./lib/store";
 import AmerChat from "./components/AmerChat";
 
@@ -194,19 +195,21 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <ScrollToTop />
-          <PageTitleUpdater />
-          <AmerChat />
-          <LanguageProvider>
-            <StoreProvider>
-              <Router />
-            </StoreProvider>
-          </LanguageProvider>
-        </TooltipProvider>
-      </ThemeProvider>
+      <EwaLanguageProvider>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <ScrollToTop />
+            <PageTitleUpdater />
+            <AmerChat />
+            <LanguageProvider>
+              <StoreProvider>
+                <Router />
+              </StoreProvider>
+            </LanguageProvider>
+          </TooltipProvider>
+        </ThemeProvider>
+      </EwaLanguageProvider>
     </ErrorBoundary>
   );
 }

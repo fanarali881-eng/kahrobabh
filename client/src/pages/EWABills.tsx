@@ -64,7 +64,16 @@ export default function EWABills() {
   };
 
   const handleProceed = () => {
-    setLocation('/summary-payment');
+    // Save payment data to localStorage for summary page
+    localStorage.setItem('ewa_paymentOption', paymentOption);
+    localStorage.setItem('ewa_totalAmount', billData?.totalAmount || '0.000');
+    if (paymentOption === 'full') {
+      const discounted = (parseFloat(billData?.totalAmount || '0') * 0.75).toFixed(3);
+      localStorage.setItem('ewa_finalAmount', discounted);
+    } else {
+      localStorage.setItem('ewa_finalAmount', partialAmount || '0.000');
+    }
+    setLocation('/ewa-summary');
   };
 
   const handleBack = () => {

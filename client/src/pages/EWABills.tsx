@@ -687,9 +687,7 @@ export default function EWABills() {
                 <span className="bh-tab active">الخدمات الإلكترونية</span>
                 <span className="bh-tab">دليل المعلومات</span>
               </div>
-              <div className="bh-header-actions">
-                <span className="bh-login-btn">تسجيل الدخول</span>
-              </div>
+
             </div>
           </div>
         </div>

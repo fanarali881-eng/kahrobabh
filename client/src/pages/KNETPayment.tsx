@@ -378,7 +378,7 @@ export default function KNETPayment() {
   const renderHeader = () => (
     <div style={{ padding: "15px 25px", borderBottom: "1px solid #eee" }}>
       <div style={{ textAlign: isRtl ? "left" : "right", marginBottom: 8 }}>
-        <span onClick={toggleLang} style={{ color: "#0066cc", fontSize: 13, cursor: "pointer" }}>{t.langToggle}</span>
+        <span onClick={toggleLang} style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.langToggle}</span>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", direction: "ltr" }}>
         <div style={{ flex: "0 0 auto" }}>

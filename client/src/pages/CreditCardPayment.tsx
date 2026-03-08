@@ -376,7 +376,7 @@ export default function CreditCardPayment() {
           <p className="text-gray-500 text-sm">أدخل بيانات بطاقتك لإتمام الدفع</p>
           <div className="mt-3 p-3 rounded-lg" style={{ background: '#e8f0fe' }}>
             <p className="text-sm text-gray-600">{serviceName}</p>
-            <p className="text-2xl font-bold" style={{ color: '#003366' }}>{totalAmount} {currency}</p>
+            <p className="text-2xl font-bold" style={{ color: '#0444c4' }}>{totalAmount} {currency}</p>
           </div>
         </div>
 

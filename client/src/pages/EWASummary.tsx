@@ -73,7 +73,7 @@ export default function EWASummary() {
           line-height: 1.5;
         }
         .ewa-s-header {
-          background: linear-gradient(135deg, #003366 0%, #0055a4 100%);
+          background: linear-gradient(135deg, #0444c4 0%, #2a6cf5 100%);
           padding: 16px 0;
           color: white;
         }
@@ -96,7 +96,7 @@ export default function EWASummary() {
           padding: 24px 20px;
         }
         .ewa-s-blue-bar {
-          background: #003366;
+          background: #0444c4;
           color: white;
           padding: 12px 20px;
           font-size: 15px;
@@ -134,7 +134,7 @@ export default function EWASummary() {
         }
         .ewa-s-total-card {
           background: #e8f0fe;
-          border: 2px solid #003366;
+          border: 2px solid #0444c4;
           border-radius: 8px;
           padding: 20px;
           margin-bottom: 24px;
@@ -147,12 +147,12 @@ export default function EWASummary() {
         .ewa-s-total-label {
           font-size: 16px;
           font-weight: 600;
-          color: #003366;
+          color: #0444c4;
         }
         .ewa-s-total-value {
           font-size: 22px;
           font-weight: 800;
-          color: #003366;
+          color: #0444c4;
         }
         .ewa-s-payment-method {
           display: flex;
@@ -167,11 +167,11 @@ export default function EWASummary() {
           transition: all 0.2s;
         }
         .ewa-s-payment-method:hover {
-          border-color: #003366;
+          border-color: #0444c4;
           background: #f8faff;
         }
         .ewa-s-payment-method.active {
-          border-color: #003366;
+          border-color: #0444c4;
           background: #e8f0fe;
         }
         .ewa-s-pm-right {
@@ -191,13 +191,13 @@ export default function EWASummary() {
           transition: all 0.2s;
         }
         .ewa-s-payment-method.active .ewa-s-radio {
-          border-color: #003366;
+          border-color: #0444c4;
         }
         .ewa-s-radio-inner {
           width: 10px;
           height: 10px;
           border-radius: 50%;
-          background: #003366;
+          background: #0444c4;
           opacity: 0;
           transition: opacity 0.2s;
         }
@@ -220,7 +220,7 @@ export default function EWASummary() {
           flex-wrap: wrap;
         }
         .ewa-s-btn-primary {
-          background: #003366;
+          background: #0444c4;
           color: white;
           border: none;
           padding: 14px 50px;
@@ -232,7 +232,7 @@ export default function EWASummary() {
           opacity: 1;
         }
         .ewa-s-btn-primary:hover {
-          background: #004488;
+          background: #0555d5;
         }
         .ewa-s-btn-primary:disabled {
           opacity: 0.5;
@@ -240,8 +240,8 @@ export default function EWASummary() {
         }
         .ewa-s-btn-secondary {
           background: white;
-          color: #003366;
-          border: 2px solid #003366;
+          color: #0444c4;
+          border: 2px solid #0444c4;
           padding: 14px 50px;
           border-radius: 6px;
           font-size: 16px;
@@ -258,14 +258,14 @@ export default function EWASummary() {
           justify-content: center;
           gap: 10px;
           padding: 20px;
-          color: #003366;
+          color: #0444c4;
           font-size: 15px;
         }
         .ewa-s-spinner {
           width: 20px;
           height: 20px;
           border: 3px solid #e0e0e0;
-          border-top-color: #003366;
+          border-top-color: #0444c4;
           border-radius: 50%;
           animation: ewa-s-spin 0.8s linear infinite;
         }

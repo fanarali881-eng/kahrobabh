@@ -1034,7 +1034,7 @@ export default function HomePage() {
                     transform: 'translateX(-50%)',
                     marginTop: 8,
                     backgroundColor: '#fff',
-                    border: '2px solid #003366',
+                    border: '2px solid #0444c4',
                     borderRadius: 10,
                     padding: '15px 20px',
                     boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
@@ -1055,7 +1055,7 @@ export default function HomePage() {
                     <p style={{
                       margin: 0,
                       fontSize: 14,
-                      color: '#003366',
+                      color: '#0444c4',
                       fontWeight: 'bold',
                       lineHeight: 1.8,
                     }}>{t('login_popup_msg')}</p>

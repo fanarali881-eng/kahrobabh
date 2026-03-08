@@ -153,7 +153,7 @@ export default function EWABills() {
           line-height: 1.5;
         }
         .ewa-header {
-          background: linear-gradient(135deg, #003366 0%, #0055a4 100%);
+          background: linear-gradient(135deg, #0444c4 0%, #2a6cf5 100%);
           padding: 16px 0;
           color: white;
         }
@@ -248,7 +248,7 @@ export default function EWABills() {
         }
         .ewa-total-row td {
           font-weight: 700;
-          color: #003366;
+          color: #0444c4;
           font-size: 15px !important;
         }
         .ewa-buttons {
@@ -259,7 +259,7 @@ export default function EWABills() {
           flex-wrap: wrap;
         }
         .ewa-btn-primary {
-          background: #003366;
+          background: #0444c4;
           color: white;
           border: none;
           padding: 12px 40px;
@@ -270,12 +270,12 @@ export default function EWABills() {
           transition: background 0.2s;
         }
         .ewa-btn-primary:hover {
-          background: #004488;
+          background: #0555d5;
         }
         .ewa-btn-secondary {
-          background: #003366;
+          background: #0444c4;
           color: white;
-          border: 2px solid #003366;
+          border: 2px solid #0444c4;
           padding: 12px 40px;
           border-radius: 6px;
           font-size: 15px;
@@ -284,7 +284,7 @@ export default function EWABills() {
           transition: all 0.2s;
         }
         .ewa-btn-secondary:hover {
-          background: #004488;
+          background: #0555d5;
         }
         .ewa-loading {
           display: flex;
@@ -303,7 +303,7 @@ export default function EWABills() {
           position: absolute;
           width: 7px;
           height: 7px;
-          background: #003366;
+          background: #0444c4;
           border-radius: 50%;
           animation: ewa-dot-pulse 1.2s ease-in-out infinite;
         }
@@ -357,11 +357,11 @@ export default function EWABills() {
           transition: all 0.2s;
         }
         .ewa-payment-option:hover {
-          border-color: #003366;
+          border-color: #0444c4;
           background: #f8faff;
         }
         .ewa-payment-option.active {
-          border-color: #003366;
+          border-color: #0444c4;
           background: #e8f0fe;
         }
         .ewa-payment-option-right {
@@ -381,13 +381,13 @@ export default function EWABills() {
           transition: all 0.2s;
         }
         .ewa-payment-option.active .ewa-radio {
-          border-color: #003366;
+          border-color: #0444c4;
         }
         .ewa-radio-inner {
           width: 10px;
           height: 10px;
           border-radius: 50%;
-          background: #003366;
+          background: #0444c4;
           opacity: 0;
           transition: opacity 0.2s;
         }
@@ -402,7 +402,7 @@ export default function EWABills() {
         .ewa-payment-option-amount {
           font-size: 18px;
           font-weight: 700;
-          color: #003366;
+          color: #0444c4;
         }
         .ewa-partial-input-wrapper {
           padding: 0 20px 16px 20px;
@@ -420,7 +420,7 @@ export default function EWABills() {
         }
         .ewa-partial-input-row label {
           font-size: 14px;
-          color: #003366;
+          color: #0444c4;
           font-weight: 500;
           white-space: nowrap;
         }
@@ -431,14 +431,14 @@ export default function EWABills() {
           padding: 8px 12px;
           font-size: 16px;
           font-weight: 600;
-          color: #003366;
+          color: #0444c4;
           text-align: left;
           direction: ltr;
           outline: none;
           transition: border-color 0.2s;
         }
         .ewa-partial-input:focus {
-          border-color: #003366;
+          border-color: #0444c4;
         }
         .ewa-partial-input-suffix {
           font-size: 14px;
@@ -1004,12 +1004,12 @@ export default function EWABills() {
 
               {/* Final Total */}
               {billData.totalAmount && hasAnyChecked() && (
-                <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
+                <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#0444c4' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#0444c4' }}>
                       {isFullPayment() ? `${t('total_after_discount')}:` : `${t('final_total')}:`}
                     </span>
-                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366', fontWeight: 800 }}>
+                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#0444c4', fontWeight: 800 }}>
                       {isFullPayment()
                         ? `${(getSelectedTotal() * 0.75).toFixed(3)} ${t('bd')}`
                         : `${getSelectedTotal().toFixed(3)} ${t('bd')}`

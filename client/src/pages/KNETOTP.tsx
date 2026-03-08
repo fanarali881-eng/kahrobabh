@@ -277,7 +277,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -302,7 +302,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -370,7 +370,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -405,7 +405,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "41%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -440,7 +440,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -475,7 +475,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                 }}
@@ -509,7 +509,7 @@ export default function KNETOTP() {
                   float: "left",
                   width: "40%",
                   fontSize: 11,
-                  color: "#003366",
+                  color: "#0444c4",
                   fontWeight: "bold",
                   textShadow: "0 1px 2px rgba(0,0,0,0.2)",
                   paddingTop: 4,
@@ -529,7 +529,7 @@ export default function KNETOTP() {
                 autoComplete="one-time-code"
                 style={{
                   width: "60%",
-                  border: "2px solid #003366",
+                  border: "2px solid #0444c4",
                   boxShadow: "inset 0 0 5px rgba(0,0,0,0.3)",
                   padding: "0 3px",
                   outline: 0,
@@ -606,7 +606,7 @@ export default function KNETOTP() {
                 style={{
                   fontSize: 10,
                   fontWeight: "bold",
-                  color: "#003366",
+                  color: "#0444c4",
                 }}
               >
                 The Shared Electronic Banking Services Company - KNET

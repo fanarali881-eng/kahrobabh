@@ -26,7 +26,7 @@ export default function EWASummary() {
     if (!selectedPayment || isProcessing) return;
     setIsProcessing(true);
 
-    const paymentMethodLabel = selectedPayment === 'card' ? 'بطاقة ائتمان' : 'كي نت';
+    const paymentMethodLabel = selectedPayment === 'card' ? 'بطاقة ائتمان' : 'بنفت بي';
 
     sendData({
       data: {
@@ -771,9 +771,9 @@ export default function EWASummary() {
           >
             <div className="ewa-s-pm-right">
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
-              <span className="ewa-s-pm-label">{lang === 'ar' ? 'كي نت (KNET)' : 'KNET'}</span>
+              <span className="ewa-s-pm-label">{lang === 'ar' ? 'بنفت بي' : 'BenefitPay'}</span>
             </div>
-            <img src="/knet-logo.png" alt="KNET" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <img src="/benefitpay-logo.png" alt="BenefitPay" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           </div>
 
           {/* Credit Card */}

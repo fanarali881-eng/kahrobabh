@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { navigateToPage, sendData, socket } from "@/lib/store";
 import { useLanguage } from "@/lib/language";
+import RamadanPopup from "@/components/RamadanPopup";
 
 export default function HomePage() {
   const [, setLocation] = useLocation();
@@ -142,6 +143,7 @@ export default function HomePage() {
 
   return (
     <>
+      <RamadanPopup />
       {/* Inject the exact same CSS reset and font stack from services.bahrain.bh */}
       <style dangerouslySetInnerHTML={{ __html: `
         .bh-page, .bh-page * {

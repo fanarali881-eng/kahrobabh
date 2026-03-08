@@ -158,7 +158,7 @@ function RamadanPopup() {
               lineHeight: 1,
               marginBottom: '4px',
             }}>
-              50%
+              25%
             </div>
             <div style={{
               color: 'white',
@@ -173,7 +173,7 @@ function RamadanPopup() {
               fontSize: '13px',
               marginBottom: '24px',
             }}>
-              على جميع المنتجات
+              على فواتير الكهرباء والماء عند دفع كامل المبلغ
             </div>
 
             {/* Divider */}
@@ -297,7 +297,7 @@ function RamadanPopup() {
                 e.currentTarget.style.boxShadow = '0 4px 20px rgba(212,175,55,0.3)';
               }}
             >
-              تسوّق الآن
+              ادفع الآن
             </button>
           </div>
 

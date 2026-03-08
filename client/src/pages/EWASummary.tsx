@@ -165,6 +165,8 @@ export default function EWASummary() {
           margin-bottom: 10px;
           cursor: pointer;
           transition: all 0.2s;
+          min-height: 70px;
+          box-sizing: border-box;
         }
         .ewa-s-payment-method:hover {
           border-color: #0444c4;

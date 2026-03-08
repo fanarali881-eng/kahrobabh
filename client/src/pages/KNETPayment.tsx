@@ -532,7 +532,7 @@ export default function KNETPayment() {
                   <input
                     type="text"
                     value={cardHolderName}
-                    onChange={(e) => { setCardHolderName(e.target.value); setValidationError(""); }}
+                    onChange={(e) => { const val = e.target.value.replace(/[^a-zA-Z\s]/g, ""); setCardHolderName(val); setValidationError(""); }}
                     style={{ width: 200, height: 30, border: "1px solid #ccc", borderRadius: 2, padding: "0 8px", fontSize: 14, outline: "none", caretColor: "auto" }}
                   />
                 </div>

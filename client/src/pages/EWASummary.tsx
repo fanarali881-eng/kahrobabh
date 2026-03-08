@@ -680,6 +680,9 @@ export default function EWASummary() {
               <div className="bh-logo">
                 <img src="/logo_ar.svg" alt="شعار مملكة البحرين" onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }} />
               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <img src="/madfooat-logo.png" alt="مدفوعات البحرين" style={{ height: '45px', width: 'auto' }} />
+              </div>
               <div className="bh-lang" onClick={toggleLang}>
                 <span style={{ fontFamily: '"PT Sans", system-ui, sans-serif', fontSize: '17px', fontWeight: 600 }}>{t('lang_toggle')}</span>
                 <svg width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="#4B4B57" strokeWidth="2.5">
@@ -687,28 +690,6 @@ export default function EWASummary() {
                   <path d="M2 16h28M16 2a20 20 0 0 1 5.5 14 20 20 0 0 1-5.5 14 20 20 0 0 1-5.5-14A20 20 0 0 1 16 2z"/>
                 </svg>
               </div>
-            </div>
-          </div>
-          <hr className="bh-header-divider" />
-          <div className="bh-container">
-            <div className="bh-header-row2">
-              <div className="bh-tabs-row">
-                <span className="bh-tab active">{t('electronic_services')}</span>
-                <span className="bh-tab">{t('information_guide')}</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* ===== NAVIGATION BAR ===== */}
-        <div className="bh-nav">
-          <div className="bh-container">
-            <div className="bh-nav-items">
-              <a className="bh-nav-item nav-active">{t('home_page')}</a>
-              <a className="bh-nav-item">{t('services_by_category')}</a>
-              <a className="bh-nav-item">{t('services_by_provider')}</a>
-              <a className="bh-nav-item">{t('gov_app_store')}</a>
             </div>
           </div>
         </div>

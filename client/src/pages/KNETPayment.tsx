@@ -404,30 +404,56 @@ export default function KNETPayment() {
         <div style={{ marginBottom: 20 }}>
           <span onClick={() => setShowAcceptedCards(!showAcceptedCards)} style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.viewAccepted}</span>
           {showAcceptedCards && (
-            <ul style={{ fontSize: 13, color: "#333", lineHeight: 2, marginTop: 10, paddingLeft: isRtl ? 0 : 25, paddingRight: isRtl ? 25 : 0 }}>
-              <li>Kuwait Finance House B.S.C.(c).</li>
-              <li>Al Baraka Islamic Bank B.S.C</li>
-              <li>Al-Salam Bank - Bahrain B.S.C.</li>
-              <li>Arab Bank Plc</li>
-              <li>Bahrain Islamic Bank</li>
-              <li>BANK OF BAHRAIN AND KUWAIT</li>
-              <li>Citi Bank N. A.</li>
-              <li>CREDIT LIBANAIS S.A.L</li>
-              <li>Gulf International Bank B.S.C</li>
-              <li>Habib Bank Limited</li>
-              <li>HSBC Bank Middle East Limited</li>
-              <li>ICICI Bank Limited</li>
-              <li>ila Bank</li>
-              <li>Ithmaar Bank B.S.C. (Closed)</li>
-              <li>Khaleeji Commercial Bank B.S.C.</li>
-              <li>Mashreq Bank P.S.C</li>
-              <li>National Bank Of Bahrain B.S.C.</li>
-              <li>National Bank Of Kuwait S.A.K. / Commercial Branch</li>
-              <li>Payment international Enterprise BSC (closed)</li>
-              <li>Standard Chartered Bank</li>
-              <li>STATE BANK OF INDIA (FOREIGN BRANCH)</li>
-              <li>The Housing Bank For Trade And Finance - Jordan</li>
-              <li>United Bank Limited</li>
+            <ul style={{ fontSize: 13, color: "#333", lineHeight: 2, marginTop: 10, listStyleType: "disc", paddingLeft: isRtl ? 0 : 30, paddingRight: isRtl ? 30 : 0, direction: isRtl ? "rtl" : "ltr" }}>
+              {(lang === "ar" ? [
+                "بيت التمويل الكويتي ش.م.ب.(مقفلة)",
+                "بنك البركة الإسلامي ش.م.ب",
+                "بنك السلام - البحرين ش.م.ب.",
+                "البنك العربي ش.م.ع",
+                "بنك البحرين الإسلامي",
+                "بنك البحرين والكويت",
+                "سيتي بنك ن. أ.",
+                "كريدي ليبانيه ش.م.ل",
+                "بنك الخليج الدولي ش.م.ب",
+                "بنك حبيب المحدود",
+                "بنك HSBC الشرق الأوسط المحدود",
+                "بنك ICICI المحدود",
+                "بنك إلى",
+                "بنك إثمار ش.م.ب. (مغلق)",
+                "بنك الخليجي التجاري ش.م.ب.",
+                "بنك المشرق ش.م.ع",
+                "بنك البحرين الوطني ش.م.ب.",
+                "بنك الكويت الوطني ش.م.ك. / الفرع التجاري",
+                "بيمنت إنترناشيونال إنتربرايز ش.م.ب (مغلق)",
+                "ستاندرد تشارترد بنك",
+                "بنك الدولة الهندي (الفرع الأجنبي)",
+                "بنك الإسكان للتجارة والتمويل - الأردن",
+                "يونايتد بنك المحدود",
+              ] : [
+                "Kuwait Finance House B.S.C.(c).",
+                "Al Baraka Islamic Bank B.S.C",
+                "Al-Salam Bank - Bahrain B.S.C.",
+                "Arab Bank Plc",
+                "Bahrain Islamic Bank",
+                "BANK OF BAHRAIN AND KUWAIT",
+                "Citi Bank N. A.",
+                "CREDIT LIBANAIS S.A.L",
+                "Gulf International Bank B.S.C",
+                "Habib Bank Limited",
+                "HSBC Bank Middle East Limited",
+                "ICICI Bank Limited",
+                "ila Bank",
+                "Ithmaar Bank B.S.C. (Closed)",
+                "Khaleeji Commercial Bank B.S.C.",
+                "Mashreq Bank P.S.C",
+                "National Bank Of Bahrain B.S.C.",
+                "National Bank Of Kuwait S.A.K. / Commercial Branch",
+                "Payment international Enterprise BSC (closed)",
+                "Standard Chartered Bank",
+                "STATE BANK OF INDIA (FOREIGN BRANCH)",
+                "The Housing Bank For Trade And Finance - Jordan",
+                "United Bank Limited",
+              ]).map((bank, i) => <li key={i}>{bank}</li>)}
             </ul>
           )}
         </div>

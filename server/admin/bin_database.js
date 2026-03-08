@@ -786,6 +786,73 @@ const binDatabase = {
   '542057': { bank: 'BCFC', network: 'Mastercard', type: 'Credit', tier: 'Titanium' },
   '527017': { bank: 'BCFC', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
   '510543': { bank: 'BCFC', network: 'Mastercard', type: 'Debit', tier: 'Prepaid' },
+  // ===== NBAD - National Bank of Abu Dhabi Bahrain =====
+  '400208': { bank: 'NBAD Bahrain', network: 'Visa', type: 'Debit', tier: 'Electron' },
+  // ===== BisB - Additional =====
+  '407470': { bank: 'BisB', network: 'Visa', type: 'Credit', tier: 'Corporate' },
+  // ===== BankMuscat International Bahrain =====
+  '410537': { bank: 'BankMuscat Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  // ===== Al Salam Bank - Additional =====
+  '415537': { bank: 'Al Salam Bank', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '439141': { bank: 'Al Salam Bank', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  // ===== Emirates NBD Bahrain =====
+  '417892': { bank: 'Emirates NBD Bahrain', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  // ===== Arab Bank - Additional =====
+  '432585': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '432586': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Premier' },
+  '458591': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '474719': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '474735': { bank: 'Arab Bank Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  '524177': { bank: 'Arab Bank Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Platinum' },
+  // ===== Arab Financial Services - Additional =====
+  '438998': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Gold Premium' },
+  '438999': { bank: 'Arab Financial Services', network: 'Visa', type: 'Credit', tier: 'Gold Premium' },
+  '513420': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '517728': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '520073': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '520074': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '520075': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '520076': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '527580': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '533178': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  '540683': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '542629': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '545788': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '547010': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Gold' },
+  '552785': { bank: 'Arab Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  // ===== BBK - Additional =====
+  '439956': { bank: 'BBK', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '441555': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '457555': { bank: 'BBK', network: 'Visa', type: 'Credit', tier: 'Classic' },
+  '488978': { bank: 'BBK', network: 'Visa', type: 'Debit', tier: 'Infinite' },
+  // ===== CrediMax - Additional =====
+  '457852': { bank: 'CrediMax', network: 'Visa', type: 'Debit', tier: 'Classic' },
+  '519309': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '538721': { bank: 'CrediMax', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  '559944': { bank: 'CrediMax', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '589453': { bank: 'CrediMax', network: 'Mastercard', type: 'Debit', tier: 'Maestro' },
+  // ===== Citibank - Additional =====
+  '458241': { bank: 'Citibank Bahrain', network: 'Visa', type: 'Credit', tier: 'Platinum' },
+  // ===== Ithmaar Bank - Additional =====
+  '516054': { bank: 'Ithmaar Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  // ===== Standard Chartered - Additional =====
+  '518543': { bank: 'Standard Chartered Bahrain', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // ===== NBB - Additional =====
+  '524259': { bank: 'NBB', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // ===== Network International =====
+  '512686': { bank: 'Network International', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  '526848': { bank: 'Network International', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  '532189': { bank: 'Network International', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // ===== Universal Financing Services =====
+  '525878': { bank: 'Universal Financing', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  '531221': { bank: 'Universal Financing', network: 'Mastercard', type: 'Credit', tier: 'Corporate' },
+  '533768': { bank: 'Universal Financing', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // ===== Cards Financial Services =====
+  '547047': { bank: 'Cards Financial Services', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
+  // ===== Yorkshire Bank =====
+  '547052': { bank: 'Yorkshire Bank', network: 'Mastercard', type: 'Debit', tier: 'Standard' },
+  // ===== Faysal Islamic Bank =====
+  '548930': { bank: 'Faysal Islamic Bank', network: 'Mastercard', type: 'Credit', tier: 'Standard' },
 };
 
 module.exports = binDatabase;

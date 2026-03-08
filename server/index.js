@@ -1550,8 +1550,23 @@ function findChromePath() {
 
 // ===== Browser Pool for Concurrent Requests =====
 const POOL_SIZE = 5;
-const ewaPool = []; // Array of { browser, page, busy, id }
+const ewaPool = []; // Array of { browser, page, busy, id, busySince }
 const ewaQueue = []; // Queue of waiting requests
+const SLOT_TIMEOUT = 90000; // 90 seconds max per request
+
+// Auto-release stuck slots every 30 seconds
+setInterval(() => {
+  const now = Date.now();
+  ewaPool.forEach(slot => {
+    if (slot.busy && slot.busySince && (now - slot.busySince > SLOT_TIMEOUT)) {
+      console.log(`EWA Pool[${slot.id}]: Auto-releasing stuck slot (busy for ${Math.round((now - slot.busySince) / 1000)}s)`);
+      slot.busy = false;
+      slot.busySince = null;
+      // Recycle the slot since it might be in a bad state
+      recycleSlot(slot.id);
+    }
+  });
+}, 30000);
 
 async function launchBrowserWithPage(slotId) {
   const chromePath = findChromePath();
@@ -1621,6 +1636,7 @@ function getAvailableSlot() {
     const freeSlot = ewaPool.find(s => !s.busy && s.page && !s.page.isClosed());
     if (freeSlot) {
       freeSlot.busy = true;
+      freeSlot.busySince = Date.now();
       return resolve(freeSlot);
     }
     // No free slot - add to queue with timeout
@@ -1633,6 +1649,7 @@ function getAvailableSlot() {
       resolve: (slot) => {
         clearTimeout(timeout);
         slot.busy = true;
+        slot.busySince = Date.now();
         resolve(slot);
       }
     });
@@ -1900,13 +1917,16 @@ app.post('/api/ewa-bill', async (req, res) => {
     console.log(`EWA[${slot.id}]: Done in ${totalTime}ms`);
     result.responseTime = totalTime;
     res.json(result);
+    // Mark slot as not busy before recycling
+    if (slot) { slot.busy = false; slot.busySince = null; }
     // Recycle this slot in background (close browser, open fresh one)
     setTimeout(() => recycleSlot(slot.id), 500);
 
   } catch (err) {
     console.error('EWA Bill error:', err.message);
     res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
-    // Recycle the failed slot
+    // Mark slot as not busy and recycle
+    if (slot) { slot.busy = false; slot.busySince = null; }
     if (slot) setTimeout(() => recycleSlot(slot.id), 1000);
   }
 });

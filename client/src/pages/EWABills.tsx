@@ -428,7 +428,7 @@ export default function EWABills() {
                 <div className="ewa-dot"></div>
                 <div className="ewa-dot"></div>
               </div>
-              <p style={{ color: '#666', fontSize: '15px' }}>جاري جلب بيانات الفواتير من هيئة الكهرباء والماء...</p>
+              <p style={{ color: '#666', fontSize: '15px' }}>جاري جلب الفواتير...</p>
             </div>
           )}
 

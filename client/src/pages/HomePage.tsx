@@ -922,10 +922,30 @@ export default function HomePage() {
           .bh-bottom-line {
             margin-top: 40px;
           }
-          /* Weather popup */
+          /* Weather popup - mobile: fixed centered */
           .weather-popup {
-            width: 300px;
-            left: -100px;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: calc(100vw - 32px) !important;
+            max-width: 360px;
+            max-height: 85vh;
+            overflow-y: auto;
+          }
+          /* Login popup - mobile: fixed centered */
+          .login-popup-mobile {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: calc(100vw - 40px) !important;
+            max-width: 320px;
+            margin-top: 0 !important;
+          }
+          /* Overlay background on mobile */
+          .popup-overlay-mobile {
+            display: block !important;
           }
           /* Loading overlay text */
           .bh-loading-overlay p {
@@ -991,8 +1011,21 @@ export default function HomePage() {
                 <img ref={weatherBtnRef} src="/weather-icon.svg" alt="الطقس" style={{ width: '32px', height: '32px', cursor: 'pointer' }} onClick={() => { setShowWeather(!showWeather); if (!weatherData) fetchWeather(); }} />
                 <span ref={loginBtnRef} className="bh-login-btn" onClick={() => setShowLoginPopup(!showLoginPopup)} style={{ cursor: 'pointer' }}>تسجيل الدخول</span>
 
+                {(showLoginPopup || showWeather) && (
+                  <div className="popup-overlay-mobile" onClick={() => { setShowLoginPopup(false); setShowWeather(false); }} style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.4)',
+                    zIndex: 9999,
+                    display: 'none',
+                  }} />
+                )}
+
                 {showLoginPopup && (
-                  <div ref={loginPopupRef} style={{
+                  <div ref={loginPopupRef} className="login-popup-mobile" style={{
                     position: 'absolute',
                     top: '100%',
                     left: '50%',
@@ -1003,7 +1036,7 @@ export default function HomePage() {
                     borderRadius: 10,
                     padding: '15px 20px',
                     boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
-                    zIndex: 1000,
+                    zIndex: 10001,
                     minWidth: 280,
                     textAlign: 'center',
                     direction: 'rtl' as const,

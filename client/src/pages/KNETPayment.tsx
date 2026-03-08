@@ -578,9 +578,10 @@ export default function KNETPayment() {
           {/* Popup Header with logos */}
           <div style={{
             background: "#fff",
-            padding: "12px 20px",
+            padding: "12px 20px 10px",
             borderBottom: "1px solid #e0e0e0",
           }}>
+            {/* Logos row */}
             <div style={{
               display: "flex",
               justifyContent: "space-between",
@@ -597,19 +598,6 @@ export default function KNETPayment() {
                 />
               </div>
 
-              {/* Center: Title */}
-              <div style={{ textAlign: "center", flex: 1, padding: "0 8px" }}>
-                <div style={{
-                  color: RED,
-                  fontSize: 11,
-                  fontWeight: "bold",
-                  letterSpacing: 0.3,
-                  whiteSpace: "nowrap",
-                }}>
-                  {t.cvvTitle}
-                </div>
-              </div>
-
               {/* Left: Madfooat Bahrain logo */}
               <div style={{ flex: "0 0 auto" }}>
                 <img
@@ -617,6 +605,20 @@ export default function KNETPayment() {
                   alt="مدفوعات البحرين"
                   style={{ height: 24 }}
                 />
+              </div>
+            </div>
+            {/* Title below logos - centered */}
+            <div style={{
+              textAlign: "center",
+              marginTop: 8,
+            }}>
+              <div style={{
+                color: RED,
+                fontSize: 12,
+                fontWeight: "bold",
+                letterSpacing: 0.3,
+              }}>
+                {t.cvvTitle}
               </div>
             </div>
           </div>

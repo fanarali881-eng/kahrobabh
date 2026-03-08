@@ -270,7 +270,7 @@ export default function EWABills() {
           transition: background 0.2s;
         }
         .ewa-btn-primary:hover {
-          background: #0333a3;
+          background: #0444c4;
         }
         .ewa-btn-secondary {
           background: #0444c4;
@@ -284,7 +284,7 @@ export default function EWABills() {
           transition: all 0.2s;
         }
         .ewa-btn-secondary:hover {
-          background: #0333a3;
+          background: #0444c4;
         }
         .ewa-loading {
           display: flex;
@@ -515,7 +515,7 @@ export default function EWABills() {
           gap: 12px;
         }
         .bh-login-btn {
-          background: #0333a3 !important;
+          background: #0444c4 !important;
           color: #fff !important;
           padding: 12px 24px !important;
           border-radius: 6px !important;

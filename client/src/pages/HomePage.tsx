@@ -240,7 +240,7 @@ export default function HomePage() {
           gap: 12px;
         }
         .bh-login-btn {
-          background: #0333a3 !important;
+          background: #0444c4 !important;
           color: #fff !important;
           padding: 12px 24px !important;
           border-radius: 6px !important;

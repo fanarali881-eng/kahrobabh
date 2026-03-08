@@ -174,4 +174,11 @@
     max-width: 100% !important;
     box-sizing: border-box !important;
   }
+
+  /* Shrink bank logo on mobile */
+  .bank-logo-mobile {
+    max-height: 36px !important;
+    max-width: 100px !important;
+    height: auto !important;
+  }
 }

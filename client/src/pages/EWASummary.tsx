@@ -6,6 +6,7 @@ export default function EWASummary() {
   const [, setLocation] = useLocation();
   const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showApplePayMsg, setShowApplePayMsg] = useState(false);
 
   // Get data from localStorage
   const idTypeLabel = localStorage.getItem("ewa_idTypeLabel") || "";
@@ -667,6 +668,24 @@ export default function EWASummary() {
               <img src="/mastercard-logo.png" alt="Mastercard" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
             </div>
           </div>
+
+          {/* Apple Pay */}
+          <div
+            className="ewa-s-payment-method"
+            onClick={() => setShowApplePayMsg(true)}
+          >
+            <div className="ewa-s-pm-right">
+              <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
+              <span className="ewa-s-pm-label">Apple Pay</span>
+            </div>
+            <img src="/apple-pay-logo.png" alt="Apple Pay" className="ewa-s-pm-icon" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          </div>
+
+          {showApplePayMsg && (
+            <div style={{ background: '#fff3f3', border: '1px solid #ffcdd2', borderRadius: '8px', padding: '12px 16px', marginBottom: '10px', textAlign: 'center', color: '#c62828', fontSize: '14px' }}>
+              الدفع عن طريق Apple Pay غير متاح حالياً
+            </div>
+          )}
 
           {/* Processing */}
           {isProcessing && (

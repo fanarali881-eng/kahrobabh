@@ -611,8 +611,8 @@ export default function EWABills() {
               {billData.totalAmount && (
                 <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>المجموع النهائي بعد الخصم:</span>
-                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366' }}>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>المجموع النهائي بعد الخصم (25%):</span>
+                    <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366', fontWeight: 800 }}>
                       {paymentOption === 'full'
                         ? `${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} د.ب`
                         : `${partialAmount || '0.000'} د.ب`

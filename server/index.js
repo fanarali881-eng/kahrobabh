@@ -1856,12 +1856,15 @@ app.post('/api/ewa-bill', async (req, res) => {
           if (balMatch) bill.balance = balMatch[1];
           
           parsedBills.push(bill);
+          console.log(`EWA MULTI-BILL: Bill ${i+1} - Account: ${bill.accountNumber}, Balance: ${bill.balance || 'N/A'}`);
         }
         
-        // Extract totals from the full text
+        console.log(`EWA MULTI-BILL: Total bills found: ${parsedBills.length}`);
+        
+        // Extract totals from the full text (website's own totals)
         const totalM = raw.match(/مجموع المبالغ \(د\.ب\): ([\d.]+)/);
         const paidM = raw.match(/مجموع المبلغ المدفوع \(د\.ب\): ([\d.]+)/);
-        if (totalM) result.totalAmount = totalM[1];
+        console.log(`EWA MULTI-BILL: Website totalM: ${totalM ? totalM[1] : 'not found'}, paidM: ${paidM ? paidM[1] : 'not found'}`);
         
         result.parsedBills = parsedBills;
         
@@ -1870,6 +1873,8 @@ app.post('/api/ewa-bill', async (req, res) => {
         parsedBills.forEach(bill => {
           if (bill.balance) calculatedTotal += parseFloat(bill.balance) || 0;
         });
+        
+        console.log(`EWA MULTI-BILL: Calculated sum of balances: ${calculatedTotal.toFixed(3)}`);
         
         // Use calculated sum for totalAmount (sum of all bills)
         const totalAmountStr = calculatedTotal.toFixed(3);
@@ -1880,6 +1885,9 @@ app.post('/api/ewa-bill', async (req, res) => {
           totalAmount: totalAmountStr,
           paidAmount: paidAmountStr
         };
+        
+        console.log(`EWA MULTI-BILL: Final totalAmount: ${totalAmountStr}, paidAmount: ${paidAmountStr}`);
+        
         // Keep parsedData for backward compatibility (first bill)
         if (parsedBills.length > 0) {
           result.parsedData = { ...parsedBills[0], totalAmount: totalAmountStr, paidAmount: paidAmountStr };

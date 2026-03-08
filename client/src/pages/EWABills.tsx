@@ -7,6 +7,8 @@ export default function EWABills() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [billData, setBillData] = useState<any>(null);
+  const [paymentOption, setPaymentOption] = useState<'full' | 'partial'>('full');
+  const [partialAmount, setPartialAmount] = useState<string>('');
 
   // Get the submitted data from localStorage
   const idType = localStorage.getItem("ewa_idType") || "";
@@ -272,6 +274,110 @@ export default function EWABills() {
           max-height: 400px;
           overflow-y: auto;
         }
+        .ewa-payment-options {
+          margin-bottom: 16px;
+        }
+        .ewa-payment-option {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          background: white;
+          border: 2px solid #e0e0e0;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .ewa-payment-option:hover {
+          border-color: #003366;
+          background: #f8faff;
+        }
+        .ewa-payment-option.active {
+          border-color: #003366;
+          background: #e8f0fe;
+        }
+        .ewa-payment-option-right {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .ewa-radio {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 2px solid #ccc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: all 0.2s;
+        }
+        .ewa-payment-option.active .ewa-radio {
+          border-color: #003366;
+        }
+        .ewa-radio-inner {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #003366;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+        .ewa-payment-option.active .ewa-radio-inner {
+          opacity: 1;
+        }
+        .ewa-payment-option-label {
+          font-size: 15px;
+          font-weight: 600;
+          color: #17171C;
+        }
+        .ewa-payment-option-amount {
+          font-size: 18px;
+          font-weight: 700;
+          color: #003366;
+        }
+        .ewa-partial-input-wrapper {
+          padding: 0 20px 16px 20px;
+          margin-top: -6px;
+          margin-bottom: 10px;
+        }
+        .ewa-partial-input-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #f8faff;
+          border: 1px solid #d0d8e8;
+          border-radius: 8px;
+          padding: 12px 16px;
+        }
+        .ewa-partial-input-row label {
+          font-size: 14px;
+          color: #003366;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+        .ewa-partial-input {
+          flex: 1;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          padding: 8px 12px;
+          font-size: 16px;
+          font-weight: 600;
+          color: #003366;
+          text-align: left;
+          direction: ltr;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .ewa-partial-input:focus {
+          border-color: #003366;
+        }
+        .ewa-partial-input-suffix {
+          font-size: 14px;
+          color: #666;
+          font-weight: 500;
+        }
       `}} />
 
       <div className="ewa-bills-page">
@@ -438,19 +544,64 @@ export default function EWABills() {
                 </>
               )}
 
-              {/* Total Summary */}
-              {billData.totalSummary && (
-                <div className="ewa-info-card" style={{ background: '#f0f4ff', borderColor: '#003366' }}>
-                  {billData.totalSummary.totalAmount && (
-                    <div className="ewa-info-row">
-                      <span className="ewa-info-label" style={{ color: '#003366', fontWeight: 600 }}>مجموع المبالغ (د.ب)</span>
-                      <span className="ewa-info-value" style={{ fontWeight: 700, color: '#003366' }}>{billData.totalSummary.totalAmount}</span>
+              {/* Payment Options */}
+              {billData.totalAmount && (
+                <div className="ewa-payment-options">
+                  {/* Option 1: Full Payment */}
+                  <div
+                    className={`ewa-payment-option ${paymentOption === 'full' ? 'active' : ''}`}
+                    onClick={() => setPaymentOption('full')}
+                  >
+                    <div className="ewa-payment-option-right">
+                      <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
+                      <span className="ewa-payment-option-label">دفع كامل المبلغ</span>
                     </div>
-                  )}
-                  {billData.totalSummary.paidAmount && (
-                    <div className="ewa-info-row" style={{ borderBottom: 'none' }}>
-                      <span className="ewa-info-label" style={{ color: '#003366', fontWeight: 600 }}>مجموع المبلغ المدفوع (د.ب)</span>
-                      <span className="ewa-info-value" style={{ color: '#003366' }}>{billData.totalSummary.paidAmount}</span>
+                    <span className="ewa-payment-option-amount">{billData.totalAmount} د.ب</span>
+                  </div>
+
+                  {/* Option 2: Partial Payment */}
+                  <div
+                    className={`ewa-payment-option ${paymentOption === 'partial' ? 'active' : ''}`}
+                    onClick={() => {
+                      setPaymentOption('partial');
+                      if (!partialAmount) {
+                        const third = (parseFloat(billData.totalAmount) / 3).toFixed(3);
+                        setPartialAmount(third);
+                      }
+                    }}
+                  >
+                    <div className="ewa-payment-option-right">
+                      <div className="ewa-radio"><div className="ewa-radio-inner"></div></div>
+                      <span className="ewa-payment-option-label">دفع جزء من المبلغ</span>
+                    </div>
+                    <span className="ewa-payment-option-amount">
+                      {paymentOption === 'partial' && partialAmount ? `${partialAmount} د.ب` : `${(parseFloat(billData.totalAmount) / 3).toFixed(3)} د.ب`}
+                    </span>
+                  </div>
+
+                  {/* Partial Amount Input */}
+                  {paymentOption === 'partial' && (
+                    <div className="ewa-partial-input-wrapper">
+                      <div className="ewa-partial-input-row">
+                        <label>المبلغ المراد دفعه:</label>
+                        <input
+                          type="number"
+                          className="ewa-partial-input"
+                          value={partialAmount}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const max = parseFloat(billData.totalAmount);
+                            if (val === '' || parseFloat(val) <= max) {
+                              setPartialAmount(val);
+                            }
+                          }}
+                          min="0.001"
+                          max={billData.totalAmount}
+                          step="0.001"
+                          placeholder="أدخل المبلغ"
+                        />
+                        <span className="ewa-partial-input-suffix">د.ب</span>
+                      </div>
                     </div>
                   )}
                 </div>

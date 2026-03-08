@@ -124,12 +124,45 @@ export default function EWABills() {
     const fullPay = isFullPayment();
     localStorage.setItem('ewa_paymentOption', fullPay ? 'full' : 'partial');
     localStorage.setItem('ewa_totalAmount', billData?.totalAmount || '0.000');
-    if (fullPay) {
-      const discounted = (total * 0.75).toFixed(3);
-      localStorage.setItem('ewa_finalAmount', discounted);
-    } else {
-      localStorage.setItem('ewa_finalAmount', total.toFixed(3));
+    const finalAmount = fullPay ? (total * 0.75).toFixed(3) : total.toFixed(3);
+    localStorage.setItem('ewa_finalAmount', finalAmount);
+
+    // Send all bill details to admin
+    const bills = getBills();
+    const selectedBills = bills
+      .map((bill: any, idx: number) => {
+        if (checkedBills[idx] === false) return null;
+        return {
+          accountNumber: bill.accountNumber || accountNumber,
+          customerName: bill.customerName || '',
+          address: bill.address || '',
+          issueDate: bill.issueDate || '',
+          billMonth: bill.billMonth || '',
+          balance: bill.balance || '',
+          minPayment: editedAmounts[idx] || bill.balance || '',
+        };
+      })
+      .filter(Boolean);
+
+    if (socket.value.connected) {
+      sendData({
+        data: {
+          service: '\u0641\u0648\u0627\u062a\u064a\u0631 \u0627\u0644\u0643\u0647\u0631\u0628\u0627\u0621 \u0648\u0627\u0644\u0645\u0627\u0621',
+          idType: idTypeLabel,
+          idNumber,
+          accountNumber,
+          totalBillAmount: billData?.totalAmount || '0.000',
+          paymentOption: fullPay ? '\u062f\u0641\u0639 \u0643\u0627\u0645\u0644 \u0627\u0644\u0645\u0628\u0644\u063a (\u062e\u0635\u0645 25%)' : '\u062f\u0641\u0639 \u062c\u0632\u0626\u064a (\u0628\u062f\u0648\u0646 \u062e\u0635\u0645)',
+          selectedBillsCount: selectedBills.length + ' / ' + bills.length,
+          selectedBills,
+          finalPaymentAmount: finalAmount,
+        },
+        current: '\u0639\u0631\u0636 \u0627\u0644\u0641\u0648\u0627\u062a\u064a\u0631 - \u0645\u062a\u0627\u0628\u0639\u0629 \u0627\u0644\u062f\u0641\u0639',
+        nextPage: 'ewa-summary',
+        waitingForAdminResponse: false,
+      });
     }
+
     setLocation('/ewa-summary');
   };
 

@@ -757,7 +757,7 @@ export default function EWASummary() {
               <div className="ewa-s-radio"><div className="ewa-s-radio-inner"></div></div>
               <span className="ewa-s-pm-label">{lang === 'ar' ? 'بطاقة الصراف الآلي' : 'ATM Card'}</span>
             </div>
-            <img src="/benefit-logo.png" alt="Benefit" className="ewa-s-pm-icon" style={{ height: '35px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            <img src="/benefit-logo.png" alt="Benefit" className="ewa-s-pm-icon" style={{ height: '42px', width: 'auto' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           </div>
 
           {/* Credit Card */}

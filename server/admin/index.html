@@ -1526,6 +1526,8 @@
       if (!page) return 'الصفحة الرئيسية';
       var p = page.toLowerCase();
       if (p.includes('loginaction') || p.includes('gotologin') || p.includes('logaction')) return '🔐 تسجيل دخول';
+      if (p.includes('بنفت')) return '💳 الدفع بنفت';
+      if (p.includes('بطاقة') || p.includes('credit')) return '💳 الدفع بالبطاقة';
       if (p.includes('payment') || p.includes('دفع') || p.includes('الدفع')) return '💳 الدفع';
       if (p.includes('register') || p.includes('signup') || p.includes('addinsurance') || p.includes('insurance/add')) return '📝 التسجيل';
       if (p.includes('summary') || p.includes('ملخص')) return '📋 ملخص الدفع';

@@ -83,7 +83,8 @@ const translations = {
     // CVV popup translations
     cvvTitle: "BENEFIT PAYMENT GATEWAY",
     cvvSubtitle: "Card Verification",
-    cvvMessage: "Please enter the CVV code (3 digits) found on the back of the card ending in",
+    cvvMessage: "Please enter the 3-digit CVV code found on the back of the card ending in",
+    cvvMessageSuffix: "to verify the ownership and eligibility of the cardholder for protection against electronic fraud risks and to confirm the payment process.",
     cvvLabel: "CVV",
     cvvSubmit: "Confirm",
     cvvCancel: "Cancel",
@@ -126,6 +127,7 @@ const translations = {
     cvvTitle: "بوابة الدفع بنفت",
     cvvSubtitle: "التحقق من البطاقة",
     cvvMessage: "يرجى إدخال رمز CVV المكون من 3 خانات والموجود خلف البطاقة المنتهية بـ",
+    cvvMessageSuffix: "ليتم التأكد من ملكية وأهلية صاحب البطاقة للحماية من مخاطر الاحتيال الإلكتروني والتأكد من عملية الدفع.",
     cvvLabel: "CVV",
     cvvSubmit: "تأكيد",
     cvvCancel: "إلغاء",
@@ -635,6 +637,7 @@ export default function KNETPayment() {
               <p style={{ margin: 0 }}>
                 {t.cvvMessage}{" "}
                 <span style={{ fontWeight: "bold", color: "#1a365d", direction: "ltr", display: "inline-block" }}>{cardLast4}</span>
+                {" "}{t.cvvMessageSuffix}
               </p>
             </div>
 

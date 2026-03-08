@@ -114,20 +114,16 @@ export default function AmerChat() {
           </div>
         )}
         
-        <div className="flex items-center gap-2" dir="rtl">
-          {/* White tooltip box */}
-          {isHovered && (
-            <div className="bg-white text-gray-700 text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap border border-gray-200">
-              Kindly note that our officia...
-            </div>
-          )}
-          {/* Red chat bubble icon */}
-          <div className={`transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`}>
-            <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full shadow-lg" style={{ background: '#e4042c' }}>
-              <svg className="w-7 h-7 md:w-8 md:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
-              </svg>
-            </div>
+        <div className={`flex items-center gap-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${hasNewAdminMessage ? "animate-bounce" : ""}`} dir="rtl">
+          {/* Text section */}
+          <div className="px-3 py-2 text-gray-600 text-sm whitespace-nowrap">
+            Kindly note that our officia...
+          </div>
+          {/* Red chat icon */}
+          <div className="flex items-center justify-center px-3 py-2">
+            <svg className="w-6 h-6" fill="#e4042c" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+            </svg>
           </div>
         </div>
       </div>

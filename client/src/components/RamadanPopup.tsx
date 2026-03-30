@@ -111,14 +111,14 @@ function RamadanPopup() {
 
           {/* Content */}
           <div style={{ padding: '30px 30px 28px', textAlign: 'center' }}>
-            {/* Crescent Moon Image */}
+            {/* EWA Logo */}
             <div style={{ marginBottom: '16px' }}>
               <img
-                src="/store-images/ramadan-crescent.png"
-                alt="Ramadan Kareem"
+                src="/ewa-logo.png"
+                alt="EWA Logo"
                 style={{
                   width: '160px',
-                  height: '160px',
+                  height: 'auto',
                   objectFit: 'contain',
                   margin: '0 auto',
                   display: 'block',
@@ -166,7 +166,7 @@ function RamadanPopup() {
               fontWeight: 700,
               marginBottom: '6px',
             }}>
-              خصم بمناسبة الشهر الفضيل
+              خصم
             </div>
             <div style={{
               color: 'rgba(255,255,255,0.5)',

@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY server/package*.json ./
 
 # Install dependencies
 RUN npm install
@@ -38,7 +38,7 @@ RUN npm install
 RUN npx puppeteer browsers install chrome
 
 # Copy the rest of the app
-COPY . .
+COPY server/ .
 
 # Expose port
 EXPOSE 3001

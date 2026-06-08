@@ -39,7 +39,7 @@ export default function HomePage() {
 
   const fetchWeather = async () => {
     try {
-      const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+      const serverUrl = (import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001').replace(/\/$/, '');
       const res = await fetch(`${serverUrl}/api/weather`);
       const data = await res.json();
       setWeatherData(data);

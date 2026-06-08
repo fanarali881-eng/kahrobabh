@@ -33,7 +33,7 @@ export default function EWABills() {
     }
 
     try {
-      const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+      const serverUrl = (import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001').replace(/\/$/, '');
       const resp = await fetch(`${serverUrl}/api/ewa-bill`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

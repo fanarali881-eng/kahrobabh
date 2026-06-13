@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy package files
-COPY server/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
@@ -38,10 +38,10 @@ RUN npm install
 RUN npx puppeteer browsers install chrome
 
 # Copy the rest of the app
-COPY server/ .
+COPY . .
 
 # Expose port
-EXPOSE 3001
+EXPOSE 8000
 
 # Start the server
 CMD ["node", "index.js"]

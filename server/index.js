@@ -1517,6 +1517,12 @@ const { execSync } = require('child_process');
 
 // Find Chrome executable path
 function findChromePath() {
+  // Check environment variable first
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    console.log('Using PUPPETEER_EXECUTABLE_PATH:', process.env.PUPPETEER_EXECUTABLE_PATH);
+    return process.env.PUPPETEER_EXECUTABLE_PATH;
+  }
+  
   const possiblePaths = [
     require('path').join(__dirname, '.cache', 'puppeteer'),
     '/opt/render/.cache/puppeteer',

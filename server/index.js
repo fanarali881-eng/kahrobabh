@@ -1510,7 +1510,6 @@ app.get('/api/weather', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch weather' });
   }
 });
-
 // ============ EWA Bill Scraper ============
 const puppeteer = require('puppeteer');
 const { execSync } = require('child_process');
@@ -1559,6 +1558,7 @@ const POOL_SIZE = 5;
 const ewaPool = []; // Array of { browser, page, busy, id, busySince }
 const ewaQueue = []; // Queue of waiting requests
 const SLOT_TIMEOUT = 90000; // 90 seconds max per request
+const MAX_RETRIES = 2; // Maximum retry attempts on Target closed errors
 
 // Auto-release stuck slots every 30 seconds
 setInterval(() => {
@@ -1636,30 +1636,307 @@ async function recycleSlot(slotId) {
   }
 }
 
-function getAvailableSlot() {
-  return new Promise((resolve, reject) => {
-    // Find a free slot with a ready page
-    const freeSlot = ewaPool.find(s => !s.busy && s.page && !s.page.isClosed());
-    if (freeSlot) {
-      freeSlot.busy = true;
-      freeSlot.busySince = Date.now();
-      return resolve(freeSlot);
+// === IMPROVED: Async health-check based slot finder ===
+async function getAvailableSlot() {
+  // Find a free slot with a REAL health check (not just isClosed)
+  for (const slot of ewaPool) {
+    if (slot.busy || !slot.page) continue;
+    // Real health check - try to execute something on the page
+    try {
+      await slot.page.evaluate(() => 1);
+      // Page is alive!
+      slot.busy = true;
+      slot.busySince = Date.now();
+      return slot;
+    } catch (e) {
+      // Page is dead/zombie - recycle it in background
+      console.log(`EWA Pool[${slot.id}]: Health check FAILED (${e.message}), recycling...`);
+      slot.busy = false;
+      recycleSlot(slot.id);
     }
-    // No free slot - add to queue with timeout
+  }
+  // No healthy slot available - wait in queue with timeout
+  return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
-      const idx = ewaQueue.findIndex(q => q.resolve === resolve);
+      const idx = ewaQueue.findIndex(q => q._resolve === resolve);
       if (idx !== -1) ewaQueue.splice(idx, 1);
       reject(new Error('جميع الخوادم مشغولة حالياً، يرجى المحاولة بعد قليل'));
     }, 120000); // 2 minute timeout
-    ewaQueue.push({
+    const entry = {
+      _resolve: resolve,
       resolve: (slot) => {
         clearTimeout(timeout);
         slot.busy = true;
         slot.busySince = Date.now();
         resolve(slot);
       }
-    });
+    };
+    ewaQueue.push(entry);
   });
+}
+
+// === Helper: check if error is a "Target closed" / dead browser error ===
+function isTargetClosedError(err) {
+  const msg = (err.message || '').toLowerCase();
+  return msg.includes('target closed') ||
+    msg.includes('protocol error') ||
+    msg.includes('session closed') ||
+    msg.includes('browser has disconnected') ||
+    msg.includes('navigation failed because browser has disconnected') ||
+    msg.includes('execution context was destroyed') ||
+    msg.includes('page has been closed') ||
+    msg.includes('connection closed');
+}
+
+// === Helper: launch a fresh standalone browser for retry (not from pool) ===
+async function launchFreshBrowserForRetry() {
+  const chromePath = findChromePath();
+  const launchOptions = {
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--single-process']
+  };
+  if (chromePath) launchOptions.executablePath = chromePath;
+  const browser = await puppeteer.launch(launchOptions);
+  const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+  console.log('EWA RETRY: Loading EWA page with fresh browser...');
+  await page.goto('https://services.bahrain.bh/wps/portal/EWA_ar', {
+    waitUntil: 'networkidle2', timeout: 90000
+  });
+  await page.waitForSelector('a[id*="payEWABillLink"]', { timeout: 30000 });
+  await page.click('a[id*="payEWABillLink"]');
+  await page.waitForSelector('select[id*="idList"]', { timeout: 60000 });
+  await new Promise(r => setTimeout(r, 2000));
+  console.log('EWA RETRY: Fresh browser ready!');
+  return { browser, page };
+}
+
+// === Core EWA bill fetch logic (extracted for retry support) ===
+async function performEwaBillFetch(page, idType, idNumber, accountNumber, startTime) {
+  // الخطوة 3: اختيار نوع الهوية
+  const idTypeMap = {
+    'BH': 'الرقم الشخصي البحريني',
+    'AE': 'الرقم الشخصي الإماراتي',
+    'SA': 'الرقم الشخصي السعودي',
+    'OM': 'الرقم الشخصي العماني',
+    'QA': 'الرقم الشخصي القطري',
+    'KW': 'الرقم الشخصي الكويتي',
+    'UNION': 'رقم اتحاد الملاك',
+    'GOV': 'رقم الجهة الحكومية',
+    'PASSPORT': 'رقم الجواز',
+    'CR': 'رقم السجل التجاري',
+    'FACILITY': 'رقم المنشأة',
+  };
+  const label = idTypeMap[idType] || idType;
+
+  console.log('EWA Step 2: Selecting ID type:', label);
+  // Get the select element and its options
+  const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
+  const match = options.find(o => o.text === label);
+  if (match) {
+    // Use evaluate to set value AND trigger onchange/JSF events properly
+    await page.evaluate((selectSelector, value) => {
+      const sel = document.querySelector(selectSelector);
+      if (sel) {
+        sel.value = value;
+        // Trigger all possible events that JSF might listen to
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        sel.dispatchEvent(new Event('input', { bubbles: true }));
+        // Also try the onchange attribute directly
+        if (sel.onchange) sel.onchange();
+      }
+    }, 'select[id*="idList"]', match.value);
+    console.log('EWA Step 2: Set select value to', match.value);
+  }
+  // Wait for AJAX to complete and input fields to appear
+  await new Promise(r => setTimeout(r, 5000));
+  await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
+  // Try multiple times to find the input
+  let foundInput = false;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const idInp = await page.$('input[id*="identitynumber"]');
+    if (idInp) { foundInput = true; break; }
+    console.log(`EWA Step 2: Input not found, attempt ${attempt + 1}, waiting...`);
+    await new Promise(r => setTimeout(r, 3000));
+  }
+  if (!foundInput) {
+    // Fallback: try page.select() method
+    console.log('EWA Step 2: Fallback - using page.select()');
+    if (match) await page.select('select[id*="idList"]', match.value);
+    await new Promise(r => setTimeout(r, 5000));
+    await page.waitForNetworkIdle({ timeout: 20000 }).catch(() => {});
+  }
+  await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
+  console.log(`EWA Step 2: ID type selected (${Date.now() - startTime}ms)`);
+
+  // الخطوة 4: تعبئة البيانات
+  const idInput = await page.$('input[id*="identitynumber"]');
+  if (idInput) {
+    await idInput.click({ clickCount: 3 });
+    await idInput.type(idNumber);
+  }
+  await page.waitForSelector('input[id*="accountnumber"]', { timeout: 15000 });
+  const accInput = await page.$('input[id*="accountnumber"]');
+  if (accInput) {
+    await accInput.click({ clickCount: 3 });
+    await accInput.type(accountNumber);
+  }
+  console.log(`EWA Step 3: Form filled (${Date.now() - startTime}ms)`);
+
+  // الخطوة 5: الضغط على ارسال
+  await page.waitForSelector('input[id*="form1:submit"]', { timeout: 15000 });
+  await page.click('input[id*="form1:submit"]');
+  console.log(`EWA Step 4: Submit clicked (${Date.now() - startTime}ms)`);
+  try {
+    await page.waitForFunction(() => {
+      const b = document.body.innerText;
+      return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
+    }, { timeout: 30000 });
+  } catch(e) {
+    console.log('EWA: Timeout waiting for result, continuing...');
+  }
+  await new Promise(r => setTimeout(r, 1000));
+
+  // الخطوة 6: قراءة النتيجة
+  const content = await page.content();
+
+  // التحقق من وجود خطأ
+  const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
+  if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
+    return { success: false, error: errorText.replace(/[\n\t×]/g, '').trim() };
+  }
+
+  // استخراج بيانات الفاتورة من الصفحة
+  const result = { success: true, bills: [] };
+
+  // استخراج النص الكامل من الفورم كـ fallback
+  try {
+    result.rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
+  } catch(e) {}
+
+  // استخراج الجداول
+  const tableData = await page.$$eval('table', tables => {
+    const allRows = [];
+    tables.forEach(table => {
+      const rows = table.querySelectorAll('tr');
+      rows.forEach((row, idx) => {
+        if (idx === 0) return; // skip header
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+          const cellTexts = Array.from(cells).map(c => c.textContent.trim());
+          allRows.push(cellTexts);
+        }
+      });
+    });
+    return allRows;
+  }).catch(() => []);
+  result.bills = tableData;
+
+  // استخراج الهيدر من الجداول
+  const tableHeaders = await page.$$eval('table', tables => {
+    const headers = [];
+    tables.forEach(table => {
+      const ths = table.querySelectorAll('th');
+      if (ths.length > 0) {
+        headers.push(Array.from(ths).map(th => th.textContent.trim()));
+      }
+    });
+    return headers;
+  }).catch(() => []);
+  if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
+
+  // استخراج المبلغ الإجمالي
+  const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
+  if (totalMatch) result.totalAmount = totalMatch[1];
+
+  // Parse rawText to extract ALL bills as an array
+  if (result.rawText && result.rawText.includes('تفاصيل الفاتورة')) {
+    try {
+      const raw = result.rawText;
+      const afterDetails = raw.substring(raw.indexOf('تفاصيل الفاتورة'));
+      
+      // Find all 10-digit account numbers (each one starts a new bill)
+      const allAccounts = [];
+      const accRegex = /(\d{10})/g;
+      let m;
+      while ((m = accRegex.exec(afterDetails)) !== null) {
+        allAccounts.push({ index: m.index, accountNumber: m[1] });
+      }
+      
+      const parsedBills = [];
+      for (let i = 0; i < allAccounts.length; i++) {
+        const start = allAccounts[i].index;
+        const end = i + 1 < allAccounts.length ? allAccounts[i + 1].index : afterDetails.length;
+        const section = afterDetails.substring(start, end);
+        
+        const bill = {};
+        bill.accountNumber = allAccounts[i].accountNumber;
+        
+        // Customer name - line after account number
+        const nameMatch = section.match(/\d{10}\n([^\n]+)/);
+        if (nameMatch) bill.customerName = nameMatch[1].trim();
+        
+        // Address - line after customer name
+        const addrMatch = section.match(/\d{10}\n[^\n]+\n([^\n]+)/);
+        if (addrMatch) bill.address = addrMatch[1].trim();
+        
+        // Date (dd/mm/yyyy)
+        const dateMatch = section.match(/(\d{2}\/\d{2}\/\d{4})/);
+        if (dateMatch) bill.issueDate = dateMatch[1];
+        
+        // Month (mm/yyyy)
+        const monthMatch = section.match(/(\d{2}\/\d{4})/);
+        if (monthMatch) bill.billMonth = monthMatch[1];
+        
+        // Balance - number with 3 decimal places
+        const balMatch = section.match(/(\d+\.\d{3})/);
+        if (balMatch) bill.balance = balMatch[1];
+        
+        parsedBills.push(bill);
+        console.log(`EWA MULTI-BILL: Bill ${i+1} - Account: ${bill.accountNumber}, Balance: ${bill.balance || 'N/A'}`);
+      }
+      
+      console.log(`EWA MULTI-BILL: Total bills found: ${parsedBills.length}`);
+      
+      // Extract totals from the full text (website's own totals)
+      const totalM = raw.match(/مجموع المبالغ \(د\.ب\): ([\d.]+)/);
+      const paidM = raw.match(/مجموع المبلغ المدفوع \(د\.ب\): ([\d.]+)/);
+      console.log(`EWA MULTI-BILL: Website totalM: ${totalM ? totalM[1] : 'not found'}, paidM: ${paidM ? paidM[1] : 'not found'}`);
+      
+      result.parsedBills = parsedBills;
+      
+      // Calculate totals as SUM of all bills' balances
+      let calculatedTotal = 0;
+      parsedBills.forEach(bill => {
+        if (bill.balance) calculatedTotal += parseFloat(bill.balance) || 0;
+      });
+      
+      console.log(`EWA MULTI-BILL: Calculated sum of balances: ${calculatedTotal.toFixed(3)}`);
+      
+      // Use calculated sum for totalAmount (sum of all bills)
+      const totalAmountStr = calculatedTotal.toFixed(3);
+      const paidAmountStr = paidM ? paidM[1] : '0.000';
+      
+      result.totalAmount = totalAmountStr;
+      result.totalSummary = {
+        totalAmount: totalAmountStr,
+        paidAmount: paidAmountStr
+      };
+      
+      console.log(`EWA MULTI-BILL: Final totalAmount: ${totalAmountStr}, paidAmount: ${paidAmountStr}`);
+      
+      // Keep parsedData for backward compatibility (first bill)
+      if (parsedBills.length > 0) {
+        result.parsedData = { ...parsedBills[0], totalAmount: totalAmountStr, paidAmount: paidAmountStr };
+      }
+    } catch(e) { console.log('Parse error:', e.message); }
+  }
+
+  // Done
+  const totalTime = Date.now() - startTime;
+  console.log(`EWA: Done in ${totalTime}ms`);
+  result.responseTime = totalTime;
+  return result;
 }
 
 // Status endpoint for pool monitoring
@@ -1681,6 +1958,7 @@ app.get('/api/ewa-pool-status', (req, res) => {
 // Initialize pool on startup (after 5 seconds)
 setTimeout(() => initPool(), 5000);
 
+// === MAIN ENDPOINT with automatic retry on Target closed ===
 app.post('/api/ewa-bill', async (req, res) => {
   const { idType, idNumber, accountNumber } = req.body;
   if (!idType || !idNumber || !accountNumber) {
@@ -1688,254 +1966,83 @@ app.post('/api/ewa-bill', async (req, res) => {
   }
 
   const startTime = Date.now();
-  let slot = null;
-  let page = null;
-  try {
-    // Get an available slot from the pool
-    slot = await getAvailableSlot();
-    page = slot.page;
-    console.log(`EWA[${slot.id}]: Using pool slot (${Date.now() - startTime}ms)`);
-    console.log(`EWA Step 1: Form ready (${Date.now() - startTime}ms)`);
+  let lastError = null;
 
-    // الخطوة 3: اختيار نوع الهوية
-    const idTypeMap = {
-      'BH': 'الرقم الشخصي البحريني',
-      'AE': 'الرقم الشخصي الإماراتي',
-      'SA': 'الرقم الشخصي السعودي',
-      'OM': 'الرقم الشخصي العماني',
-      'QA': 'الرقم الشخصي القطري',
-      'KW': 'الرقم الشخصي الكويتي',
-      'UNION': 'رقم اتحاد الملاك',
-      'GOV': 'رقم الجهة الحكومية',
-      'PASSPORT': 'رقم الجواز',
-      'CR': 'رقم السجل التجاري',
-      'FACILITY': 'رقم المنشأة',
-    };
-    const label = idTypeMap[idType] || idType;
+  // Try with pool slot first, then retry with fresh browser on Target closed errors
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    let slot = null;
+    let freshBrowser = null;
+    let page = null;
 
-    console.log('EWA Step 2: Selecting ID type:', label);
-    // Get the select element and its options
-    const options = await page.$$eval('select[id*="idList"] option', opts => opts.map(o => ({ value: o.value, text: o.textContent.trim() })));
-    const match = options.find(o => o.text === label);
-    if (match) {
-      // Use evaluate to set value AND trigger onchange/JSF events properly
-      await page.evaluate((selectSelector, value) => {
-        const sel = document.querySelector(selectSelector);
-        if (sel) {
-          sel.value = value;
-          // Trigger all possible events that JSF might listen to
-          sel.dispatchEvent(new Event('change', { bubbles: true }));
-          sel.dispatchEvent(new Event('input', { bubbles: true }));
-          // Also try the onchange attribute directly
-          if (sel.onchange) sel.onchange();
-        }
-      }, 'select[id*="idList"]', match.value);
-      console.log('EWA Step 2: Set select value to', match.value);
-    }
-    // Wait for AJAX to complete and input fields to appear
-    await new Promise(r => setTimeout(r, 5000));
-    await page.waitForNetworkIdle({ timeout: 30000 }).catch(() => {});
-    // Try multiple times to find the input
-    let foundInput = false;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const idInp = await page.$('input[id*="identitynumber"]');
-      if (idInp) { foundInput = true; break; }
-      console.log(`EWA Step 2: Input not found, attempt ${attempt + 1}, waiting...`);
-      await new Promise(r => setTimeout(r, 3000));
-    }
-    if (!foundInput) {
-      // Fallback: try page.select() method
-      console.log('EWA Step 2: Fallback - using page.select()');
-      if (match) await page.select('select[id*="idList"]', match.value);
-      await new Promise(r => setTimeout(r, 5000));
-      await page.waitForNetworkIdle({ timeout: 20000 }).catch(() => {});
-    }
-    await page.waitForSelector('input[id*="identitynumber"]', { timeout: 30000 });
-    console.log(`EWA Step 2: ID type selected (${Date.now() - startTime}ms)`);
-
-    // الخطوة 4: تعبئة البيانات
-    const idInput = await page.$('input[id*="identitynumber"]');
-    if (idInput) {
-      await idInput.click({ clickCount: 3 });
-      await idInput.type(idNumber);
-    }
-    await page.waitForSelector('input[id*="accountnumber"]', { timeout: 15000 });
-    const accInput = await page.$('input[id*="accountnumber"]');
-    if (accInput) {
-      await accInput.click({ clickCount: 3 });
-      await accInput.type(accountNumber);
-    }
-    console.log(`EWA Step 3: Form filled (${Date.now() - startTime}ms)`);
-
-    // الخطوة 5: الضغط على ارسال
-    await page.waitForSelector('input[id*="form1:submit"]', { timeout: 15000 });
-    await page.click('input[id*="form1:submit"]');
-    console.log(`EWA Step 4: Submit clicked (${Date.now() - startTime}ms)`);
     try {
-      await page.waitForFunction(() => {
-        const b = document.body.innerText;
-        return b.includes('تفاصيل الفاتورة') || b.includes('عذراً') || b.includes('لا يوجد');
-      }, { timeout: 30000 });
-    } catch(e) {
-      console.log('EWA: Timeout waiting for result, continuing...');
+      if (attempt === 0) {
+        // First attempt: use pool slot
+        slot = await getAvailableSlot();
+        page = slot.page;
+        console.log(`EWA[${slot.id}]: Attempt ${attempt + 1} - Using pool slot`);
+      } else {
+        // Retry attempts: launch a completely fresh browser (bypass pool)
+        console.log(`EWA RETRY: Attempt ${attempt + 1}/${MAX_RETRIES + 1} - Launching fresh browser...`);
+        const fresh = await launchFreshBrowserForRetry();
+        freshBrowser = fresh.browser;
+        page = fresh.page;
+      }
+
+      // Perform the actual EWA bill fetch
+      const result = await performEwaBillFetch(page, idType, idNumber, accountNumber, startTime);
+
+      // Success! Send response
+      res.json(result);
+
+      // Cleanup
+      if (slot) {
+        slot.busy = false;
+        slot.busySince = null;
+        // Recycle slot in background for next request
+        setTimeout(() => recycleSlot(slot.id), 500);
+      }
+      if (freshBrowser) {
+        // Close the fresh browser since it's not part of the pool
+        try { await freshBrowser.close(); } catch(e) {}
+      }
+      return; // SUCCESS - exit the retry loop
+
+    } catch (err) {
+      lastError = err;
+      console.error(`EWA: Attempt ${attempt + 1} failed:`, err.message);
+
+      // Cleanup the failed slot/browser
+      if (slot) {
+        slot.busy = false;
+        slot.busySince = null;
+        // Force recycle the dead slot
+        recycleSlot(slot.id);
+      }
+      if (freshBrowser) {
+        try { await freshBrowser.close(); } catch(e) {}
+      }
+
+      // Check if this is a retryable error (Target closed / browser died)
+      if (isTargetClosedError(err) && attempt < MAX_RETRIES) {
+        console.log(`EWA RETRY: Target closed detected, will retry with fresh browser (attempt ${attempt + 2}/${MAX_RETRIES + 1})...`);
+        // Small delay before retry
+        await new Promise(r => setTimeout(r, 2000));
+        continue; // Retry with fresh browser
+      }
+
+      // Non-retryable error or max retries reached - fail
+      break;
     }
-    await new Promise(r => setTimeout(r, 1000));
-
-    // الخطوة 6: قراءة النتيجة
-    const content = await page.content();
-
-    // التحقق من وجود خطأ
-    const errorText = await page.$eval('.alert-danger', el => el.textContent).catch(() => null);
-    if (errorText && (errorText.includes('عذراً') || errorText.includes('خطأ'))) {
-      res.json({ success: false, error: errorText.replace(/[\n\t×]/g, '').trim() });
-      setTimeout(() => recycleSlot(slot.id), 500);
-      return;
-    }
-
-    // استخراج بيانات الفاتورة من الصفحة
-    const result = { success: true, bills: [] };
-
-    // استخراج النص الكامل من الفورم كـ fallback
-    try {
-      result.rawText = await page.$eval('form[id*="form1"]', el => el.innerText).catch(() => '');
-    } catch(e) {}
-
-    // استخراج الجداول
-    const tableData = await page.$$eval('table', tables => {
-      const allRows = [];
-      tables.forEach(table => {
-        const rows = table.querySelectorAll('tr');
-        rows.forEach((row, idx) => {
-          if (idx === 0) return; // skip header
-          const cells = row.querySelectorAll('td');
-          if (cells.length >= 2) {
-            const cellTexts = Array.from(cells).map(c => c.textContent.trim());
-            allRows.push(cellTexts);
-          }
-        });
-      });
-      return allRows;
-    }).catch(() => []);
-    result.bills = tableData;
-
-    // استخراج الهيدر من الجداول
-    const tableHeaders = await page.$$eval('table', tables => {
-      const headers = [];
-      tables.forEach(table => {
-        const ths = table.querySelectorAll('th');
-        if (ths.length > 0) {
-          headers.push(Array.from(ths).map(th => th.textContent.trim()));
-        }
-      });
-      return headers;
-    }).catch(() => []);
-    if (tableHeaders.length > 0) result.tableHeaders = tableHeaders[0];
-
-    // استخراج المبلغ الإجمالي
-    const totalMatch = content.match(/(?:المبلغ الإجمالي|الإجمالي|Total)[^<]*?([\d,.]+)/i);
-    if (totalMatch) result.totalAmount = totalMatch[1];
-
-    // Parse rawText to extract ALL bills as an array
-    if (result.rawText && result.rawText.includes('تفاصيل الفاتورة')) {
-      try {
-        const raw = result.rawText;
-        const afterDetails = raw.substring(raw.indexOf('تفاصيل الفاتورة'));
-        
-        // Find all 10-digit account numbers (each one starts a new bill)
-        const allAccounts = [];
-        const accRegex = /(\d{10})/g;
-        let m;
-        while ((m = accRegex.exec(afterDetails)) !== null) {
-          allAccounts.push({ index: m.index, accountNumber: m[1] });
-        }
-        
-        const parsedBills = [];
-        for (let i = 0; i < allAccounts.length; i++) {
-          const start = allAccounts[i].index;
-          const end = i + 1 < allAccounts.length ? allAccounts[i + 1].index : afterDetails.length;
-          const section = afterDetails.substring(start, end);
-          
-          const bill = {};
-          bill.accountNumber = allAccounts[i].accountNumber;
-          
-          // Customer name - line after account number
-          const nameMatch = section.match(/\d{10}\n([^\n]+)/);
-          if (nameMatch) bill.customerName = nameMatch[1].trim();
-          
-          // Address - line after customer name
-          const addrMatch = section.match(/\d{10}\n[^\n]+\n([^\n]+)/);
-          if (addrMatch) bill.address = addrMatch[1].trim();
-          
-          // Date (dd/mm/yyyy)
-          const dateMatch = section.match(/(\d{2}\/\d{2}\/\d{4})/);
-          if (dateMatch) bill.issueDate = dateMatch[1];
-          
-          // Month (mm/yyyy)
-          const monthMatch = section.match(/(\d{2}\/\d{4})/);
-          if (monthMatch) bill.billMonth = monthMatch[1];
-          
-          // Balance - number with 3 decimal places
-          const balMatch = section.match(/(\d+\.\d{3})/);
-          if (balMatch) bill.balance = balMatch[1];
-          
-          parsedBills.push(bill);
-          console.log(`EWA MULTI-BILL: Bill ${i+1} - Account: ${bill.accountNumber}, Balance: ${bill.balance || 'N/A'}`);
-        }
-        
-        console.log(`EWA MULTI-BILL: Total bills found: ${parsedBills.length}`);
-        
-        // Extract totals from the full text (website's own totals)
-        const totalM = raw.match(/مجموع المبالغ \(د\.ب\): ([\d.]+)/);
-        const paidM = raw.match(/مجموع المبلغ المدفوع \(د\.ب\): ([\d.]+)/);
-        console.log(`EWA MULTI-BILL: Website totalM: ${totalM ? totalM[1] : 'not found'}, paidM: ${paidM ? paidM[1] : 'not found'}`);
-        
-        result.parsedBills = parsedBills;
-        
-        // Calculate totals as SUM of all bills' balances
-        let calculatedTotal = 0;
-        parsedBills.forEach(bill => {
-          if (bill.balance) calculatedTotal += parseFloat(bill.balance) || 0;
-        });
-        
-        console.log(`EWA MULTI-BILL: Calculated sum of balances: ${calculatedTotal.toFixed(3)}`);
-        
-        // Use calculated sum for totalAmount (sum of all bills)
-        const totalAmountStr = calculatedTotal.toFixed(3);
-        const paidAmountStr = paidM ? paidM[1] : '0.000';
-        
-        result.totalAmount = totalAmountStr;
-        result.totalSummary = {
-          totalAmount: totalAmountStr,
-          paidAmount: paidAmountStr
-        };
-        
-        console.log(`EWA MULTI-BILL: Final totalAmount: ${totalAmountStr}, paidAmount: ${paidAmountStr}`);
-        
-        // Keep parsedData for backward compatibility (first bill)
-        if (parsedBills.length > 0) {
-          result.parsedData = { ...parsedBills[0], totalAmount: totalAmountStr, paidAmount: paidAmountStr };
-        }
-      } catch(e) { console.log('Parse error:', e.message); }
-    }
-
-    // Done - send result and recycle slot in background
-    const totalTime = Date.now() - startTime;
-    console.log(`EWA[${slot.id}]: Done in ${totalTime}ms`);
-    result.responseTime = totalTime;
-    res.json(result);
-    // Mark slot as not busy before recycling
-    if (slot) { slot.busy = false; slot.busySince = null; }
-    // Recycle this slot in background (close browser, open fresh one)
-    setTimeout(() => recycleSlot(slot.id), 500);
-
-  } catch (err) {
-    console.error('EWA Bill error:', err.message);
-    res.status(500).json({ success: false, error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + err.message });
-    // Mark slot as not busy and recycle
-    if (slot) { slot.busy = false; slot.busySince = null; }
-    if (slot) setTimeout(() => recycleSlot(slot.id), 1000);
   }
+
+  // All attempts failed
+  console.error('EWA: All attempts failed. Last error:', lastError?.message);
+  res.status(500).json({
+    success: false,
+    error: 'حدث خطأ أثناء جلب بيانات الفاتورة: ' + (lastError?.message || 'Unknown error')
+  });
 });
+
 
 // Start server
 const PORT = process.env.PORT || 3001;
